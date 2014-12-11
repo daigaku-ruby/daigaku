@@ -18,5 +18,5 @@ RSpec.configure do |config|
   config.include ResourceHelpers
 
   config.before(:all) { prepare_courses }
-  #config.after(:all) { cleanup_courses }
+  config.after(:all) { cleanup_courses }
 end
