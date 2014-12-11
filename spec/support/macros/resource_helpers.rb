@@ -1,8 +1,17 @@
 module ResourceHelpers
   require 'fileutils'
 
-  TASK_FILE_CONTENT = ["Heading\n======", "##Task", "Solve this task!", "##Hints", "Just do it right..."].join("\n\n")
-  REFERENCE_SOLUTION_CONTENT = ["# This is the reference solution", 'puts "hello world".upcase'].join("\n\n")
+  TASK_FILE_CONTENT = [
+    "Heading\n======", "##Task",
+    "Solve this task!",
+    "##Hints",
+    "Just do it right..."
+  ].join("\n\n")
+
+  REFERENCE_SOLUTION_CONTENT = [
+    "# This is the reference solution",
+    'puts "hello world".upcase'
+  ].join("\n\n")
 
   def task_file_content
     TASK_FILE_CONTENT
