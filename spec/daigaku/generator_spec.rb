@@ -1,37 +1,45 @@
 require 'spec_helper'
 
 describe Daigaku::Generator do
-  it { should respond_to :scaffold }
-  it { should respond_to :prepare }
 
-  before :all do
-    prepare_courses
-  end
-
-  after :all do
-    cleanup_courses
-  end
+  it { is_expected.to respond_to :scaffold }
+  it { is_expected.to respond_to :prepare }
 
   subject { Daigaku::Generator.new }
 
   describe "#scaffold" do
+    it "creates blank solution files for all available units" do
+      subject.scaffold(courses_basepath, solutions_basepath)
 
+      all_solution_file_paths.each do |file_path|
+        expect(File.exist?(file_path)).to be_truthy
+      end
+    end
   end
 
   describe "#prepare" do
     before do
-      @target_dir = File.expand_path("~/#{Daigaku::Generator::TARGET_DIRECTORY}", __FILE__)
+      target_dir = Daigaku::Generator::TARGET_DIRECTORY
+      config_file_name = Daigaku::Generator::CONFIG_FILE
+      courses_dir = Daigaku::Generator::COURSES_DIRECTORY
+
+      @target_path = File.expand_path(File.join("~", target_dir), __FILE__)
+      @config_file = File.join(@target_path, config_file_name)
+      @courses_path = File.join(@target_path, courses_dir)
+
       subject.prepare
     end
 
-    it "generates a '.daigaku' folder at the user's home directory" do
-      expect(Dir.exist?(@target_dir)).to be_truthy
+    it "generates a '~/.daigaku' folder at the user's home directory" do
+      expect(Dir.exist?(@target_path)).to be_truthy
     end
 
-    it "generates a '#{Daigaku::Generator::CONFIG_FILE}' file in the .daigaku directory" do
-      file_path = "~/#{Daigaku::Generator::TARGET_DIRECTORY}/#{Daigaku::Generator::CONFIG_FILE}"
-      file = File.expand_path(file_path, __FILE__)
-      expect(File.exist?(file)).to be_truthy
+    it "generates a 'config' file in the '~/.daigaku' directory" do
+      expect(File.exist?(@config_file)).to be_truthy
+    end
+
+    it "generates a courses folder in '~/.daigaku'" do
+      expect(Dir.exist?(@courses_path)).to be_truthy
     end
   end
 

@@ -5,27 +5,41 @@ module Daigaku
 
     TARGET_DIRECTORY = '.daigaku'
     CONFIG_FILE = 'config'
+    COURSES_DIRECTORY = 'courses'
+    SOLUTION_SUFFIX = '_solution.rb'
 
-    def scaffold(path)
+    def scaffold(courses_path, target_path)
+      Dir[File.join(courses_path, "**/*.md")].each do |file|
+        content_dir = File.join(*file.split('/')[-4..-2])
+        directory = File.join(target_path, File.dirname(content_dir))
 
+        unit_name = File.basename(content_dir)
+        solution_file = unit_name.gsub(/(\_+|\-+|\.+)/, '_') + SOLUTION_SUFFIX
+        file_path = File.join(directory, solution_file)
+
+        FileUtils.makedirs(directory) unless Dir.exist?(directory)
+        FileUtils.touch(file_path) unless  File.exist?(file_path)
+      end
     end
 
     def prepare
-      target_dir = File.expand_path("~/#{TARGET_DIRECTORY}", __FILE__)
-      create_local_dir(target_dir)
-      create_local_config(target_dir)
+      create_local_dir('~', TARGET_DIRECTORY, COURSES_DIRECTORY)
+      create_local_config('~', TARGET_DIRECTORY)
     end
 
     private
 
-    def create_local_dir(target_dir)
-      FileUtils.mkdir(target_dir) unless Dir.exist?(target_dir)
+    def create_local_dir(*dirs)
+      path = File.expand_path(File.join(dirs), __FILE__)
+      FileUtils.makedirs(path) unless Dir.exist?(path)
     end
 
-    def create_local_config(target_dir)
-      if Dir.exist?(target_dir)
-        file = File.join(target_dir, CONFIG_FILE)
-        File.open(file, 'w')
+    def create_local_config(*dirs)
+      path = File.expand_path(File.join(dirs), __FILE__)
+
+      if Dir.exist?(path)
+        file = File.join(path, CONFIG_FILE)
+        FileUtils.touch(file)
       end
     end
   end

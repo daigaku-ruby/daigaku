@@ -33,4 +33,14 @@ describe "PathHelpers" do
       puts "\n- #{File.basename course_name}: #{unit_dirs(course_name).to_s}"
     end
   end
+
+  it "provides all unit directories as flattened array" do
+    puts "\n* all unit dirs:"
+    puts all_unit_dirs.to_s
+  end
+
+  it "provides all solution file paths" do
+    puts "\n* all solution file paths:"
+    puts all_solution_file_paths
+  end
 end
