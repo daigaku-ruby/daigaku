@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Daigaku::Task do
+
   it { is_expected.to respond_to :markdown }
   it { is_expected.to respond_to :path }
 

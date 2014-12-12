@@ -1,5 +1,7 @@
 module Daigaku
+
   class Chapter
+
     attr_reader :title, :path
 
     def initialize(path)
@@ -16,5 +18,6 @@ module Daigaku
 
     def mastered?
     end
+
   end
 end

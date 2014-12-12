@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe Daigaku::ReferenceSolution do
+
   it { is_expected.to respond_to :code }
   it { is_expected.to respond_to :path }
 

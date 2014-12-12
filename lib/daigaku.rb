@@ -1,6 +1,6 @@
 require 'curses'
 
-Dir[File.join(File.expand_path("../../lib/**/*.rb", __FILE__))].each do |file|
+Dir[File.join("#{File.dirname(__FILE__)}/**/*.rb")].sort.each do |file|
   require file
 end
 

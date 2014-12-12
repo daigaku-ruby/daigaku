@@ -1,19 +1,18 @@
 require 'spec_helper'
 
 describe Daigaku::Unit do
+
   it { is_expected.to respond_to :title }
   it { is_expected.to respond_to :task }
   it { is_expected.to respond_to :solution }
   it { is_expected.to respond_to :reference_solution }
   it { is_expected.to respond_to :mastered? }
 
-  before :all do
-    @course_name = course_dir_names.first
-    @chapter_name = chapter_dir_names.first
-    @unit_name = unit_dir_names.first
-  end
+  let(:course_name) { course_dir_names.first }
+  let(:chapter_name) { chapter_dir_names.first }
+  let(:unit_name) { unit_dir_names.first }
 
-  subject { Daigaku::Unit.new(unit_dirs(@course_name).first[0]) }
+  subject { Daigaku::Unit.new(unit_dirs(course_name).first[0]) }
 
   it "has the prescribed title" do
     expect(subject.title).to eq unit_titles.first
@@ -25,7 +24,7 @@ describe Daigaku::Unit do
     end
 
     it "returns the unit's appropriate task" do
-      task = available_task(@course_name, @chapter_name, @unit_name).first
+      task = available_task(course_name, chapter_name, unit_name).first
       expect(subject.task.markdown).to eq task.markdown
     end
 
@@ -42,9 +41,9 @@ describe Daigaku::Unit do
     end
 
     it "returns the units appropriate predefined reference solution" do
-      reference_solution = available_reference_solution(@course_name,
-                                                        @chapter_name,
-                                                        @unit_name).first
+      reference_solution = available_reference_solution(course_name,
+                                                        chapter_name,
+                                                        unit_name).first
       expect(subject.reference_solution.code).to eq reference_solution.code
     end
 
@@ -61,9 +60,9 @@ describe Daigaku::Unit do
     end
 
     it "returns the units appropriate solution provided by the user" do
-      expect(subject.solution.code).to eq available_solution(@course_name,
-                                                             @chapter_name,
-                                                             @unit_name).code
+      expect(subject.solution.code).to eq available_solution(course_name,
+                                                             chapter_name,
+                                                             unit_name).code
     end
 
     it "lazy-loads the reference solution" do

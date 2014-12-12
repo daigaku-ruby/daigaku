@@ -9,18 +9,16 @@ describe Daigaku::Chapter do
   it { is_expected.to respond_to :mastered? }
   it { is_expected.to respond_to :started? }
 
-  before :all do
-    @chapter_path = chapter_dirs(course_dir_names.first).first
-  end
+  let(:chapter_path) { chapter_dirs(course_dir_names.first).first }
 
-  subject { Daigaku::Chapter.new(@chapter_path) }
+  subject { Daigaku::Chapter.new(chapter_path) }
 
   it "has the prescribed title" do
     expect(subject.title).to eq chapter_titles.first
   end
 
   it "has the prescribed path" do
-    expect(subject.path).to eq @chapter_path
+    expect(subject.path).to eq chapter_path
   end
 
   it "is not started by default" do
@@ -34,7 +32,7 @@ describe Daigaku::Chapter do
   describe "#units" do
     it "loads the prescribed number of units" do
       course_name = course_dir_names.first
-      chapter_name = File.basename(@chapter_path)
+      chapter_name = File.basename(chapter_path)
       units_count = available_units(course_name, chapter_name).count
       expect(subject.units.count).to eq units_count
     end

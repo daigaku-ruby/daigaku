@@ -9,7 +9,7 @@ module Daigaku
     end
 
     def chapters
-      @chapters ||= load_chapters
+      @chapters ||= Loading::Chapters.load(@path)
     end
 
     def started?
@@ -20,10 +20,5 @@ module Daigaku
 
     end
 
-    private 
-
-    def load_chapters
-      Loading::Chapters.load(@path)
-    end
   end
 end

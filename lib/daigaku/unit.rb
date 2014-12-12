@@ -1,5 +1,6 @@
 module Daigaku
   class Unit
+
     attr_reader :title, :task
 
     def initialize(path)
@@ -22,5 +23,6 @@ module Daigaku
     def mastered?
       solution.verified?
     end
+
   end
 end
