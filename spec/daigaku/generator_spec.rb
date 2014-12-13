@@ -18,28 +18,15 @@ describe Daigaku::Generator do
   end
 
   describe "#prepare" do
-    before do
-      target_dir = Daigaku::Generator::TARGET_DIRECTORY
-      config_file_name = Daigaku::Generator::CONFIG_FILE
-      courses_dir = Daigaku::Generator::COURSES_DIRECTORY
 
-      @target_path = File.expand_path(File.join("~", target_dir), __FILE__)
-      @config_file = File.join(@target_path, config_file_name)
-      @courses_path = File.join(@target_path, courses_dir)
+    before { subject.prepare }
 
-      subject.prepare
+    it "generates a '~/.daigaku/daigaku.settings' directory" do
+      expect(File.exist?(local_configuration_file)).to be_truthy
     end
 
-    it "generates a '~/.daigaku' folder at the user's home directory" do
-      expect(Dir.exist?(@target_path)).to be_truthy
-    end
-
-    it "generates a 'config' file in the '~/.daigaku' directory" do
-      expect(File.exist?(@config_file)).to be_truthy
-    end
-
-    it "generates a courses folder in '~/.daigaku'" do
-      expect(Dir.exist?(@courses_path)).to be_truthy
+    it "generates a ~/.daigaku/courses folder" do
+      expect(Dir.exist?(local_courses_path)).to be_truthy
     end
   end
 

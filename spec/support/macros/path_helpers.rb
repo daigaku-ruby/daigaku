@@ -1,4 +1,6 @@
 module PathHelpers
+  LOCAL_DIR = '.daigaku'
+  CONFIGURATION_FILE = 'daigaku.settings'
   COURSES = 'courses'
   SOLUTIONS = 'solutions'
   TEMP_PATH = File.expand_path("../../../../tmp/", __FILE__)
@@ -100,5 +102,13 @@ module PathHelpers
 
   def gsub_underscores(names)
     names.map { |unit| unit.gsub(/\_+/, ' ') }
+  end
+
+  def local_courses_path
+    File.expand_path(File.join('~', LOCAL_DIR, COURSES))
+  end
+
+  def local_configuration_file
+    File.expand_path(File.join('~', LOCAL_DIR, CONFIGURATION_FILE))
   end
 end

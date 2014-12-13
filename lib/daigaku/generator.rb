@@ -1,11 +1,9 @@
 module Daigaku
   require 'fileutils'
+  require 'active_support/core_ext'
 
   class Generator
 
-    TARGET_DIRECTORY = '.daigaku'
-    CONFIG_FILE = 'config'
-    COURSES_DIRECTORY = 'courses'
     SOLUTION_SUFFIX = '_solution.rb'
 
     def scaffold(courses_path, target_path)
@@ -17,30 +15,27 @@ module Daigaku
         solution_file = unit_name.gsub(/(\_+|\-+|\.+)/, '_') + SOLUTION_SUFFIX
         file_path = File.join(directory, solution_file)
 
-        FileUtils.makedirs(directory) unless Dir.exist?(directory)
-        FileUtils.touch(file_path) unless  File.exist?(file_path)
+        create_dir(directory)
+        create_file(file_path)
       end
     end
 
     def prepare
-      create_local_dir('~', TARGET_DIRECTORY, COURSES_DIRECTORY)
-      create_local_config('~', TARGET_DIRECTORY)
+      create_dir(Daigaku.config.courses_path)
+      create_file(Daigaku.config.configuration_file)
     end
 
     private
 
-    def create_local_dir(*dirs)
-      path = File.expand_path(File.join(dirs), __FILE__)
+    def create_dir(path)
+      return if path.blank?
       FileUtils.makedirs(path) unless Dir.exist?(path)
     end
 
-    def create_local_config(*dirs)
-      path = File.expand_path(File.join(dirs), __FILE__)
-
-      if Dir.exist?(path)
-        file = File.join(path, CONFIG_FILE)
-        FileUtils.touch(file)
-      end
+    def create_file(path)
+      return if path.blank?
+      create_dir(File.dirname(path))
+      FileUtils.touch(path) unless File.exist?(path)
     end
   end
 end

@@ -9,4 +9,6 @@ module Daigaku
   class SolutionNotFoundError < Error; end
   class ScaffoldError < Error; end
 
+  class ConfigurationError < Error; end
+
 end

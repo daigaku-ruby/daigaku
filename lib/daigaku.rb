@@ -6,6 +6,15 @@ end
 
 module Daigaku
 
+  def self.config
+    Configuration.instance
+  end
+
+  def self.configure
+    puts config.to_s
+    yield(config) if block_given?
+  end
+
   def self.start
     View::Splash.new
     View::MainMenu.new
