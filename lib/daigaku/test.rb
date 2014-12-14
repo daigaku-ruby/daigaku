@@ -1,5 +1,4 @@
 module Daigaku
-  require 'rspec'
   require 'fileutils'
 
   class Test
@@ -13,16 +12,17 @@ module Daigaku
       @path = Dir[File.join(path, '*spec.rb')].first
     end
 
-    def run(solution)
+    def run(solution_code)
       spec_code = File.read(@path)
-      patched_spec_code = insert_code(spec_code, solution.code)
+      patched_spec_code = insert_code(spec_code, solution_code.to_s)
 
       temp_spec = File.join(File.dirname(@path), "temp_#{File.basename(@path)}")
       create_temp_spec(temp_spec, patched_spec_code)
 
-      result = system("rspec --color #{temp_spec}")
+      result = %x{ rspec --color --format j #{temp_spec} }
       remove_file(temp_spec)
-      result
+
+      TestResult.new(result)
     end
 
     private
