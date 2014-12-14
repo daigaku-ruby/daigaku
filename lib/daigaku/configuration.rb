@@ -8,7 +8,7 @@ module Daigaku
     COURSES_DIR = 'courses'
     CONFIGURATION_FILE = 'daigaku.settings'
 
-    attr_reader :courses_path, :configuration_file
+    attr_accessor :courses_path, :configuration_file
 
     def initialize
       @courses_path = local_path_to(COURSES_DIR)

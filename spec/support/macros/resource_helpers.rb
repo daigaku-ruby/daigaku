@@ -8,17 +8,26 @@ module ResourceHelpers
     "Just do it right..."
   ].join("\n\n")
 
-  REFERENCE_SOLUTION_CONTENT = [
-    "# This is the reference solution",
-    'puts "hello world".upcase'
-  ].join("\n\n")
+  SOLUTION_CONTENT = 'print "hello world".upcase'
+  TEST_CONTENT = [
+    "require 'rspec'\n",
+    "describe 'solution test' do",
+    "  it 'prints out HELLO WORLD' do",
+    "    expect { [['solution::code']] }.to output('HELLO WORLD').to_stdout",
+    "  end\n",
+    "end"
+    ].join("\n")
 
   def task_file_content
     TASK_FILE_CONTENT
   end
 
-  def reference_solution_content
-    REFERENCE_SOLUTION_CONTENT
+  def solution_content
+    SOLUTION_CONTENT
+  end
+
+  def test_content
+    TEST_CONTENT
   end
 
   def prepare_courses
@@ -29,15 +38,24 @@ module ResourceHelpers
         unit_dirs(course).each do |units|
           units.each do |unit|
             create_directory(unit)
-            create_file(unit, task_name, TASK_FILE_CONTENT)
-            create_file(unit, reference_solution_name, REFERENCE_SOLUTION_CONTENT)
+            create_file(unit, task_name, task_file_content)
+            create_file(unit, reference_solution_name, solution_content)
+            create_file(unit, test_name, test_content)
           end
         end
       end
     end
   end
 
-  def cleanup_courses
+  def prepare_solutions
+    all_solution_file_paths.each do |path|
+      base_dir = File.dirname(path)
+      name = File.basename(path)
+      create_file(base_dir, name, solution_content)
+    end
+  end
+
+  def cleanup_temp_data
     FileUtils.remove_dir(temp_basepath) if Dir.exist?(temp_basepath)
   end
 
@@ -46,6 +64,7 @@ module ResourceHelpers
   end
 
   def create_file(base_dir, name, content)
+    create_directory(base_dir) unless Dir.exist?(base_dir)
     file_path = File.join(base_dir, name)
 
     if Dir.exist?(base_dir)
@@ -103,6 +122,7 @@ module ResourceHelpers
   end
 
   def available_solution(course_name, chapter_name, unit_name)
-    Daigaku::Solution.new
+    path = File.join(solutions_basepath, course_name, chapter_name, unit_name)
+    Daigaku::Solution.new(path)
   end
 end

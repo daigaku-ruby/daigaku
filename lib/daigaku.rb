@@ -11,7 +11,6 @@ module Daigaku
   end
 
   def self.configure
-    puts config.to_s
     yield(config) if block_given?
   end
 

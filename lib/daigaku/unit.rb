@@ -17,7 +17,7 @@ module Daigaku
     end
 
     def solution
-      @solution ||= Solution.new
+      @solution ||= Solution.new(@path)
     end
 
     def mastered?

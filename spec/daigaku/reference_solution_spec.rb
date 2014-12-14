@@ -18,6 +18,6 @@ describe Daigaku::ReferenceSolution do
   end
 
   it "has the prescribed code" do
-    expect(subject.code).to eq reference_solution_content
+    expect(subject.code).to eq solution_content
   end
 end

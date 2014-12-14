@@ -7,22 +7,27 @@ describe "ResourceHelpers" do
   let(:unit) { unit_dir_names.first }
 
   it "provides the available courses" do
-    puts "\navailable courses: #{available_courses}"
+    puts "\n* available courses:"
+    puts available_courses.map &:inspect
   end
 
   it "provides a course's available chapters" do
-    puts "\navailable chapters: #{available_chapters(course)}"
+    puts "\n* available chapters:"
+    puts available_chapters(course).map &:inspect
   end
 
   it "provides a chapter's avaliable units" do
-    puts "\navailable units: #{available_units(course, chapter)}"
+    puts "\n* available units:"
+    puts available_units(course, chapter).map &:inspect
   end
 
   it "provides a unit's task file" do
-    puts "\ntask: #{available_task(course, chapter, unit)}"
+    puts "\n* task:"
+    puts available_task(course, chapter, unit).map &:inspect
   end
 
   it "provides a unit's reference solution file" do
-    puts "\nreference solution: #{available_reference_solution(course, chapter, unit)}"
+    puts "\n* reference solution:"
+    puts available_reference_solution(course, chapter, unit).map &:inspect
   end
 end

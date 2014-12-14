@@ -9,6 +9,7 @@ module PathHelpers
   UNIT_DIR_NAMES = ['unit-1', 'unit-2']
   TASK_NAME = 'task.md'
   REFERENCE_SOLUTION_NAME = 'solution.rb'
+  TEST_NAME = 'solution_spec.rb'
 
   def temp_basepath
     TEMP_PATH
@@ -36,6 +37,10 @@ module PathHelpers
 
   def reference_solution_name
     REFERENCE_SOLUTION_NAME
+  end
+
+  def test_name
+    TEST_NAME
   end
 
   def courses_basepath
@@ -85,6 +90,12 @@ module PathHelpers
       unit_path = File.join(solutions_basepath, unit_dir.split('/')[-3..-1])
 
       File.join(File.dirname(unit_path), file_name)
+    end
+  end
+
+  def all_test_file_paths
+    all_unit_dirs.map do |unit_dir|
+      File.join(unit_dir, test_name)
     end
   end
 

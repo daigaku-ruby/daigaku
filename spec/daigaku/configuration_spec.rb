@@ -7,7 +7,9 @@ describe Daigaku::Configuration do
   it { is_expected.to respond_to :solutions_path }
   it { is_expected.to respond_to :solutions_path= }
   it { is_expected.to respond_to :courses_path }
+  it { is_expected.to respond_to :courses_path= }
   it { is_expected.to respond_to :configuration_file }
+  it { is_expected.to respond_to :configuration_file= }
 
   describe "#courses_path" do
     it "returns the appropriate local courses path" do
