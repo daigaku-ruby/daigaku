@@ -19,7 +19,14 @@ describe Daigaku::Generator do
 
   describe "#prepare" do
 
-    before { subject.prepare }
+    before do
+      Daigaku.configure do |config|
+        config.solutions_path = solutions_basepath
+        config.courses_path = local_courses_path
+      end
+
+      subject.prepare
+    end
 
     it "generates a '~/.daigaku/daigaku.settings' directory" do
       expect(File.exist?(local_configuration_file)).to be_truthy
@@ -27,6 +34,13 @@ describe Daigaku::Generator do
 
     it "generates a ~/.daigaku/courses folder" do
       expect(Dir.exist?(local_courses_path)).to be_truthy
+    end
+
+    it "saves the current config info" do
+      expect(YAML.load_file(local_configuration_file)).to be_truthy
+
+      config = YAML.load_file(local_configuration_file)
+      expect(config['courses_path']).to eq local_courses_path
     end
   end
 

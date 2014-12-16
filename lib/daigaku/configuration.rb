@@ -1,5 +1,7 @@
 module Daigaku
   require 'singleton'
+  require 'yaml'
+  require 'fileutils'
 
   class Configuration
     include Singleton
@@ -8,7 +10,8 @@ module Daigaku
     COURSES_DIR = 'courses'
     CONFIGURATION_FILE = 'daigaku.settings'
 
-    attr_accessor :courses_path, :configuration_file
+    attr_accessor :courses_path
+    attr_reader :configuration_file
 
     def initialize
       @courses_path = local_path_to(COURSES_DIR)
@@ -27,6 +30,35 @@ module Daigaku
       end
 
       @solutions_path = File.expand_path(path, __FILE__)
+    end
+
+    def save
+      dir = File.basename(@configuration_file)
+      FileUtils.makedirs(dir) unless Dir.exist?(dir)
+
+      settings = self.instance_variables
+      settings.delete(:@configuration_file)
+
+      config = settings.map do |variable|
+        [variable.to_s.delete('@'), self.instance_variable_get(variable.to_sym)]
+      end
+
+      File.open(@configuration_file, 'w') { |f| f.write Hash[config].to_yaml }
+    end
+
+    def import!
+      if File.exist?(@configuration_file)
+        config = YAML.load_file(@configuration_file)
+
+        if config
+          @courses_path = config['courses_path']
+          @solutions_path = config['solutions_path']
+        else
+          @solutions_path = nil
+        end
+      end
+
+      self
     end
 
     private

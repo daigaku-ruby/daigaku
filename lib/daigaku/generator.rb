@@ -23,6 +23,7 @@ module Daigaku
     def prepare
       create_dir(Daigaku.config.courses_path)
       create_file(Daigaku.config.configuration_file)
+      Daigaku.config.save
     end
 
     private
