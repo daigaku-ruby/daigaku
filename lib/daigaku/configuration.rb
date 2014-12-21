@@ -33,7 +33,7 @@ module Daigaku
     end
 
     def save
-      dir = File.basename(@configuration_file)
+      dir = File.dirname(@configuration_file)
       FileUtils.makedirs(dir) unless Dir.exist?(dir)
 
       settings = self.instance_variables

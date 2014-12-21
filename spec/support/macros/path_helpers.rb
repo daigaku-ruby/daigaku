@@ -116,10 +116,12 @@ module PathHelpers
   end
 
   def local_courses_path
-    File.expand_path(File.join('~', LOCAL_DIR, COURSES))
+    local_path = File.join(test_basepath, LOCAL_DIR, COURSES)
+    File.expand_path(local_path, __FILE__)
   end
 
   def local_configuration_file
-    File.expand_path(File.join('~', LOCAL_DIR, CONFIGURATION_FILE))
+    local_path = File.join(test_basepath, LOCAL_DIR, CONFIGURATION_FILE)
+    File.expand_path(local_path, __FILE__)
   end
 end

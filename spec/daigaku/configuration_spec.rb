@@ -13,19 +13,24 @@ describe Daigaku::Configuration do
   it { is_expected.to respond_to :import! }
 
   before do
-    @config_file = File.join(test_basepath, File.basename(subject.configuration_file))
-    subject.instance_variable_set(:@configuration_file, @config_file)
+    subject.instance_variable_set(:@configuration_file, local_configuration_file)
   end
 
   describe "#courses_path" do
-    it "returns the appropriate local courses path" do
+    it "returns the appropriate initial local courses path" do
+      courses_path = File.expand_path('~/.daigaku/courses', __FILE__)
+      expect(subject.courses_path).to eq courses_path
+    end
+
+    it "returns the appropriate set courses path" do
+      subject.courses_path = local_courses_path
       expect(subject.courses_path).to eq local_courses_path
     end
   end
 
   describe "#configuration_path" do
     it "returns the aproproiate path to the local configuration file" do
-      expect(subject.configuration_file).to eq @config_file
+      expect(subject.configuration_file).to eq local_configuration_file
     end
   end
 
@@ -50,12 +55,11 @@ describe Daigaku::Configuration do
 
   describe "#save" do
     it "saves the configured courses path to the daigaku.settings file" do
-      path = File.join(test_basepath, 'test_courses')
-      subject.courses_path = path
+      subject.courses_path = local_courses_path
       subject.save
-      yaml = YAML.load_file(@config_file)
+      yaml = YAML.load_file(local_configuration_file)
 
-      expect(yaml['courses_path']).to eq path
+      expect(yaml['courses_path']).to eq local_courses_path
     end
 
     it "saves the configured solution_path to the daigaku.settings file" do
@@ -63,14 +67,14 @@ describe Daigaku::Configuration do
       FileUtils.makedirs(path)
       subject.solutions_path = path
       subject.save
-      yaml = YAML.load_file(@config_file)
+      yaml = YAML.load_file(local_configuration_file)
 
       expect(yaml['solutions_path']).to eq path
     end
 
     it "does not save the configuration_file path" do
       subject.save
-      yaml = YAML.load_file(@config_file)
+      yaml = YAML.load_file(local_configuration_file)
 
       expect(yaml['configuration_file']).to be_nil
     end
@@ -80,7 +84,8 @@ describe Daigaku::Configuration do
     context "with non-existent daigaku.setting file:" do
       it "uses the default configuration" do
         FileUtils.makedirs(solutions_basepath)
-        subject.instance_variable_set(:@configuration_file, '/no/real/file')
+        FileUtils.rm(local_configuration_file) if File.exist?(local_configuration_file)
+        subject.courses_path = local_courses_path
 
         loaded_config = subject.import!
 
@@ -108,7 +113,7 @@ describe Daigaku::Configuration do
         subject.solutions_path = wanted_solutions_path
         subject.save
 
-        # overqwrite in memory settings
+        # overwrite in memory settings
         subject.courses_path = '/some/other/path/'
         subject.solutions_path = temp_solutions_path
 
