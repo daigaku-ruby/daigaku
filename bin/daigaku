@@ -1,11 +1,12 @@
 #! /usr/bin/env ruby
 
-require 'daigaku'
+require 'rubygems'
 
-if ARGV.empty?
-  Daigaku.start
-elsif ARGV[0] == 'scaffold'
-  puts "create scaffold..."
-else
-  $stderr.puts "Daigako bundles a lot of knowledge - but does not know how to run 'daigaku #{ARGV.join(' ')}'."
+begin
+  require 'daigaku'
+rescue LoadError => e
+  warn 'could not load "daigaku"'
+  exit -1
 end
+
+Daigaku::Terminal::CLI.start

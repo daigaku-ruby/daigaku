@@ -1,0 +1,12 @@
+**********************************************************************
+                      ◇  WELCOME TO DAIGAKU! ◇
+**********************************************************************
+
+To get started, you need a folder where you can save your courses and
+solutions. By default, daigaku uses the same base path for both.
+Your courses will be saved to a "courses" folder and your solutions
+can be found in a "solutions" folder.
+
+The "solutions" path and "courses" path can be changed later on.
+See which command you can use for this by simply typing "daigaku" in
+your command line.
