@@ -44,17 +44,50 @@ module Daigaku
 
       desc 'list', 'List the current daigaku setup'
       def list
-        #TODO implement
+        say_info "Your current daigaku setup is:\n\n#{Daigaku.config.summary}"
       end
 
       desc 'set [OPTIONS]', 'Update the settings of your daigaku environment'
-      method_option :courses_path, aliases: '-c', desc: 'Set courses_path directory'
-      method_option :solutions_path, aliases: '-s', desc: 'Set solutions_path directory'
+      method_option :courses_path,
+                    type: :string,
+                    aliases: '-c',
+                    desc: 'Set courses_path directory'
+      method_option :solutions_path,
+                    type: :string,
+                    aliases: '-s',
+                    desc: 'Set solutions_path directory'
+      method_option :paths,
+                    type: :string,
+                    aliases: '-p',
+                    desc: 'Set all daigaku paths to a certain path'
       def set
-        #courses_path = options[:courses_path]
-        #solutions_path = options[:solutions_path]
-        #TODO implement
+        courses_path = options[:paths] || options[:courses_path]
+        solutions_path = options[:paths] || options[:solutions_path]
+
+        if courses_path.nil? && solutions_path.nil?
+          say_warning "Please specify options when using this command!"
+          say %x{ daigaku setup help set }
+          return
+        end
+
+        update_config(:courses_path, courses_path) if courses_path
+        update_config(:solutions_path, solutions_path) if solutions_path
+
+        Daigaku.config.save
+        list
       end
+
+      private
+
+      def update_config(attribute, value)
+        begin
+          path = File.expand_path(value, Dir.pwd)
+          Daigaku.config.send("#{attribute}=", path)
+        rescue Exception => e
+          say_warning e.message
+        end
+      end
+
     end
 
   end

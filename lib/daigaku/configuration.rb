@@ -25,7 +25,7 @@ module Daigaku
 
     def solutions_path=(path)
       if !Dir.exist?(path)
-        error = [Daigaku::ConfigurationError, "Solutions path isn't an existing directory."]
+        error = [Daigaku::ConfigurationError, "Solutions path \"#{path}\" isn't an existing directory."]
         raise(*error)
       end
 
@@ -59,6 +59,19 @@ module Daigaku
       end
 
       self
+    end
+
+    def summary
+      settings = self.instance_variables
+      settings.delete(:@configuration_file)
+
+      lines = settings.map do |variable|
+        key = variable.to_s.delete('@').gsub('_', ' ')
+        value = self.instance_variable_get(variable.to_sym)
+        "* #{key}: #{value}"
+      end
+
+      lines.join("\n")
     end
 
     private

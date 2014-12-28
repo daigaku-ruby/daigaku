@@ -11,6 +11,7 @@ describe Daigaku::Configuration do
   it { is_expected.to respond_to :configuration_file }
   it { is_expected.to respond_to :save }
   it { is_expected.to respond_to :import! }
+  it { is_expected.to respond_to :summary }
 
   before do
     subject.instance_variable_set(:@configuration_file, local_configuration_file)
@@ -123,6 +124,30 @@ describe Daigaku::Configuration do
         expect(subject.courses_path).to eq wanted_courses_path
         expect(subject.solutions_path).to eq wanted_solutions_path
       end
+    end
+  end
+
+  describe '#summary' do
+    before do
+      subject.courses_path = "wanted/courses/path"
+      subject.solutions_path = solutions_basepath
+      @summary = subject.summary
+    end
+
+    it "returns a string" do
+      expect(@summary).to be_a String
+    end
+
+    it "returns a string with all properties but @configuration_file" do
+      expect(@summary.lines.count).to eq subject.instance_variables.count - 1
+    end
+
+    it "returns a string including the courses path" do
+      expect(@summary =~ /courses path/).to be_truthy
+    end
+
+    it "returns a string including the courses path" do
+      expect(@summary =~ /solutions path/).to be_truthy
     end
   end
 
