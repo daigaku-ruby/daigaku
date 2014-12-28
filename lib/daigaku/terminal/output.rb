@@ -1,5 +1,6 @@
 require 'thor'
 require 'active_support/concern'
+require 'colorize'
 
 module Daigaku
   module Terminal
@@ -25,26 +26,28 @@ module Daigaku
         end
 
         def say_info(text)
-          line('-')
-          say text.prepend 'ℹ '
-          line('-')
+          say_box(text, 'ℹ', :light_blue)
         end
 
         def say_warning(text)
-          line('-')
-          say text.prepend '⚠  '
-          line('-')
+          say_box(text, '⚠ ', :light_red)
+        end
+
+        def say_box(text, symbol, color)
+          empty_line
+          say line('-').send(color)
+          empty_line
+
+          say text.prepend("#{symbol} ").send(color)
+
+          empty_line
+          say line('-').send(color)
+          empty_line
         end
 
         def line(symbol)
-          empty_line
-          say symbol * 70
-          empty_line
+          symbol * 70
         end
-
-      end
-
-      module ClassMethods
 
       end
     end

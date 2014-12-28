@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "rspec", ">= 3.0", "< 4.0"
   spec.add_runtime_dependency "thor", "~> 0.19.1"
   spec.add_runtime_dependency "os", "~> 0.9.6"
+  spec.add_runtime_dependency "colorize", "~> 0.7.5"
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"

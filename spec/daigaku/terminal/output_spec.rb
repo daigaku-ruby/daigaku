@@ -65,9 +65,9 @@ describe Daigaku::Terminal::Output do
   describe "::say_info" do
     it "prints the prescribed output to the $stdout" do
       line = "line"
-      expect($stdout).to receive(:puts).with("\tℹ #{line}")
       expect($stdout).to receive(:puts).exactly(4).times.with("")
-      expect($stdout).to receive(:puts).twice.times.with("\t" + '-' * 70)
+      expect($stdout).to receive(:puts).with("\t" + "ℹ #{line}".light_blue)
+      expect($stdout).to receive(:puts).twice.times.with("\t" + ('-' * 70).light_blue)
       subject.send(:say_info, line)
     end
   end
@@ -76,8 +76,8 @@ describe Daigaku::Terminal::Output do
     it "prints the prescribed output to the $stdout" do
       line = "line"
       expect($stdout).to receive(:puts).exactly(4).times.with("")
-      expect($stdout).to receive(:puts).with("\t⚠  #{line}")
-      expect($stdout).to receive(:puts).twice.times.with("\t" + '-' * 70)
+      expect($stdout).to receive(:puts).with("\t" + "⚠  #{line}".light_red)
+      expect($stdout).to receive(:puts).twice.times.with("\t" + ('-' * 70).light_red)
       subject.send(:say_warning, line)
     end
   end
