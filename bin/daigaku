@@ -5,7 +5,7 @@ require 'rubygems'
 begin
   require 'daigaku'
 rescue LoadError => e
-  warn 'could not load "daigaku"'
+  warn "could not load \"daigaku\"\n#{e}"
   exit -1
 end
 
