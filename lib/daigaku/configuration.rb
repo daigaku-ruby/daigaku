@@ -8,6 +8,7 @@ module Daigaku
 
     LOCAL_DIR = '.daigaku'
     COURSES_DIR = 'courses'
+    SOLUTIONS_DIR = 'solutions'
     CONFIGURATION_FILE = 'daigaku.settings'
 
     attr_accessor :courses_path
@@ -24,12 +25,14 @@ module Daigaku
     end
 
     def solutions_path=(path)
-      if !Dir.exist?(path)
+      full_path = File.expand_path(path, Dir.pwd)
+
+      if !Dir.exist?(full_path)
         error = [Daigaku::ConfigurationError, "Solutions path \"#{path}\" isn't an existing directory."]
         raise(*error)
       end
 
-      @solutions_path = File.expand_path(path, __FILE__)
+      @solutions_path = full_path
     end
 
     def save

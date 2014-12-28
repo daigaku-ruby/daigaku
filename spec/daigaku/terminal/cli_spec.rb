@@ -15,21 +15,29 @@ describe Daigaku::Terminal::CLI do
 
   describe "#learn" do
     it "starts the daigaku terminal app" do
-      daigaku = double('Daigaku')
-      allow(daigaku).to receive(:start) { true }
+      allow(Daigaku).to receive(:start) { true }
       expect(Daigaku).to receive(:start)
 
       subject.learn
     end
   end
 
-  describe "#install" do
-    it "runs the installer" do
-      installer = double('Daigaku::Terminal::Welcome')
-      allow(installer).to receive(:run) { true }
-      expect(Daigaku::Terminal::Welcome).to receive(:run)
+  describe "#welcome" do
+    it "runs the welcome routine" do
+      allow(Daigaku::Terminal::Welcome).to receive(:run) { true }
+      expect(Daigaku::Terminal::Welcome).to receive(:run).once
 
       subject.welcome
+    end
+  end
+
+  describe "#scaffold" do
+    it "runs the scaffolding" do
+      allow($stdout).to receive(:puts) {}
+      allow_any_instance_of(Daigaku::Generator).to receive(:scaffold) { true }
+      expect_any_instance_of(Daigaku::Generator).to receive(:scaffold).once
+
+      subject.scaffold
     end
   end
 end

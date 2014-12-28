@@ -22,8 +22,20 @@ module Daigaku
     end
 
     def prepare
+      begin
+        solutions_path = Daigaku.config.solutions_path
+      rescue ConfigurationError => e
+        base_dir = File.dirname(Daigaku.config.courses_path)
+        solutions_dir = Daigaku::Configuration::SOLUTIONS_DIR
+        solutions_path = File.join(base_dir, solutions_dir)
+      end
+
       create_dir(Daigaku.config.courses_path)
       create_file(Daigaku.config.configuration_file)
+
+      create_dir(solutions_path)
+      Daigaku.config.solutions_path = solutions_path
+
       Daigaku.config.save
     end
 

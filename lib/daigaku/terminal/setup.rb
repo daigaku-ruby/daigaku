@@ -11,8 +11,9 @@ module Daigaku
       desc 'init', 'Initially setup daigaku paths'
       def init
         empty_line
-        say 'Please type the directory in which you want to save your daigaku'
-        say 'files.'
+        say 'Please type the base path in which you want to save your daigaku'
+        say 'files. The "courses" folder and "solutions" folder will be created'
+        say 'automatically.'
 
         loop do
           path = get 'path:'
@@ -24,7 +25,7 @@ module Daigaku
             next
           end
 
-          say_warning 'Do you want to use the following path as your daigaku path?'
+          say_warning 'Do you want to use the following path as your daigaku base path?'
           say "\"#{@daigaku_path}\""
 
           confirmation = get '(yes|no)'
@@ -34,12 +35,7 @@ module Daigaku
           say 'No Problem. Just type another one!'
         end
 
-        Daigaku.config.courses_path = File.join(@daigaku_path, 'courses')
-
-        generator = Daigaku::Generator.new
-        generator.prepare
-
-        say_info "Your Daigaku directory was set up."
+        prepare_directories(@daigaku_path)
       end
 
       desc 'list', 'List the current daigaku setup'
@@ -78,6 +74,31 @@ module Daigaku
       end
 
       private
+
+      def prepare_directories(path)
+        courses_dir = Daigaku::Configuration::COURSES_DIR
+        courses_path = File.join(path, courses_dir)
+        Daigaku.config.courses_path = courses_path
+
+        solutions_dir = Daigaku::Configuration::SOLUTIONS_DIR
+        solutions_path = File.join(path, solutions_dir)
+
+        if Dir.exist? solutions_path
+          Daigaku.config.solutions_path = solutions_path
+        end
+
+        generator = Daigaku::Generator.new
+        generator.prepare
+
+        text = [
+          "Your Daigaku directory is now set up.\n",
+          "Daigaku created/updated following two paths for you:",
+          courses_path,
+          solutions_path
+        ]
+
+        say_info text.join("\n")
+      end
 
       def update_config(attribute, value)
         begin
