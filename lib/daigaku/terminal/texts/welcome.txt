@@ -8,5 +8,5 @@ Your courses will be saved to a "courses" folder and your solutions
 can be found in a "solutions" folder.
 
 The "solutions" path and "courses" path can be changed later on.
-See which command you can use for this by simply typing "daigaku" in
-your command line.
+See which command you can use to update your setup by simply typing
+"daigaku setup help set" in your command line.

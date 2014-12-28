@@ -6,9 +6,9 @@ Daigaku is the Japanese word for "university".
 With daigaku it's easy to learn the Ruby programming language.
 
 Since the terminal is your friend while programming with Ruby, daigaku
-courses also run in the terminal. Daigaku provides several command you
-can use in your terminal to setup the system, open courses and
-navigate through your courses.
+courses also run in the terminal. Daigaku provides several commands
+which you can use in your terminal to setup the system, open courses,
+and navigate through your courses.
 
 By typing "daigaku help" in you terminal you are provided with an
 overview of all available commands.
