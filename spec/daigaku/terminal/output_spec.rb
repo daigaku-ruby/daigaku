@@ -1,15 +1,28 @@
 require 'spec_helper'
 
-describe Daigaku::Terminal::Base do
+describe Daigaku::Terminal::Output do
 
-  subject { Daigaku::Terminal::Base.new }
+  subject do
+    require 'thor'
+    class Test < Thor
+      include Daigaku::Terminal::Output
+    end
+
+    Test.new
+  end
 
   before do
     allow($stdout).to receive(:puts) { |string| string }
     allow($stdout).to receive(:print) { |string| string }
   end
 
-  [:say, :empty_line, :get].each do |method|
+  [
+    :say,
+    :empty_line,
+    :get,
+    :say_info,
+    :say_warning
+  ].each do |method|
     it "has the private method #{method}" do
       expect(subject.private_methods.include?(method)).to be_truthy
     end
@@ -43,9 +56,29 @@ describe Daigaku::Terminal::Base do
       received = 'received'
 
       allow($stdin).to receive(:gets) { received }
-      expect($stdout).to receive(:print).with("\n\t#{printed}: ")
+      expect($stdout).to receive(:print).with("\n\t#{printed} ")
       expect($stdin).to receive(:gets)
       subject.send(:get, printed)
+    end
+  end
+
+  describe "::say_info" do
+    it "prints the prescribed output to the $stdout" do
+      line = "line"
+      expect($stdout).to receive(:puts).with("\tℹ #{line}")
+      expect($stdout).to receive(:puts).exactly(4).times.with("")
+      expect($stdout).to receive(:puts).twice.times.with("\t" + '-' * 70)
+      subject.send(:say_info, line)
+    end
+  end
+
+  describe "::say_warning" do
+    it "prints the prescribed output to the $stdout" do
+      line = "line"
+      expect($stdout).to receive(:puts).exactly(4).times.with("")
+      expect($stdout).to receive(:puts).with("\t⚠  #{line}")
+      expect($stdout).to receive(:puts).twice.times.with("\t" + '-' * 70)
+      subject.send(:say_warning, line)
     end
   end
 
