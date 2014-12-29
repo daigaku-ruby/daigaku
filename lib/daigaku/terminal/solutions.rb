@@ -7,7 +7,7 @@ module Daigaku
     class Solutions < Thor
       include Terminal::Output
 
-      desc 'open [COURSE NAME]', 'Open the solutions folder of a course in a GUI window'
+      desc 'solutions open [COURSE NAME]', 'Open the solutions folder of a course in a GUI window'
       def open(course_name = '')
         begin
           path = File.join(Daigaku.config.solutions_path, course_name)
