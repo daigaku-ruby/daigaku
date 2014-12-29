@@ -4,6 +4,7 @@ module Daigaku
   module Terminal
 
     require_relative 'courses'
+    require_relative 'solutions'
     require_relative 'setup'
     require_relative 'output'
 
@@ -12,6 +13,9 @@ module Daigaku
 
       desc 'courses [COMMAND]', 'Handle daigaku courses'
       subcommand 'courses', Terminal::Courses
+
+      desc 'solutions [COMMAND]', 'Handle your solutions'
+      subcommand 'solutions', Terminal::Solutions
 
       desc 'setup [COMMAND]', 'Change daigaku setup'
       subcommand 'setup', Terminal::Setup

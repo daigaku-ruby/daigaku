@@ -11,6 +11,7 @@ describe Daigaku::Terminal::CLI do
   it { is_expected.to respond_to :scaffold }
   it { is_expected.to respond_to :learn }
   it { is_expected.to respond_to :courses }
+  it { is_expected.to respond_to :solutions }
   it { is_expected.to respond_to :setup }
 
   describe "#learn" do
