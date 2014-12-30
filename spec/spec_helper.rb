@@ -1,4 +1,5 @@
 require 'rspec'
+require 'webmock/rspec'
 
 def require_files_from(paths = [])
   paths.each do |path|

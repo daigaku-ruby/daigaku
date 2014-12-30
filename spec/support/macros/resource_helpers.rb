@@ -1,5 +1,6 @@
 module ResourceHelpers
   require 'fileutils'
+  require 'zip'
 
   def prepare_courses
     FileUtils.mkdir_p(courses_basepath) unless Dir.exist?(courses_basepath)
@@ -24,6 +25,25 @@ module ResourceHelpers
       name = File.basename(path)
       create_file(base_dir, name, solution_content)
     end
+  end
+
+  def prepare_download(zip_file_name)
+    directory = course_dirs.first
+    zip_file_path = File.join(File.dirname(directory), zip_file_name)
+
+    Zip::File.open(zip_file_path, Zip::File::CREATE) do |zip_file|
+      Dir[File.join(directory, '**', '**')].each do |file|
+        zip_file.add(file.sub(directory, '')[1..-1], file)
+      end
+    end
+
+    File.read(zip_file_path)
+  end
+
+  def cleanup_download(zip_file_name)
+    directory = course_dirs.first
+    zip_file = File.join(File.dirname(directory), zip_file_name)
+    FileUtils.rm(zip_file) if File.exist?(zip_file)
   end
 
   def cleanup_temp_data
