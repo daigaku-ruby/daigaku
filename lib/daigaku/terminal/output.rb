@@ -35,20 +35,35 @@ module Daigaku
 
         def say_box(text, symbol, color)
           empty_line
-          say line('-').send(color)
+          say line.send(color)
           empty_line
 
           say text.prepend("#{symbol} ").send(color)
 
           empty_line
-          say line('-').send(color)
+          say line.send(color)
           empty_line
         end
 
-        def line(symbol)
+        def line(symbol = '-')
           symbol * 70
         end
 
+        def get_command(command, description)
+          say description
+
+          loop do
+            cmd = get '>'
+
+            unless cmd == command
+              say "This was something else. Try \"#{command}\"."
+              next
+            end
+
+            system cmd
+            break
+          end
+        end
       end
     end
 

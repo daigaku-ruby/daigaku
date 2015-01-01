@@ -21,7 +21,8 @@ describe Daigaku::Terminal::Output do
     :empty_line,
     :get,
     :say_info,
-    :say_warning
+    :say_warning,
+    :get_command
   ].each do |method|
     it "has the private method #{method}" do
       expect(subject.private_methods.include?(method)).to be_truthy
@@ -79,6 +80,43 @@ describe Daigaku::Terminal::Output do
       expect($stdout).to receive(:puts).with("\t" + "⚠  #{line}".light_red)
       expect($stdout).to receive(:puts).twice.times.with("\t" + ('-' * 70).light_red)
       subject.send(:say_warning, line)
+    end
+  end
+
+  describe "::get_command" do
+
+    before do
+      @correct_command = 'correct command'
+      @description = 'description'
+      allow($stdin).to receive(:gets).and_return(@correct_command)
+      allow(Kernel).to receive(:system) { '' }
+    end
+
+    it "prints a description" do
+      expect($stdout).to receive(:puts).once.with("\t#{@description}")
+      subject.send(:get_command, @correct_command, @description)
+    end
+
+    it "gets a command from the $stdin" do
+      expect($stdin).to receive(:gets)
+      subject.send(:get_command, @correct_command, @description)
+    end
+
+    context "with the right command typed in:" do
+      it "gets a specified command from the user" do
+        subject.send(:get_command, @correct_command, @description)
+      end
+    end
+
+    context "with a wrong command typed  in:" do
+      it "writed a hint" do
+        wrong_command = 'wrong command'
+        error = "This was something else. Try \"#{@correct_command}\"."
+        allow($stdin).to receive(:gets).and_return(wrong_command, @correct_command)
+
+        expect($stdout).to receive(:puts).once.with("\t#{error}")
+        subject.send(:get_command, @correct_command, @description)
+      end
     end
   end
 
