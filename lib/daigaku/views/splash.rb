@@ -1,14 +1,14 @@
 module Daigaku
-  module View
+  module Views
 
     class Splash
-      include Curses
+      include Views
 
       def initialize
         title = "DAIGAKU"
         subtitle = "Learning the Ruby programming language dead easy."
 
-        panel = Daigaku.default_panel
+        panel = default_window
         panel.setpos((lines / 4), (cols - title.length) / 2)
         panel.addstr(title)
         panel.refresh

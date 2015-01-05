@@ -6,7 +6,7 @@ describe "Daigaku module" do
 
     subject { Daigaku.config }
 
-    [:config, :configure, :start, :default_panel].each do |method|
+    [:config, :configure, :start].each do |method|
       it "responds to ::#{method}" do
         expect(Daigaku.singleton_methods).to include method
       end
