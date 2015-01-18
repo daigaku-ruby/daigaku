@@ -23,12 +23,13 @@ module Daigaku
 
         window = Curses::Window.new(height, width, top, left)
         window.keypad(true)
+        window.scrollok(true)
         window.refresh
         window
       end
 
       def top_bar(window)
-        @top_bar ||= TopBar.new(window)
+        TopBar.new(window)
       end
 
       def main_panel(window)
@@ -37,8 +38,8 @@ module Daigaku
       end
 
       def sub_window_below_top_bar(window)
-        height = top_bar(window).height
-        sub_window = window.subwin(window.maxy - height, window.maxx, height, 0)
+        top = top_bar(window).height
+        sub_window = window.subwin(window.maxy - top, window.maxx, top, 0)
         sub_window.keypad(true)
         sub_window
       end
