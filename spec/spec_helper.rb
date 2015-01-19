@@ -17,6 +17,7 @@ RSpec.configure do |config|
 
   config.include TestHelpers
 
+  config.before(:each, type: :view) { mock_default_window }
   config.before(:all) { prepare_courses }
   config.after(:all) { cleanup_temp_data }
 end

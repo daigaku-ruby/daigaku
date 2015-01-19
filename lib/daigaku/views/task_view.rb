@@ -11,7 +11,7 @@ module Daigaku
         @top = nil
       end
 
-      def enter_task(course, chapter, unit)
+      def enter_task_view(course, chapter, unit)
         @course = course
         @chapter = chapter
         @unit = unit

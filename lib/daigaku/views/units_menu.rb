@@ -57,7 +57,7 @@ module Daigaku
             when KEY_DOWN
               @position += 1
             when 10 # Enter
-              broadcast(:enter_task, @course, @chapter, units[@position])
+              broadcast(:enter_task_view, @course, @chapter, units[@position])
               return
             when 263 # Backspace
               broadcast(:reenter_chapters_menu, @course, @chapter)
