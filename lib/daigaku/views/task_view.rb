@@ -23,8 +23,7 @@ module Daigaku
         @window = default_window(@lines.count + @top_bar_height + @head_height)
 
         main_panel(@window) do |window|
-          sub_window = sub_window_below_top_bar(window)
-          show(sub_window)
+          show sub_window_below_top_bar(window)
         end
       end
 
@@ -40,7 +39,7 @@ module Daigaku
       def show(window)
         window.scrollok(true)
         draw(window)
-        interact(window)
+        interact_with(window)
       end
 
       def draw(window)
@@ -91,7 +90,7 @@ module Daigaku
         end
       end
 
-      def interact(window)
+      def interact_with(window)
         while char = window.getch
           scrollable = true
 

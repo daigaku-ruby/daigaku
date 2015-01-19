@@ -11,26 +11,25 @@ module Daigaku
         @window = default_window
       end
 
-      def show
+      def enter
         main_panel(@window) do |window|
-          sub_window = sub_window_below_top_bar(window)
-          show_menu(sub_window)
+          show sub_window_below_top_bar(window)
         end
       end
 
       def reenter_courses_menu(course)
         @current_course = course
-        show
+        enter
       end
 
       private
 
-      def show_menu(window)
-        draw_menu(window)
-        start_update_loop(window)
+      def show(window)
+        draw(window)
+        interact_with(window)
       end
 
-      def draw_menu(window, active_index = 0)
+      def draw(window, active_index = 0)
         window.attrset(A_NORMAL)
         window.setpos(0, 1)
         window << 'Available daigaku courses:'
@@ -44,7 +43,7 @@ module Daigaku
         window.refresh
       end
 
-      def start_update_loop(window)
+      def interact_with(window)
         while char = window.getch
           case char
             when KEY_UP
@@ -61,7 +60,7 @@ module Daigaku
           entries = course_entries
           @position = entries.length - 1 if @position < 0
           @position = 0 if @position >= entries.length
-          draw_menu(window, @position)
+          draw(window, @position)
         end
       end
 

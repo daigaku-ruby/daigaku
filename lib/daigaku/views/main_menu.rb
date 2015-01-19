@@ -19,7 +19,7 @@ module Daigaku
         units_menu.subscribe(task_view)
         task_view.subscribe(units_menu)
 
-        courses_menu.show
+        courses_menu.enter
       end
     end
 

@@ -16,8 +16,7 @@ module Daigaku
         @chapter = chapter
 
         main_panel(@window) do |window|
-          sub_window = sub_window_below_top_bar(window)
-          show_menu(sub_window)
+          show sub_window_below_top_bar(window)
         end
       end
 
@@ -30,12 +29,12 @@ module Daigaku
 
       private
 
-      def show_menu(window)
-        draw_menu(window)
-        start_update_loop(window)
+      def show(window)
+        draw(window)
+        interact_with(window)
       end
 
-      def draw_menu(window, active_index = 0)
+      def draw(window, active_index = 0)
         window.attrset(A_NORMAL)
         window.setpos(0, 1)
         window << "#{@course.title} > #{@chapter.title} - available units:"
@@ -49,7 +48,7 @@ module Daigaku
         window.refresh
       end
 
-      def start_update_loop(window)
+      def interact_with(window)
         while char = window.getch
           case char
             when KEY_UP
@@ -68,7 +67,7 @@ module Daigaku
 
           @position = menu_items.length - 1 if @position < 0
           @position = 0 if @position >= menu_items.length
-          draw_menu(window, @position)
+          draw(window, @position)
         end
       end
 
