@@ -10,7 +10,7 @@ describe Daigaku::Views do
     Test.new
   end
 
-  [:default_window, :menu_bar].each do |method|
+  [:default_window, :top_bar].each do |method|
     it "has a private method #{method}" do
       expect(subject.private_methods.include?(method)).to be_truthy
     end
