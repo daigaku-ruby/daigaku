@@ -2,8 +2,6 @@ require 'spec_helper'
 
 describe Daigaku::Terminal::Courses do
 
-  subject { Daigaku::Terminal::Courses.new }
-
   it { is_expected.to be_a Thor }
 
   describe "commands" do

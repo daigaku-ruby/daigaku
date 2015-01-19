@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe Daigaku::Terminal::CLI do
 
-  subject { Daigaku::Terminal::CLI.new }
-
   it { is_expected.to be_a Thor }
-
   it { is_expected.to respond_to :about }
   it { is_expected.to respond_to :welcome }
   it { is_expected.to respond_to :scaffold }
