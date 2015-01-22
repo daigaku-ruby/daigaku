@@ -36,7 +36,8 @@ module Daigaku
       def draw(window, active_index = 0)
         window.attrset(A_NORMAL)
         window.setpos(0, 1)
-        window << "#{@course.title} - available chapters:"
+        emphasize(@course.title, window)
+        window << " - available chapters:"
 
         menu_items.each_with_index do |item, index|
           window.setpos(index + 2, 1)

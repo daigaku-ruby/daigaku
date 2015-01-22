@@ -12,14 +12,14 @@ module Daigaku
       private
 
       def default_window(height = nil, width = nil, top = 0, left = 0)
-        Curses.init_screen
-        Curses.start_color
-        Curses.noecho
-        Curses.crmode
-        Curses.curs_set(0) # invisible cursor
+        init_screen
+        start_color
+        noecho
+        crmode
+        curs_set(0) # invisible cursor
 
-        height ||= Curses.lines
-        width ||= Curses.cols
+        height ||= lines
+        width ||= cols
 
         window = Curses::Window.new(height, width, top, left)
         window.keypad(true)
@@ -42,6 +42,14 @@ module Daigaku
         sub_window = window.subwin(window.maxy - top, window.maxx, top, 0)
         sub_window.keypad(true)
         sub_window
+      end
+
+      def emphasize(text, window, font_color = Curses::COLOR_WHITE)
+        start_color
+        init_pair(font_color, font_color, Curses::COLOR_BLACK)
+        window.attron(color_pair(font_color) | Curses::A_BOLD) do
+          window << text
+        end
       end
     end
 

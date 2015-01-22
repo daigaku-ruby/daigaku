@@ -31,7 +31,13 @@ module Daigaku
 
       def set_head(window)
         window.setpos(0, 1)
-        window << "#{@course.title} > #{@chapter.title} > #{@unit.title}:"
+        emphasize(@course.title, window)
+        window << " > "
+        emphasize(@chapter.title, window)
+        window << " > "
+        emphasize(@unit.title, window)
+        window << ":"
+
         window.setpos(1, 1)
         window.clrtoeol
       end
