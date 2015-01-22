@@ -24,13 +24,14 @@ module Daigaku
         @course = course
         @chapter = chapter
 
+        @position = chapter.units.find_index(unit)
         enter_units_menu(@course, @chapter)
       end
 
       private
 
       def show(window)
-        draw(window)
+        draw(window, @position)
         interact_with(window)
       end
 

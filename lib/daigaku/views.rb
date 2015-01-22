@@ -9,6 +9,10 @@ module Daigaku
     included do
       include Curses
 
+      def reset_menu_position
+        @position = 0
+      end
+
       private
 
       def default_window(height = nil, width = nil, top = 0, left = 0)

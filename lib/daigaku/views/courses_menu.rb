@@ -25,7 +25,7 @@ module Daigaku
       private
 
       def show(window)
-        draw(window)
+        draw(window, @position)
         interact_with(window)
       end
 
@@ -48,8 +48,10 @@ module Daigaku
           case char
             when KEY_UP
               @position -= 1
+              broadcast(:reset_menu_position)
             when KEY_DOWN
               @position += 1
+              broadcast(:reset_menu_position)
             when 10 # Enter
               broadcast(:enter_chapters_menu, courses[@position])
               return
