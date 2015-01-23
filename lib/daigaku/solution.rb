@@ -23,7 +23,7 @@ module Daigaku
     def solution_path(path)
       local_path = Daigaku.config.solutions_path
       sub_dirs = path.split('/')[-3..-2]
-      file = File.basename(path).gsub(/(\_+|\-+|\.+|\.+)/, '_') + '_solution.rb'
+      file = File.basename(path).gsub(/(\_+|\-+|\.+)/, '_') + '_solution.rb'
 
       File.join(local_path, sub_dirs, file)
     end
