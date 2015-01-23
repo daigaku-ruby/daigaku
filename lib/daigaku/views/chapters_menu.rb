@@ -54,8 +54,10 @@ module Daigaku
           case char
             when KEY_UP
               @position -= 1
+              broadcast(:reset_menu_position)
             when KEY_DOWN
               @position += 1
+              broadcast(:reset_menu_position)
             when 10 # Enter
               broadcast(:enter_units_menu, @course, chapters[@position])
               return
