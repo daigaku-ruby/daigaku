@@ -10,7 +10,7 @@ module Daigaku
 
     def verify!(reference_test)
       result = reference_test.run(self.code)
-      @verified = true if result.passed? === true
+      @verified = result.passed?
       result
     end
 
