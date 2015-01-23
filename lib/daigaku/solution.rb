@@ -9,8 +9,8 @@ module Daigaku
     end
 
     def verify!(reference_test)
-      result = reference_test.run(self)
-      @verified = true if result === true
+      result = reference_test.run(self.code)
+      @verified = true if result.passed? === true
       result
     end
 

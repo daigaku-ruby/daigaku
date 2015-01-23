@@ -29,26 +29,18 @@ describe Daigaku::Solution do
   context "Verification" do
 
     before do
-      @test = double('Daigaku::Test')
-      allow(@test).to receive(:run) { true }
+      @test = Daigaku::Test.new(unit_path)
     end
 
     describe "#verify!" do
-      it "returns true if the given Test passes" do
-        expect(subject.verify!(@test)).to be_truthy
+      it "returns a TestResult" do
+        expect(subject.verify!(@test)).to be_a Daigaku::TestResult
       end
 
       it "sets @verified true if Test passed" do
         expect(subject.instance_variable_get(:@verified)).to be_falsey
         subject.verify!(@test)
         expect(subject.instance_variable_get(:@verified)).to be_truthy
-      end
-
-      it "return the return value of the test run" do
-        return_value = ['error 1', 'error 2']
-        allow(@test).to receive(:run) { return_value }
-
-        expect(subject.verify!(@test)).to eq return_value
       end
     end
 
