@@ -55,7 +55,7 @@ module Daigaku
 
         @lines.each_with_index do |line, index|
           window.setpos(index + 2, 1)
-          window << line.chomp
+          print_markdown(line.chomp, window)
         end
 
         window.setpos(0, 1)
@@ -72,7 +72,7 @@ module Daigaku
 
           if line
             window.setpos(2, 1)
-            window << line
+            print_markdown(line, window)
           end
         end
       end
@@ -87,7 +87,7 @@ module Daigaku
 
           if line
             window.setpos(window.maxy - 1, 1)
-            window << line
+            print_markdown(line, window)
           end
 
           return true

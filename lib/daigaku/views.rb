@@ -48,11 +48,48 @@ module Daigaku
         sub_window
       end
 
-      def emphasize(text, window, font_color = Curses::COLOR_WHITE)
+      def emphasize(text, window, font_color = Curses::COLOR_WHITE, text_decoration = Curses::A_BOLD)
         start_color
         init_pair(font_color, font_color, Curses::COLOR_BLACK)
-        window.attron(color_pair(font_color) | Curses::A_BOLD) do
+        window.attron(color_pair(font_color) | text_decoration) do
           window << text
+        end
+      end
+
+      def print_markdown(text, window)
+        case text
+          when /^\#{1}[^#]+/          # '# heading'
+            emphasize(
+              text.gsub(/^#\s?/, ''),
+              window,
+              Curses::COLOR_YELLOW,
+              Curses::A_UNDERLINE | Curses::A_BOLD
+            )
+          when /^\#{2}[^#]+/          # '## sub heading'
+            emphasize(
+              text.gsub(/^##\s?/, ''),
+              window,
+              Curses::COLOR_YELLOW,
+              Curses::A_UNDERLINE | Curses::A_NORMAL
+            )
+          when /(\*[^*]*\*)/ # '*text*''
+            matches = text.scan(/(\*[^*]*\*)/).flatten.map do |m|
+              m.gsub('*', '\*')
+            end
+
+            words = text.split
+
+            words.each do |word|
+              if word.match(/(#{matches.join('|')})/)
+                emphasize(word.gsub('*', '') + ' ', window)
+              else
+                window << word + ' '
+              end
+            end
+          when /^-{5}/                # '-----' vertical line
+            window << '-' * (Curses.cols - 2)
+          else
+            window << text
         end
       end
     end
