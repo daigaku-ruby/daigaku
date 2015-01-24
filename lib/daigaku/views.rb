@@ -57,36 +57,37 @@ module Daigaku
       end
 
       def print_markdown(text, window)
+        h1 = /^\#{1}[^#]+/    # '# heading'
+        h2 = /^\#{2}[^#]+/    # '## sub heading'
+        bold = /(\*[^*]*\*)/  # '*text*''
+        line = /^-{5}/        # '-----' vertical line
+
         case text
-          when /^\#{1}[^#]+/          # '# heading'
+          when h1
             emphasize(
               text.gsub(/^#\s?/, ''),
               window,
               Curses::COLOR_YELLOW,
               Curses::A_UNDERLINE | Curses::A_BOLD
             )
-          when /^\#{2}[^#]+/          # '## sub heading'
+          when h2
             emphasize(
               text.gsub(/^##\s?/, ''),
               window,
               Curses::COLOR_YELLOW,
               Curses::A_UNDERLINE | Curses::A_NORMAL
             )
-          when /(\*[^*]*\*)/ # '*text*''
-            matches = text.scan(/(\*[^*]*\*)/).flatten.map do |m|
-              m.gsub('*', '\*')
-            end
+          when bold
+            matches = text.scan(bold).flatten.map { |m| m.gsub('*', '\*') }
 
-            words = text.split
-
-            words.each do |word|
+            text.split.each do |word|
               if word.match(/(#{matches.join('|')})/)
                 emphasize(word.gsub('*', '') + ' ', window)
               else
                 window << word + ' '
               end
             end
-          when /^-{5}/                # '-----' vertical line
+          when line
             window << '-' * (Curses.cols - 2)
           else
             window << text
