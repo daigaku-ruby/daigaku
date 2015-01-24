@@ -21,12 +21,12 @@ describe Daigaku::Terminal::Courses do
       @url = "https://example.com/#{@zip_file_name}"
 
       stub_request(:get, @url)
-        .with(:headers => {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'User-Agent'=>'Ruby'
+        .with(headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
           })
-        .to_return(:status => 200, :body => @file_content, :headers => {})
+        .to_return(status: 200, body: @file_content, headers: {})
     end
 
     after { cleanup_download(@zip_file_name) }
@@ -46,6 +46,15 @@ describe Daigaku::Terminal::Courses do
       expect(dirs.include?(target_path)).to be_truthy
     end
 
+    it "raises an error if param is no url" do
+      expect { subject.download('no-url') }.to \
+        raise_error Daigaku::Download::NoUrlError
+    end
+
+    it "raises an error if param is no url to a zip file" do
+      expect { subject.download('http://exmaple.com/something-else') }.to \
+        raise_error Daigaku::Download::NoZipFileUrlError
+    end
   end
 
 end

@@ -11,4 +11,9 @@ module Daigaku
 
   class ConfigurationError < Error; end
 
+  module Download
+    class NoUrlError < Error; end
+    class NoZipFileUrlError < Error; end
+  end
+
 end

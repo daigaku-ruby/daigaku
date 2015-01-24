@@ -3,6 +3,7 @@ module Daigaku
 
     require 'os'
     require 'open-uri'
+    require 'zip'
     require_relative 'output'
 
     class Courses < Thor
@@ -26,6 +27,11 @@ module Daigaku
 
       desc 'courses download [URL]', 'Download a new daigaku course from [URL]'
       def download(url)
+        url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
+
+        raise Download::NoUrlError unless url_given
+        raise Download::NoZipFileUrlError unless File.basename(url) =~ /\.zip/
+
         courses_path = Daigaku.config.courses_path
         FileUtils.makedirs(courses_path) unless Dir.exist?(courses_path)
 
