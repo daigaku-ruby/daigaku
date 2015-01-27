@@ -10,13 +10,17 @@ module Daigaku
     COURSES_DIR = 'courses'
     SOLUTIONS_DIR = 'solutions'
     CONFIGURATION_FILE = 'daigaku.settings'
+    STORAGE_FILE = 'daigaku.db.yml'
+
 
     attr_accessor :courses_path
-    attr_reader :configuration_file
+    attr_reader :configuration_file, :storage_file
 
     def initialize
       @courses_path = local_path_to(COURSES_DIR)
       @configuration_file = local_path_to(CONFIGURATION_FILE)
+      @storage_file = local_path_to(STORAGE_FILE)
+
       yield if block_given?
     end
 

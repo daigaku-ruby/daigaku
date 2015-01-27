@@ -52,4 +52,9 @@ describe "PathHelpers" do
     puts "\n* all test file paths:"
     puts all_test_file_paths
   end
+
+  it "provides the local_storage_file path" do
+    puts "\n* local storage file path:"
+    puts local_storage_file
+  end
 end

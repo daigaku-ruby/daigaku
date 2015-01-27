@@ -10,6 +10,7 @@ module PathHelpers
   TASK_NAME = 'task.md'
   REFERENCE_SOLUTION_NAME = 'solution.rb'
   TEST_NAME = 'solution_spec.rb'
+  STORAGE_FILE = 'daigaku.db.yml'
 
   def temp_basepath
     TEMP_PATH
@@ -122,6 +123,11 @@ module PathHelpers
 
   def local_configuration_file
     local_path = File.join(test_basepath, LOCAL_DIR, CONFIGURATION_FILE)
+    File.expand_path(local_path, __FILE__)
+  end
+
+  def local_storage_file
+    local_path = File.join(test_basepath, LOCAL_DIR, STORAGE_FILE)
     File.expand_path(local_path, __FILE__)
   end
 end

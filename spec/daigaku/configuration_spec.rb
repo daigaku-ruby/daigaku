@@ -9,12 +9,14 @@ describe Daigaku::Configuration do
   it { is_expected.to respond_to :courses_path }
   it { is_expected.to respond_to :courses_path= }
   it { is_expected.to respond_to :configuration_file }
+  it { is_expected.to respond_to :storage_file }
   it { is_expected.to respond_to :save }
   it { is_expected.to respond_to :import! }
   it { is_expected.to respond_to :summary }
 
   before do
     subject.instance_variable_set(:@configuration_file, local_configuration_file)
+    subject.instance_variable_set(:@storage_file, local_storage_file)
   end
 
   describe "#courses_path" do
@@ -30,7 +32,7 @@ describe Daigaku::Configuration do
   end
 
   describe "#configuration_path" do
-    it "returns the aproproiate path to the local configuration file" do
+    it "returns the appropriate path to the local configuration file" do
       expect(subject.configuration_file).to eq local_configuration_file
     end
   end
@@ -51,6 +53,12 @@ describe Daigaku::Configuration do
     it "returns the solutions path if set" do
       subject.solutions_path = test_basepath
       expect { subject.solutions_path }.not_to raise_error
+    end
+  end
+
+  describe "#storage_path" do
+    it "returns the appropriate path to the storge file" do
+      expect(subject.storage_file).to eq local_storage_file
     end
   end
 
