@@ -14,18 +14,41 @@ module Daigaku
       @db =  YAML::Store.new(db_file)
     end
 
+    def set(key, value)
+      @db.transaction { @db[key.to_s] = value }
+    end
+
+    def get(key)
+      @db.transaction { @db[key.to_s] }
+    end
+
+    def self.get(key)
+      instance.get(key)
+    end
+
+    def self.set(key, value)
+      instance.set(key, value)
+    end
+
     # Defines getter and setter methods for arbitrarily named methods.
     # @xample
-    #   Diagaku::Database.instance.answer = 42
-    #   => saves 'anser: 42' to database
+    #   Diagaku::Database.answer = 42
+    #   => saves 'answer: 42' to database
     #
-    #   Daigaku::Database.instance.answer
+    #   Daigaku::Database.answer
     #   => 42
-    def method_missing(method, *args, &block)
+    def self.method_missing(method, *args, &block)
       if method =~ /.*=$/
-        @db.transaction { @db[method.to_s.gsub(/=$/, '')] = args[0] }
+        if singleton_methods.include?(method.to_s.chop.to_sym)
+          raise "There is a \"#{method.to_s.chop}\" instance method already " +
+            "defined. This will lead to problems while getting values " +
+            "from the database. Please use another key than " +
+            "#{singleton_methods.map(&:to_s)}."
+        end
+
+        instance.set(method.to_s.gsub(/=$/, ''), args[0])
       elsif args.count == 0
-        @db.transaction { @db[method.to_s] }
+        instance.get(method)
       else
         super
       end
