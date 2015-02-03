@@ -4,17 +4,22 @@ end
 
 module Daigaku
 
-  def self.config
-    Configuration.instance
-  end
+  class << self
+    def config
+      Configuration.instance
+    end
 
-  def self.configure
-    yield(config) if block_given?
-  end
+    def configure
+      yield(config) if block_given?
+    end
 
-  def self.start
-    #Views::Splash.new
-    Views::MainMenu.new
-  end
+    def start
+      #Views::Splash.new
+      Views::MainMenu.new
+    end
 
+    def database
+      Database.instance
+    end
+  end
 end

@@ -49,4 +49,9 @@ describe "Daigaku module" do
     end
   end
 
+  describe "::database" do
+    it "returns a Diagaku::Database instance" do
+      expect(Daigaku.database).to be_a Daigaku::Database
+    end
+  end
 end
