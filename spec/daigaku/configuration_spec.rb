@@ -8,14 +8,12 @@ describe Daigaku::Configuration do
   it { is_expected.to respond_to :solutions_path= }
   it { is_expected.to respond_to :courses_path }
   it { is_expected.to respond_to :courses_path= }
-  it { is_expected.to respond_to :configuration_file }
   it { is_expected.to respond_to :storage_file }
   it { is_expected.to respond_to :save }
   it { is_expected.to respond_to :import! }
   it { is_expected.to respond_to :summary }
 
   before do
-    subject.instance_variable_set(:@configuration_file, local_configuration_file)
     subject.instance_variable_set(:@storage_file, local_storage_file)
   end
 
@@ -28,12 +26,6 @@ describe Daigaku::Configuration do
     it "returns the appropriate set courses path" do
       subject.courses_path = local_courses_path
       expect(subject.courses_path).to eq local_courses_path
-    end
-  end
-
-  describe "#configuration_path" do
-    it "returns the appropriate path to the local configuration file" do
-      expect(subject.configuration_file).to eq local_configuration_file
     end
   end
 
@@ -63,54 +55,53 @@ describe Daigaku::Configuration do
   end
 
   describe "#save" do
-    it "saves the configured courses path to the daigaku.settings file" do
+    it "saves the configured courses path to the daigaku database" do
       subject.courses_path = local_courses_path
       subject.save
-      yaml = YAML.load_file(local_configuration_file)
 
-      expect(yaml['courses_path']).to eq local_courses_path
+      expect(Daigaku::Database.courses_path).to eq local_courses_path
     end
 
-    it "saves the configured solution_path to the daigaku.settings file" do
+    it "saves the configured solution_path to the daigaku database" do
       path = File.join(test_basepath, 'test_solutions')
       FileUtils.makedirs(path)
       subject.solutions_path = path
       subject.save
-      yaml = YAML.load_file(local_configuration_file)
 
-      expect(yaml['solutions_path']).to eq path
+      expect(Daigaku::Database.solutions_path).to eq path
     end
 
-    it "does not save the configuration_file path" do
+    it "does not save the storage file path" do
       subject.save
-      yaml = YAML.load_file(local_configuration_file)
-
-      expect(yaml['configuration_file']).to be_nil
+      expect(Daigaku::Database.storage_file).to be_nil
     end
   end
 
   describe "#import!" do
-    context "with non-existent daigaku.setting file:" do
+    context "with non-existent daigaku database entries:" do
+      before  do
+        FileUtils.rm(local_storage_file) if File.exist?(local_storage_file)
+      end
+
       it "uses the default configuration" do
-        FileUtils.makedirs(solutions_basepath)
-        FileUtils.rm(local_configuration_file) if File.exist?(local_configuration_file)
-        subject.courses_path = local_courses_path
+        Daigaku::Database.courses_path = nil
+        Daigaku::Database.solutions_path = nil
+        subject.instance_variable_set(:@courses_path, local_courses_path)
 
         loaded_config = subject.import!
 
-        expect(File.exist?('/no/real/file')).to be_falsey
         expect(loaded_config.courses_path).to eq local_courses_path
         expect { loaded_config.solutions_path }
           .to raise_error Daigaku::ConfigurationError
       end
     end
 
-    context "with existing daigaku.setting file:" do
+    context "with existing daigaku database file:" do
       it "returns a Daigaku::Configuration" do
         expect(subject.import!).to be_a Daigaku::Configuration
       end
 
-      it "loads the daigaku.settings into the configuration" do
+      it "loads the daigaku database entries into the configuration" do
         wanted_courses_path = "/courses/path"
         wanted_solutions_path = solutions_basepath
         temp_solutions_path = File.join(solutions_basepath, 'temp')
@@ -128,7 +119,7 @@ describe Daigaku::Configuration do
 
         # fetch stored settings
         subject.import!
-        expect(File.exists?(subject.configuration_file)).to be_truthy
+        expect(File.exist?(local_storage_file)).to be_truthy
         expect(subject.courses_path).to eq wanted_courses_path
         expect(subject.solutions_path).to eq wanted_solutions_path
       end

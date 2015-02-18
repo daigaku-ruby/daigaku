@@ -31,11 +31,9 @@ module Daigaku
       end
 
       create_dir(Daigaku.config.courses_path)
-      create_file(Daigaku.config.configuration_file)
-
       create_dir(solutions_path)
-      Daigaku.config.solutions_path = solutions_path
 
+      Daigaku.config.solutions_path = solutions_path
       Daigaku.config.save
     end
 

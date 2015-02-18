@@ -5,11 +5,15 @@ describe Daigaku::Database do
   subject { Daigaku::Database.send(:new) }
 
   before do
-    Daigaku::config.instance_variable_set(:@storage_file, local_storage_file)
+    Daigaku::Configuration.send(:new)
+
+    allow_any_instance_of(Daigaku::Configuration).to \
+      receive(:storage_file) { local_storage_file }
   end
 
   it { is_expected.to respond_to :get }
   it { is_expected.to respond_to :set }
+  it { is_expected.to respond_to :file }
 
   it "creates the database file(s) in the .daigaku directory on access" do
     Daigaku::Database.call_an_arbitrary_method
@@ -43,6 +47,10 @@ describe Daigaku::Database do
     expect(Daigaku::Database).to respond_to :set
   end
 
+  it "responds to ::file" do
+    expect(Daigaku::Database).to respond_to :file
+  end
+
   describe "::get" do
     it "returns the value of the given key" do
       toast = 'toast'
@@ -56,6 +64,12 @@ describe Daigaku::Database do
       juice = 'orange juice'
       Daigaku::Database.set :juice, juice
       expect(Daigaku::Database.juice).to eq juice
+    end
+  end
+
+  describe "::file" do
+    it "returns the storage file path" do
+      expect(Daigaku::Database.file).to eq Daigaku.config.storage_file
     end
   end
 

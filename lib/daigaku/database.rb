@@ -6,12 +6,14 @@ module Daigaku
   class Database
     include Singleton
 
+    attr_reader :file
+
     def initialize
-      db_file = Daigaku.config.storage_file
-      directory = File.dirname(db_file)
+      @file = Daigaku.config.storage_file
+      directory = File.dirname(@file)
       FileUtils.makedirs(directory) unless Dir.exist?(directory)
 
-      @db =  YAML::Store.new(db_file)
+      @db =  YAML::Store.new(@file)
     end
 
     def set(key, value)
@@ -28,6 +30,10 @@ module Daigaku
 
     def self.set(key, value)
       instance.set(key, value)
+    end
+
+    def self.file
+      instance.file
     end
 
     # Defines getter and setter methods for arbitrarily named methods.

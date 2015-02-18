@@ -7,6 +7,10 @@ describe Daigaku::Generator do
 
   subject { Daigaku::Generator.new }
 
+  before do
+    Daigaku.config.instance_variable_set(:@storage_file, local_storage_file)
+  end
+
   describe "#scaffold" do
     it "creates blank solution files for all available units" do
       subject.scaffold(courses_basepath, solutions_basepath)
@@ -18,12 +22,6 @@ describe Daigaku::Generator do
   end
 
   describe "#prepare" do
-
-    before do
-      Daigaku.config.instance_variable_set(:@configuration_file,
-                                            local_configuration_file)
-    end
-
     context "with an existing solutions_path" do
       before do
         Daigaku.configure do |config|
@@ -34,8 +32,8 @@ describe Daigaku::Generator do
         subject.prepare
       end
 
-      it "generates a '<basepath>/.daigaku/daigaku.settings' directory" do
-        expect(File.exist?(local_configuration_file)).to be_truthy
+      it "generates a '<basepath>/.daigaku/daigaku.db.yml' file" do
+        expect(File.exist?(local_storage_file)).to be_truthy
       end
 
       it "generates a '<basepath>/.daigaku/courses' folder" do
@@ -43,11 +41,9 @@ describe Daigaku::Generator do
       end
 
       it "saves the current config info" do
-        expect(YAML.load_file(local_configuration_file)).to be_truthy
-
-        config = YAML.load_file(local_configuration_file)
-        expect(config['courses_path']).to eq local_courses_path
-        expect(config['solutions_path']).to eq solutions_basepath
+        expect(File.exist?(local_storage_file)).to be_truthy
+        expect(Daigaku::Database.courses_path).to eq local_courses_path
+        expect(Daigaku::Database.solutions_path).to eq solutions_basepath
       end
     end
 
@@ -58,10 +54,7 @@ describe Daigaku::Generator do
         @solutions_path =  File.join(base_path, 'solutions')
 
         Daigaku.config.instance_variable_set(:@solutions_path, nil)
-
-        Daigaku.configure do |config|
-          config.courses_path = local_courses_path
-        end
+        Daigaku.configure { |config| config.courses_path = local_courses_path }
 
         subject.prepare
       end
@@ -70,8 +63,8 @@ describe Daigaku::Generator do
         expect(Dir.exist?(@solutions_path)).to be_truthy
       end
 
-      it "generates a '<basepath>/.daigaku/daigaku.settings' directory" do
-        expect(File.exist?(local_configuration_file)).to be_truthy
+      it "generates a '<basepath>/.daigaku/daigaku.db.yml' file" do
+        expect(File.exist?(local_storage_file)).to be_truthy
       end
 
       it "generates a '<basepath>/.daigaku/courses' folder" do
@@ -79,11 +72,9 @@ describe Daigaku::Generator do
       end
 
       it "saves the current config info" do
-        expect(YAML.load_file(local_configuration_file)).to be_truthy
-
-        config = YAML.load_file(local_configuration_file)
-        expect(config['courses_path']).to eq local_courses_path
-        expect(config['solutions_path']).to eq @solutions_path
+        expect(File.exist?(local_storage_file)).to be_truthy
+        expect(Daigaku::Database.courses_path).to eq local_courses_path
+        expect(Daigaku::Database.solutions_path).to eq @solutions_path
       end
     end
   end

@@ -9,16 +9,14 @@ module Daigaku
     LOCAL_DIR = '.daigaku'
     COURSES_DIR = 'courses'
     SOLUTIONS_DIR = 'solutions'
-    CONFIGURATION_FILE = 'daigaku.settings'
     STORAGE_FILE = 'daigaku.db.yml'
 
 
     attr_accessor :courses_path
-    attr_reader :configuration_file, :storage_file
+    attr_reader :storage_file
 
     def initialize
       @courses_path = local_path_to(COURSES_DIR)
-      @configuration_file = local_path_to(CONFIGURATION_FILE)
       @storage_file = local_path_to(STORAGE_FILE)
 
       yield if block_given?
@@ -31,8 +29,12 @@ module Daigaku
     def solutions_path=(path)
       full_path = File.expand_path(path, Dir.pwd)
 
-      if !Dir.exist?(full_path)
-        error = [Daigaku::ConfigurationError, "Solutions path \"#{path}\" isn't an existing directory."]
+      unless Dir.exist?(full_path)
+        error = [
+          Daigaku::ConfigurationError,
+          "Solutions path \"#{path}\" isn't an existing directory."
+        ]
+
         raise(*error)
       end
 
@@ -40,37 +42,25 @@ module Daigaku
     end
 
     def save
-      dir = File.dirname(@configuration_file)
-      FileUtils.makedirs(dir) unless Dir.exist?(dir)
-
       settings = self.instance_variables
-      settings.delete(:@configuration_file)
+      settings.delete(:@storage_file)
 
-      config = settings.map do |variable|
-        [variable.to_s.delete('@'), self.instance_variable_get(variable.to_sym)]
+      settings.each do |variable|
+        key = variable.to_s.delete('@')
+        value = self.instance_variable_get(variable.to_sym)
+        Database.set(key, value)
       end
-
-      File.open(@configuration_file, 'w') { |f| f.write Hash[config].to_yaml }
     end
 
     def import!
-      if File.exist?(@configuration_file)
-        config = YAML.load_file(@configuration_file)
-
-        if config
-          @courses_path = config['courses_path']
-          @solutions_path = config['solutions_path']
-        else
-          @solutions_path = nil
-        end
-      end
-
+      @courses_path = Database.courses_path || @courses_path
+      @solutions_path = Database.solutions_path || @solutions_path
       self
     end
 
     def summary
       settings = self.instance_variables
-      settings.delete(:@configuration_file)
+      settings.delete(:@storage_file)
 
       lines = settings.map do |variable|
         key = variable.to_s.delete('@').gsub('_', ' ')
