@@ -37,13 +37,13 @@ module Daigaku
       def draw(window, active_index = 0)
         window.attrset(A_NORMAL)
         window.setpos(0, 1)
-        emphasize(@course.title, window)
-        window << " - available chapters:"
+        window.emphasize @course.title
+        window.write ' - available chapters:'
 
         menu_items.each_with_index do |item, index|
           window.setpos(index + 2, 1)
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
-          window << item.to_s
+          window.write item.to_s
         end
 
         window.refresh

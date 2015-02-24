@@ -17,7 +17,7 @@ module Daigaku
 
       def default_window(height = nil, width = nil, top = 0, left = 0)
         init_screen
-        start_color
+
         noecho
         crmode
         curs_set(0) # invisible cursor
@@ -25,7 +25,13 @@ module Daigaku
         height ||= lines
         width ||= cols
 
-        window = Curses::Window.new(height, width, top, left)
+        window = Daigaku::Window.new(height, width, top, left)
+
+        Curses.lines.times do |line|
+          window.setpos(line, 0)
+          window.clear_line
+        end
+
         window.keypad(true)
         window.scrollok(true)
         window.refresh
@@ -48,15 +54,9 @@ module Daigaku
         sub_window
       end
 
-      def emphasize(text, window, font_color = Curses::COLOR_WHITE, text_decoration = Curses::A_BOLD)
-        start_color
-        init_pair(font_color, font_color, Curses::COLOR_BLACK)
-        window.attron(color_pair(font_color) | text_decoration) do
-          window << text
-        end
-      end
-
       def print_markdown(text, window)
+        window.clear_line
+
         h1 = /^\#{1}[^#]+/    # '# heading'
         h2 = /^\#{2}[^#]+/    # '## sub heading'
         bold = /(\*[^*]*\*)/  # '*text*''
@@ -64,33 +64,25 @@ module Daigaku
 
         case text
           when h1
-            emphasize(
-              text.gsub(/^#\s?/, ''),
-              window,
-              Curses::COLOR_YELLOW,
-              Curses::A_UNDERLINE | Curses::A_BOLD
-            )
+            text_decoration = Curses::A_UNDERLINE | Curses::A_BOLD
+            window.emphasize(text.gsub(/^#\s?/, ''), text_decoration)
           when h2
-            emphasize(
-              text.gsub(/^##\s?/, ''),
-              window,
-              Curses::COLOR_YELLOW,
-              Curses::A_UNDERLINE | Curses::A_NORMAL
-            )
+            text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
+            window.emphasize(text.gsub(/^##\s?/, ''), text_decoration)
           when bold
             matches = text.scan(bold).flatten.map { |m| m.gsub('*', '\*') }
 
             text.split.each do |word|
               if word.match(/(#{matches.join('|')})/)
-                emphasize(word.gsub('*', '') + ' ', window)
+                window.emphasize(word.gsub('*', '') + ' ')
               else
-                window << word + ' '
+                window.write(word + ' ')
               end
             end
           when line
-            window << '-' * (Curses.cols - 2)
+            window.write('-' * (Curses.cols - 2))
           else
-            window << text
+            window.write text
         end
       end
     end
