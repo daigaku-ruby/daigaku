@@ -3,13 +3,14 @@ module Daigaku
 
     attr_reader :code, :path, :errors
 
-    def initialize(path)
-      @path = solution_path(path)
+    def initialize(unit_path)
+      @unit_path = unit_path
+      @path = solution_path(unit_path)
       @code = File.read(@path).strip if File.file?(@path)
     end
 
-    def verify!(reference_test)
-      result = reference_test.run(self.code)
+    def verify!
+      result = Daigaku::Test.new(@unit_path).run(self.code)
       @verified = result.passed?
       result
     end

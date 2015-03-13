@@ -27,19 +27,14 @@ describe Daigaku::Solution do
   end
 
   context "Verification" do
-
-    before do
-      @test = Daigaku::Test.new(unit_path)
-    end
-
     describe "#verify!" do
       it "returns a TestResult" do
-        expect(subject.verify!(@test)).to be_a Daigaku::TestResult
+        expect(subject.verify!).to be_a Daigaku::TestResult
       end
 
       it "sets @verified true if Test passed" do
         expect(subject.instance_variable_get(:@verified)).to be_falsey
-        subject.verify!(@test)
+        subject.verify!
         expect(subject.instance_variable_get(:@verified)).to be_truthy
       end
     end
@@ -50,7 +45,7 @@ describe Daigaku::Solution do
       end
 
       it "returns true if #verify! passed" do
-        subject.verify!(@test)
+        subject.verify!
         expect(subject.verified?).to be_truthy
       end
     end
