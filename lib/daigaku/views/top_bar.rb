@@ -34,7 +34,7 @@ module Daigaku
         panel.write     '  |  Exit with '
         panel.emphasize 'ESC'
         panel.setpos(2, 1)
-        panel.write     '_' * (window.maxx - 2)
+        panel.write     '_' * (window.maxx - 3)
 
         panel
       end

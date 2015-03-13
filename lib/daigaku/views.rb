@@ -23,7 +23,7 @@ module Daigaku
         curs_set(0) # invisible cursor
 
         height ||= lines
-        width ||= cols
+        width ||= cols + 1
 
         window = Daigaku::Window.new(height, width, top, left)
 
@@ -52,38 +52,6 @@ module Daigaku
         sub_window = window.subwin(window.maxy - top, window.maxx, top, 0)
         sub_window.keypad(true)
         sub_window
-      end
-
-      def print_markdown(text, window)
-        window.clear_line
-
-        h1 = /^\#{1}[^#]+/    # '# heading'
-        h2 = /^\#{2}[^#]+/    # '## sub heading'
-        bold = /(\*[^*]*\*)/  # '*text*''
-        line = /^-{5}/        # '-----' vertical line
-
-        case text
-          when h1
-            text_decoration = Curses::A_UNDERLINE | Curses::A_BOLD
-            window.emphasize(text.gsub(/^#\s?/, ''), text_decoration)
-          when h2
-            text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
-            window.emphasize(text.gsub(/^##\s?/, ''), text_decoration)
-          when bold
-            matches = text.scan(bold).flatten.map { |m| m.gsub('*', '\*') }
-
-            text.split.each do |word|
-              if word.match(/(#{matches.join('|')})/)
-                window.emphasize(word.gsub('*', '') + ' ')
-              else
-                window.write(word + ' ')
-              end
-            end
-          when line
-            window.write('-' * (Curses.cols - 2))
-          else
-            window.write text
-        end
       end
     end
 

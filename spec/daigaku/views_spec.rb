@@ -14,8 +14,7 @@ describe Daigaku::Views do
     :default_window,
     :top_bar,
     :main_panel,
-    :sub_window_below_top_bar,
-    :print_markdown
+    :sub_window_below_top_bar
   ].each do |method|
     it "has a private method ::#{method}" do
       expect(subject.private_methods.include?(method)).to be_truthy
