@@ -13,7 +13,7 @@ module Daigaku
       directory = File.dirname(@file)
       FileUtils.makedirs(directory) unless Dir.exist?(directory)
 
-      @db =  YAML::Store.new(@file)
+      @db = YAML::Store.new(@file)
     end
 
     def set(key, value)

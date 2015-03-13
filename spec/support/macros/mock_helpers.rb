@@ -7,5 +7,6 @@ module MockHelpers
   def use_test_storage_file
     Daigaku::Configuration.send(:new)
     Daigaku.config.instance_variable_set(:@storage_file, local_storage_file)
+    Daigaku::Database.send(:new)
   end
 end

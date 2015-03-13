@@ -82,9 +82,4 @@ describe Daigaku::Unit do
       expect(subject.mastered?).to be_truthy
     end
   end
-
-  describe "#verify_solution!" do
-    it "calls #verify! on the unit's solution" do
-    end
-  end
 end

@@ -26,6 +26,13 @@ describe Daigaku::Solution do
     expect(subject.code).to eq solution_content
   end
 
+  it "loads the verified state from the database on creation" do
+    Daigaku::Solution.new(unit_path).verify!
+    solution = Daigaku::Solution.new(unit_path)
+
+    expect(solution).to be_verified
+  end
+
   context "Verification" do
     describe "#verify!" do
       it "returns a TestResult" do
@@ -33,9 +40,27 @@ describe Daigaku::Solution do
       end
 
       it "sets @verified true if Test passed" do
-        expect(subject.instance_variable_get(:@verified)).to be_falsey
+        Daigaku::Database.set(subject.path, false)
+        solution = Daigaku::Solution.new(unit_path)
+
+        expect(solution.instance_variable_get(:@verified)).to be_falsey
+        solution.verify!
+        expect(solution.instance_variable_get(:@verified)).to be_truthy
+      end
+
+      it "sets the solution's state in the database to verified if passed" do
         subject.verify!
-        expect(subject.instance_variable_get(:@verified)).to be_truthy
+        mastered = Daigaku::Database.get(subject.path)
+
+        expect(mastered).to be_truthy
+      end
+
+      it "sets the solution's state in the database to unverified unless passed" do
+        subject.instance_variable_set(:@code, 'puts "I ❤ Daigaku!"')
+        subject.verify!
+        mastered = Daigaku::Database.get(subject.path)
+
+        expect(mastered).to be_falsey
       end
     end
 
