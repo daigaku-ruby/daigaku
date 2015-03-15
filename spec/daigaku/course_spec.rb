@@ -13,6 +13,11 @@ describe Daigaku::Course do
 
   let(:course_path) { course_dirs.first }
 
+  before(:all) do
+    prepare_solutions
+    Daigaku.config.solutions_path = solutions_basepath
+  end
+
   subject { Daigaku::Course.new(course_path) }
 
   it "has the prescribed title" do
@@ -40,6 +45,31 @@ describe Daigaku::Course do
       expect(subject.instance_variable_get(:@chapters)).to be_nil
       subject.chapters
       expect(subject.instance_variable_get(:@chapters)).not_to be_nil
+    end
+  end
+
+  describe "#started?" do
+    it "returns true if at least one chapter has been started" do
+      allow(subject.chapters.first).to receive(:started?) { true }
+      expect(subject.started?).to be true
+    end
+
+    it "returns false if no chapter has been started" do
+      allow_any_instance_of(Daigaku::Chapter).to receive(:started?) { false }
+      expect(subject.started?).to be false
+    end
+  end
+
+  describe "#mastered?" do
+    it "returns true if all chapters have been mastered" do
+      allow_any_instance_of(Daigaku::Chapter).to receive(:mastered?) { true }
+      expect(subject.mastered?).to be true
+    end
+
+    it "returns false unless all chapters have been mastered" do
+      allow_any_instance_of(Daigaku::Chapter).to receive(:mastered?) { false }
+      allow(subject.chapters.first).to receive(:mastered?) { true }
+      expect(subject.mastered?).to be false
     end
   end
 end

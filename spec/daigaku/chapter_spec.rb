@@ -11,6 +11,11 @@ describe Daigaku::Chapter do
 
   let(:chapter_path) { chapter_dirs(course_dir_names.first).first }
 
+  before(:all) do
+    prepare_solutions
+    Daigaku.config.solutions_path = solutions_basepath
+  end
+
   subject { Daigaku::Chapter.new(chapter_path) }
 
   it "has the prescribed title" do
@@ -41,6 +46,31 @@ describe Daigaku::Chapter do
       expect(subject.instance_variable_get(:@units)).to be_nil
       subject.units
       expect(subject.instance_variable_get(:@units)).not_to be_nil
+    end
+  end
+
+  describe "#started?" do
+    it "returns true if at least one unit has been verified" do
+      allow(subject.units.first).to receive(:mastered?) { true }
+      expect(subject.started?).to be true
+    end
+
+    it "returns false if no unit has been verified" do
+      allow_any_instance_of(Daigaku::Unit).to receive(:mastered?) { false }
+      expect(subject.started?).to be false
+    end
+  end
+
+  describe "#mastered?" do
+    it "returns true if all units have been verified" do
+      subject.units.each { |unit| unit.solution.verify! }
+      expect(subject.mastered?).to be true
+    end
+
+    it "returns false unless all units have been verified" do
+      allow_any_instance_of(Daigaku::Unit).to receive(:mastered?) { false }
+      allow(subject.units.first).to receive(:mastered?) { true }
+      expect(subject.mastered?).to be false
     end
   end
 end
