@@ -42,8 +42,9 @@ module Daigaku
 
         menu_items.each_with_index do |item, index|
           window.setpos(index + 2, 1)
+          window.print_indicator(chapters[index])
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
-          window.write item.to_s
+          window.write " #{item.to_s} "
         end
 
         window.refresh

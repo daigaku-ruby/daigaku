@@ -36,8 +36,9 @@ module Daigaku
 
         course_entries.each_with_index do |item, index|
           window.setpos(index + 2, 1)
+          window.print_indicator(courses[index])
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
-          window.write item.to_s
+          window.write " #{item.to_s} "
         end
 
         window.refresh
