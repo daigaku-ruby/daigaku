@@ -16,15 +16,12 @@ module Daigaku
         @chapter = chapter
         @unit = unit
 
+        @verification = nil
         @lines = @unit.task.markdown.lines
         @top_bar_height = 4
         @head_height = 2
 
-        @window = default_window(@lines.count + @top_bar_height + @head_height)
-
-        main_panel(@window) do |window|
-          show sub_window_below_top_bar(window)
-        end
+        initialize_window(@lines.count + @top_bar_height + @head_height)
       end
 
       private
@@ -56,7 +53,7 @@ module Daigaku
 
         @lines.each_with_index do |line, index|
           window.setpos(index + 2, 1)
-          window.print_markdown(line.chomp)
+          print_line(window, line, index)
         end
 
         window.setpos(0, 1)
@@ -73,7 +70,7 @@ module Daigaku
 
           if line
             window.setpos(2, 1)
-            window.print_markdown(line.strip)
+            print_line(window, line, @top)
           end
         end
       end
@@ -88,7 +85,7 @@ module Daigaku
           window.setpos(window.maxy - 1, 1)
 
           if line
-            window.print_markdown(line.strip)
+            print_line(window, line, @top)
           else
             window.clear_line
           end
@@ -99,11 +96,29 @@ module Daigaku
         end
       end
 
+      def print_line(window, line, index)
+        if @verification && index.between?(0, @verification.count + 1)
+          if @unit.mastered?
+            window.green(line, A_STANDOUT, full_line: true)
+          else
+            window.red(line, A_STANDOUT, full_line: true)
+          end
+        else
+          window.print_markdown(line.strip)
+        end
+      end
+
       def interact_with(window)
         while char = window.getch
           scrollable = true
 
           case char
+            when 'v' # Verifiy
+              print_verification(window)
+              return
+            when 'c' # clear
+              reset_screen(window)
+              return
             when Curses::KEY_DOWN, Curses::KEY_CTRL_N
               scrollable = scroll_down(window)
             when Curses::KEY_UP, Curses::KEY_CTRL_P
@@ -136,13 +151,32 @@ module Daigaku
               broadcast(:reenter_units_menu, @course, @chapter, @unit)
               return
             when 27 # ESC
-              return
+              exit
           end
 
           Curses.beep unless scrollable
           window.setpos(0, 1)
           window.refresh
         end
+      end
+
+      def print_verification(window)
+        result = @unit.solution.verify!
+        @verification = result.summary.strip.split("\n")
+        @lines = [''] + @verification + ['', ''] + @unit.task.markdown.lines
+
+        initialize_window(@lines.count + @top_bar_height + @head_height)
+      end
+
+      def reset_screen(window)
+        @verification = nil
+        @lines = @unit.task.markdown.lines
+        initialize_window(@lines.count + @top_bar_height + @head_height)
+      end
+
+      def initialize_window(height)
+        @window = default_window(height)
+        main_panel(@window) { |window| show sub_window_below_top_bar(window) }
       end
     end
 

@@ -44,9 +44,7 @@ module Daigaku
         "#{example.description}\n#{example.status}: #{example.message}"
       end
 
-      width = 50
-      wrapper = "\n" + "-" * width + "\n"
-      summary = wrapper + message.join("\n\n") + wrapper
+      summary = message.map(&:strip).join("\n\n")
     end
 
   end
