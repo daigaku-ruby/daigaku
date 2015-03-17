@@ -14,7 +14,7 @@ module Daigaku
       @failure_count = @result[:summary][:failure_count]
 
       @examples = @result[:examples].map do |example|
-        description = example[:description]
+        description = example[:full_description]
         status = example[:status]
         exception = example[:exception]
         message = exception ? exception[:message] : nil
@@ -25,7 +25,7 @@ module Daigaku
 
     def passed?
       @examples.reduce(true) do |passed, example|
-        passed && example.status == 'passed'
+        passed && example.passed?
       end
     end
 
@@ -44,7 +44,7 @@ module Daigaku
         "#{example.description}\n#{example.status}: #{example.message}"
       end
 
-      summary = message.map(&:strip).join("\n\n")
+      summary = message.map(&:strip).join("\n" * 3)
     end
 
   end
@@ -59,6 +59,10 @@ module Daigaku
       @description = args[:description]
       @status = args[:status]
       @message = args[:message] || EXAMPLE_PASSED_MESSAGE
+    end
+
+    def passed?
+      @status == 'passed'
     end
   end
 

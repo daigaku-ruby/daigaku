@@ -78,7 +78,7 @@ describe Daigaku::Unit do
     end
 
     it "returns true if the solution has been verified" do
-      subject.solution.instance_variable_set(:@verified, true)
+      allow_any_instance_of(Daigaku::Solution).to receive(:verified?) { true }
       expect(subject.mastered?).to be_truthy
     end
   end

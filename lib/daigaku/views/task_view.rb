@@ -16,7 +16,7 @@ module Daigaku
         @chapter = chapter
         @unit = unit
 
-        @verification = nil
+        @test_result_lines = nil
         @lines = @unit.task.markdown.lines
         @top_bar_height = 4
         @head_height = 2
@@ -97,11 +97,17 @@ module Daigaku
       end
 
       def print_line(window, line, index)
-        if @verification && index.between?(0, @verification.count + 1)
+        if @test_result_lines && index.between?(0, @test_result_lines.count + 1)
           if @unit.mastered?
             window.green(line, A_STANDOUT, full_line: true)
           else
-            window.red(line, A_STANDOUT, full_line: true)
+            example_index = ((index + 1) / 4.0).ceil - 1
+
+            if @examples[example_index].passed?
+              window.green(line, A_STANDOUT, full_line: true)
+            else
+              window.red(line, A_STANDOUT, full_line: true)
+            end
           end
         else
           window.print_markdown(line.strip)
@@ -114,7 +120,7 @@ module Daigaku
 
           case char
             when 'v' # Verifiy
-              print_verification(window)
+              print_test_results(window)
               return
             when 'c' # clear
               reset_screen(window)
@@ -160,16 +166,18 @@ module Daigaku
         end
       end
 
-      def print_verification(window)
+      def print_test_results(window)
         result = @unit.solution.verify!
-        @verification = result.summary.strip.split("\n")
-        @lines = [''] + @verification + ['', ''] + @unit.task.markdown.lines
+
+        @test_result_lines = result.summary.strip.split("\n")
+        @lines = [''] + @test_result_lines + ['', ''] + @unit.task.markdown.lines
+        @examples = result.examples
 
         initialize_window(@lines.count + @top_bar_height + @head_height)
       end
 
       def reset_screen(window)
-        @verification = nil
+        @test_result_lines = nil
         @lines = @unit.task.markdown.lines
         initialize_window(@lines.count + @top_bar_height + @head_height)
       end

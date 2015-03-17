@@ -11,10 +11,16 @@ module ContentHelpers
 
   TEST_CONTENT = [
     "require 'rspec'\n",
-    "describe 'solution test' do",
+    "describe 'Your code' do",
     "  it 'prints out HELLO WORLD' do",
     "    expect { [['solution::code']] }.to output('HELLO WORLD').to_stdout",
     "  end\n",
+    "  it 'uses the method #upcase to get capital letters' do",
+    "    allow(self).to receive(:puts).and_return ''",
+    "    allow(self).to receive(:print).and_return ''",
+    "    expect_any_instance_of(String).to receive(:upcase).and_return('HELLO WORLD')\n",
+    "    [['solution::code']]",
+    "  end",
     "end"
     ].join("\n")
 
