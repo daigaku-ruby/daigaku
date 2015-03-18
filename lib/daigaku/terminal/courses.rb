@@ -12,17 +12,12 @@ module Daigaku
       desc 'courses list', 'List your available daigaku courses'
       def list
         courses = Loading::Courses.load(Daigaku.config.courses_path)
-        empty_line
 
         if courses.empty?
-          say "#{Terminal.text :courses_empty}"
+          say_info "#{Terminal.text :courses_empty}"
         else
-          say "Available daigaku courses:"
-          empty_line
           print_courses(courses)
         end
-
-        empty_line
       end
 
       desc 'courses download [URL]', 'Download a new daigaku course from [URL]'
@@ -39,14 +34,23 @@ module Daigaku
         File.open(file_name, 'w') { |file| file << open(url).read }
 
         unzip(file_name)
+      rescue Download::NoUrlError => e
+        say_warning "\"#{url}\" is not a valid URL!"
+      rescue Download::NoZipFileUrlError => e
+        say_warning "\"#{url}\" is not a URL of a *.zip file!"
+      rescue Exception => e
+        say_warning "Error while downloading course from \"#{url}\":\n#{e.message}"
       end
 
       private
 
       def print_courses(courses)
-        courses.each do |course|
-          say "* #{File.basename(course.path)}"
-        end
+        text = [
+          "Available daigaku courses:\n",
+          *courses.map { |course| "* #{File.basename(course.path)}" }
+        ].join("\n")
+
+        say_info text
       end
 
       def unzip(file_path)
