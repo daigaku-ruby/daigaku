@@ -20,8 +20,15 @@ module Daigaku
         end
       end
 
-      desc 'courses download [URL]', 'Download a new daigaku course from [URL]'
-      def download(url)
+      method_option :github,
+                    type: :string,
+                    aliases: '-g',
+                    desc: 'Download Github repository'
+      desc 'courses download [URL] [OPTIONS]', 'Download a new daigaku course from [URL]'
+      def download(url = nil)
+        url = github_repo(Daigaku.config.initial_course) unless url
+        url = github_repo(options[:github]) if options[:github]
+
         url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
 
         raise Download::NoUrlError unless url_given
@@ -39,7 +46,13 @@ module Daigaku
       rescue Download::NoZipFileUrlError => e
         say_warning "\"#{url}\" is not a URL of a *.zip file!"
       rescue Exception => e
-        say_warning "Error while downloading course from \"#{url}\":\n#{e.message}"
+        message = [
+          "Error while downloading course from URL",
+          "\"#{url}\"\n",
+          "#{e.message}"
+        ].join("\n")
+
+        say_warning message
       end
 
       private
@@ -64,6 +77,10 @@ module Daigaku
             zip_file.extract(file, file_path) unless File.exist?(file_path)
           end
         end
+      end
+
+      def github_repo(user_and_repo)
+        "https://github.com/#{user_and_repo}/archive/master.zip"
       end
     end
 

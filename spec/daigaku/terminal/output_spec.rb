@@ -67,7 +67,7 @@ describe Daigaku::Terminal::Output do
     it "prints the prescribed output to the $stdout" do
       line = "line"
       expect($stdout).to receive(:puts).exactly(4).times.with("")
-      expect($stdout).to receive(:puts).with("\t" + "ℹ #{line}".light_blue)
+      expect($stdout).to receive(:puts).with("\t" + " ℹ #{line}".light_blue)
       expect($stdout).to receive(:puts).twice.times.with("\t" + ('-' * 70).light_blue)
       subject.send(:say_info, line)
     end

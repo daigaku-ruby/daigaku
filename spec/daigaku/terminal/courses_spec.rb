@@ -27,6 +27,8 @@ describe Daigaku::Terminal::Courses do
           'User-Agent' => 'Ruby'
           })
         .to_return(status: 200, body: @file_content, headers: {})
+
+      allow(subject).to receive(:say_warning) {}
     end
 
     after { cleanup_download(@zip_file_name) }
@@ -47,13 +49,13 @@ describe Daigaku::Terminal::Courses do
     end
 
     it "raises an error if param is no url" do
-      expect { subject.download('no-url') }.to \
-        raise_error Daigaku::Download::NoUrlError
+      expect(subject).to receive(:say_warning)
+      subject.download('no-url')
     end
 
     it "raises an error if param is no url to a zip file" do
-      expect { subject.download('http://exmaple.com/something-else') }.to \
-        raise_error Daigaku::Download::NoZipFileUrlError
+      expect(subject).to receive(:say_warning)
+      subject.download('http://exmaple.com/something-else')
     end
   end
 

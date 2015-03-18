@@ -55,7 +55,7 @@ describe Daigaku::TestResult do
 
       it "return examples with the prescribed info" do
         subject.examples.each_with_index do |example, index|
-          description = test_failed_json_parsed[:examples][index][:description]
+          description = test_failed_json_parsed[:examples][index][:full_description]
           status = test_failed_json_parsed[:examples][index][:status]
           exception = test_failed_json_parsed[:examples][index][:exception]
           message = exception ? exception[:message] : example_passed_message
