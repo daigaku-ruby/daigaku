@@ -12,12 +12,7 @@ module Daigaku
       desc 'courses list', 'List your available daigaku courses'
       def list
         courses = Loading::Courses.load(Daigaku.config.courses_path)
-
-        if courses.empty?
-          say_info "#{Terminal.text :courses_empty}"
-        else
-          print_courses(courses)
-        end
+        say_info courses_list_text(courses)
       end
 
       method_option :github,
@@ -53,17 +48,23 @@ module Daigaku
         ].join("\n")
 
         say_warning message
+      ensure
+        say_info Terminal.text :hint_course_download
       end
 
       private
 
-      def print_courses(courses)
-        text = [
-          "Available daigaku courses:\n",
-          *courses.map { |course| "* #{File.basename(course.path)}" }
-        ].join("\n")
+      def courses_list_text(courses)
+        if courses.empty?
+          text = Terminal.text :courses_empty
+        else
+          text = [
+            "Available daigaku courses:\n",
+            *courses.map { |course| "* #{File.basename(course.path)}" }
+          ].join("\n")
+        end
 
-        say_info text
+        "#{text}\n#{Terminal.text :hint_course_download}"
       end
 
       def unzip(file_path)

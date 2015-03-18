@@ -1,5 +1,3 @@
 There are no courses available in your current courses path.
 
-Go and insert some to your courses path! You can do this manually or
-by using the "daigaku courses download [URL]" command in your
-terminal.
+Go and insert some to your courses path!

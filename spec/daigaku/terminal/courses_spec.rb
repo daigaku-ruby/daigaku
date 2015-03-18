@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Daigaku::Terminal::Courses do
 
+  before { suppress_print_out }
+
   it { is_expected.to be_a Thor }
 
   describe "commands" do
@@ -27,8 +29,6 @@ describe Daigaku::Terminal::Courses do
           'User-Agent' => 'Ruby'
           })
         .to_return(status: 200, body: @file_content, headers: {})
-
-      allow(subject).to receive(:say_warning) {}
     end
 
     after { cleanup_download(@zip_file_name) }

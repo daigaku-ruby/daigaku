@@ -9,4 +9,12 @@ module MockHelpers
     Daigaku.config.instance_variable_set(:@storage_file, local_storage_file)
     Daigaku::Database.send(:new)
   end
+
+  def suppress_print_out
+    allow(described_class).to receive(:say_warning) {}
+    allow(described_class).to receive(:say_info) {}
+    allow(described_class).to receive(:say) {}
+    allow($stdout).to receive(:puts) {}
+    allow($stdout).to receive(:print) {}
+  end
 end
