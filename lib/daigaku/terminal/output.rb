@@ -26,7 +26,7 @@ module Daigaku
         end
 
         def say_info(text)
-          say_box(text, 'ℹ', :light_blue)
+          say_box(text, ' ℹ', :light_blue)
         end
 
         def say_warning(text)
@@ -38,7 +38,8 @@ module Daigaku
           say line.send(color)
           empty_line
 
-          say text.prepend("#{symbol} ").send(color)
+          indented_text = text.split("\n").join("\n#{' ' * (symbol.length + 1)}")
+          say indented_text.prepend("#{symbol} ").send(color)
 
           empty_line
           say line.send(color)
