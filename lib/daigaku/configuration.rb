@@ -10,7 +10,7 @@ module Daigaku
     COURSES_DIR = 'courses'
     SOLUTIONS_DIR = 'solutions'
     STORAGE_FILE = 'daigaku.db.yml'
-    DAIGAKU_INITIAL_COURSE = 'daigaku-ruby/Get-started-with-Ruby'
+    DAIGAKU_INITIAL_COURSE = 'daigaku-ruby/Get_started_with_Ruby'
 
     attr_accessor :courses_path
     attr_reader :storage_file
