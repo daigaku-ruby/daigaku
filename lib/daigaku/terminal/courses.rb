@@ -50,6 +50,7 @@ module Daigaku
         say_warning message
       ensure
         say_info Terminal.text :hint_course_download
+        FileUtils.rm(file_name) if File.exist?(file_name.to_s)
       end
 
       private
