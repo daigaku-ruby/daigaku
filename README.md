@@ -77,9 +77,7 @@ $ daigaku courses download http://exmaple.com/course.zip
 
 ```
 $ daigaku courses download --github=user/repo-name
-
 # or the short version
-
 $ daigaku courses download -g user/repo-name
 ```
 
@@ -165,6 +163,7 @@ $daigaku learn
 * Navigation through the menu: `UP` and `DOWN` keys
 * Enter a menu point: `ENTER` key
 * Go back: `BACKSPACE` key
+* Close Daigaku: `ESC` key
 
 If you are in the unit's view with the task description you can use followin keys:
 
@@ -174,7 +173,7 @@ If you are in the unit's view with the task description you can use followin key
 
 ## Contributing
 
-1. Fork it ( https://github.com/paulgoetze/daigaku/fork )
+1. Fork it ( https://github.com/daigaku-ruby/daigaku/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
