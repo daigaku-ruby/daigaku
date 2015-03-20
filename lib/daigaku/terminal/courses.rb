@@ -33,8 +33,8 @@ module Daigaku
         FileUtils.makedirs(courses_path) unless Dir.exist?(courses_path)
 
         file_name = File.join(courses_path, url.split('/').last)
-        File.open(file_name, 'w') { |file| file << open(url).read }
 
+        File.open(file_name, 'w') { |file| file << open(url).read }
         unzip(file_name)
       rescue Download::NoUrlError => e
         say_warning "\"#{url}\" is not a valid URL!"
@@ -69,16 +69,15 @@ module Daigaku
       end
 
       def unzip(file_path)
-        course_name = File.basename(file_path, File.extname(file_path))
-        target_dir = File.join(File.dirname(file_path), course_name)
-
-        FileUtils.makedirs(target_dir) unless Dir.exist?(target_dir)
+        target_dir = File.dirname(file_path)
 
         Zip::File.open(file_path) do |zip_file|
-          zip_file.each do |file|
-            zip_file.extract(file, file_path) unless File.exist?(file_path)
+          zip_file.each do |entry|
+            zip_file.extract(entry, "#{target_dir}/#{entry}") { true }
           end
         end
+
+        FileUtils.rm(file_path)
       end
 
       def github_repo(user_and_repo)

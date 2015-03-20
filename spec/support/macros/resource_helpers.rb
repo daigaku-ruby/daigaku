@@ -28,12 +28,12 @@ module ResourceHelpers
   end
 
   def prepare_download(zip_file_name)
-    directory = course_dirs.first
+    directory = File.dirname(course_dirs.first)
     zip_file_path = File.join(File.dirname(directory), zip_file_name)
 
     Zip::File.open(zip_file_path, Zip::File::CREATE) do |zip_file|
       Dir[File.join(directory, '**', '**')].each do |file|
-        zip_file.add(file.sub(directory, '')[1..-1], file)
+        zip_file.add(file.sub(directory, '')[1..-1], file) { true }
       end
     end
 

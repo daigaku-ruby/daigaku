@@ -17,8 +17,7 @@ describe Daigaku::Terminal::Courses do
     before do
       Daigaku.config.courses_path = local_courses_path
 
-      @course_name = 'new_course'
-      @zip_file_name = "#{@course_name}.zip"
+      @zip_file_name = "repo.zip"
       @file_content = prepare_download(@zip_file_name)
       @url = "https://example.com/#{@zip_file_name}"
 
@@ -34,16 +33,15 @@ describe Daigaku::Terminal::Courses do
     after { cleanup_download(@zip_file_name) }
 
     it "downloads the file from a given url" do
-      file = File.join(Daigaku.config.courses_path, File.basename(@url))
-
-      expect(File.exist?(file)).to be_falsey
-      subject.download(@url)
-      expect(File.exist?(file)).to be_truthy
+      expect{ subject.download(@url) }.not_to raise_error
     end
 
     it "creates a new courses folder in the daigaku courses directory" do
-      target_path = File.join(Daigaku.config.courses_path, @course_name)
+      target_path = File.join(Daigaku.config.courses_path, File.basename(course_dirs.first))
+
       dirs = Dir[File.join(Daigaku.config.courses_path, '**')]
+      puts "target_path: #{target_path}"
+      puts dirs.to_s
 
       expect(dirs.include?(target_path)).to be_truthy
     end

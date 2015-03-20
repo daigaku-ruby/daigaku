@@ -154,7 +154,7 @@ describe Daigaku::Configuration do
     it {  is_expected.to respond_to :initial_course }
 
     it "returns the initial course github repo partial path" do
-      expect(subject.initial_course).to eq 'daigaku-ruby/Get-started-with-Ruby'
+      expect(subject.initial_course).to eq 'daigaku-ruby/Get_started_with_Ruby'
     end
   end
 

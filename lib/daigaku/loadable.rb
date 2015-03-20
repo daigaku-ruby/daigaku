@@ -9,7 +9,7 @@ module Daigaku
           !(entry == '.' || entry == '..')
         end
 
-        dirs.sort_by { |s| s[/(\d+)?\w/] }.map do |dir|
+        dirs.sort.map do |dir|
           dir_path = File.join(path, dir)
           class_name = self.to_s.demodulize.singularize
           "Daigaku::#{class_name}".constantize.new(dir_path)
