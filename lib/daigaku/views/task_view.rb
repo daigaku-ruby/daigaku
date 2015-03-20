@@ -179,7 +179,8 @@ module Daigaku
       def reset_screen(window)
         @test_result_lines = nil
         @lines = @unit.task.markdown.lines
-        initialize_window(@lines.count + @top_bar_height + @head_height)
+        height = [@lines.count + @top_bar_height + @head_height, Curses.lines].max
+        initialize_window(height)
       end
 
       def initialize_window(height)
