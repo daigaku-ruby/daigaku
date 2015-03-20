@@ -8,10 +8,11 @@ module Daigaku
 
       def initialize
         @position = 0
-        @window = default_window
       end
 
       def enter
+        @window = default_window
+
         main_panel(@window) do |window|
           show sub_window_below_top_bar(window)
         end
@@ -68,11 +69,11 @@ module Daigaku
       end
 
       def courses
-        @courses ||= Loading::Courses.load(Daigaku.config.courses_path)
+        @courses = Loading::Courses.load(Daigaku.config.courses_path)
       end
 
       def course_entries
-        @course_entries ||= courses.map do |course|
+        @course_entries = courses.map do |course|
           "#{course.title} (#{course.author})"
         end
       end

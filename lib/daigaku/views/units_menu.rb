@@ -8,10 +8,10 @@ module Daigaku
 
       def initialize
         @position = 0
-        @window = default_window
       end
 
       def enter_units_menu(course, chapter)
+        @window = default_window
         @course = course
         @chapter = chapter
 
@@ -81,7 +81,7 @@ module Daigaku
       end
 
       def menu_items
-        @menu_items ||= units.map do |unit|
+        @menu_items = units.map do |unit|
           unit.title
         end
       end
