@@ -105,8 +105,9 @@ module Daigaku
 
       h1 = /^\#{1}[^#]+/    # '# heading'
       h2 = /^\#{2}[^#]+/    # '## sub heading'
-      bold = /(\*[^*]*\*)/  # '*text*''
+      bold = /(\*[^*]*\*)/  # '*text*'
       line = /^-{5}/        # '-----' vertical line
+      code = /(\`*\`)/    # '`code line`'
 
       case text
         when h1
@@ -114,14 +115,27 @@ module Daigaku
         when h2
           text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
           emphasize(text.gsub(/^##\s?/, ''), text_decoration)
-        when bold
-          matches = text.scan(bold).flatten.map { |m| m.gsub('*', '\*') }
+        when bold || code
+          emphasized = false
+          highlighted = false
 
-          text.split.each do |word|
-            if word.match(/(#{matches.join('|')})/)
-              emphasize(word.gsub('*', '') + ' ')
+          text.chars.each do |char|
+            if char == '*'
+              emphasized = !emphasized
+              next
+            end
+
+            if char == '`'
+              highlighted = !highlighted
+              next
+            end
+
+            if emphasized
+              emphasize(char)
+            elsif highlighted
+              red(char)
             else
-              write(word + ' ')
+              write(char)
             end
           end
         when line
