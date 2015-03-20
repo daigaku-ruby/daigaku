@@ -1,13 +1,13 @@
 You can download a new daigaku course by using the
 "daigaku courses download [URL] [OPTIONS]" command, e.g.:
 
-$ daigaku courses download https://github.com/daigaku-ruby/Get-started-with-Ruby/archive/master.zip
+$ daigaku courses download https://github.com/daigaku-ruby/Get_started_with_Ruby/archive/master.zip
 
 For Github resources you can also use the `--github` (short `-g`) option:
 
-$ daigaku courses download -g daigaku-ruby/Get-started-with-Ruby
+$ daigaku courses download -g daigaku-ruby/Get_started_with_Ruby
 
-If you want to quick start with Daiaku's "Get-started-with-Ruby"
+If you want to quick start with Daiaku's "Get started with Ruby"
 course just run:
 
 $ daigaku courses download
