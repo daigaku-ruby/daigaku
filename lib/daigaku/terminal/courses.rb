@@ -58,7 +58,7 @@ module Daigaku
         else
           text = [
             "Available daigaku courses:\n",
-            *courses.map { |course| "* #{File.basename(course.path)}" }
+            *courses.map { |course| "* #{File.basename(course.path)}\n" }
           ].join("\n")
         end
 
