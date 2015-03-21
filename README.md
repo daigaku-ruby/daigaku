@@ -1,6 +1,6 @@
 # Daigaku
 
-Daigaku is the Japanese word for **university**.
+Daigaku (大学) is the Japanese word for **university**.
 
 With Daigaku you can master your way of learning the Ruby programming
 language with courses that are created by the community.
