@@ -16,7 +16,7 @@ module Daigaku
     end
 
     def start
-      #Views::Splash.new
+      Views::Splash.new
       Views::MainMenu.new
     end
 
