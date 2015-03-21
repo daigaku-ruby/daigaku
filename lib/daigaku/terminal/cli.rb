@@ -50,7 +50,8 @@ module Daigaku
 
       desc 'learn', 'Go to daigaku to learn Ruby!'
       def learn
-        Daigaku.start
+        courses = Loading::Courses.load(Daigaku.config.courses_path)
+        courses.empty? ? Courses.new.list : Daigaku.start
       end
     end
 
