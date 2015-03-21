@@ -9,7 +9,7 @@ module Daigaku
     class Courses < Thor
       include Terminal::Output
 
-      desc 'courses list', 'List your available daigaku courses'
+      desc 'list', 'List your available daigaku courses'
       def list
         courses = Loading::Courses.load(Daigaku.config.courses_path)
         say_info courses_list_text(courses)
@@ -19,7 +19,7 @@ module Daigaku
                     type: :string,
                     aliases: '-g',
                     desc: 'Download Github repository'
-      desc 'courses download [URL] [OPTIONS]', 'Download a new daigaku course from [URL]'
+      desc 'download [URL] [OPTIONS]', 'Download a new daigaku course from [URL]'
       def download(url = nil)
         use_initial_course = url.nil? && options[:github].nil?
         url = github_repo(Daigaku.config.initial_course) if use_initial_course
