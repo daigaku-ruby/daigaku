@@ -102,7 +102,7 @@ module Daigaku
           if @unit.mastered?
             window.green(line, A_STANDOUT, full_line: true)
           else
-            example_index = ((index + 1) / 4.0).ceil - 1
+            example_index = example_index(@example_heights, index)
 
             if @examples[example_index].passed?
               window.green(line, A_STANDOUT, full_line: true)
@@ -186,7 +186,15 @@ module Daigaku
         @lines = [''] + @test_result_lines + ['', ''] + @unit.task.markdown.lines
         @examples = result.examples
 
-        initialize_window(@lines.count + @top_bar_height + @head_height)
+        @example_heights = @examples.reduce({}) do |hash, example|
+          start = hash.values.reduce(0) { |sum, r| sum += r.count }
+          range = (start..(start + example.message.split("\n").count) + 2)
+          hash[hash.keys.count] = range
+          hash
+        end
+
+        height = [@lines.count + @top_bar_height + @head_height, Curses.lines].max
+        initialize_window(height)
       end
 
       def reset_screen(window)
@@ -199,6 +207,10 @@ module Daigaku
       def initialize_window(height)
         @window = default_window(height)
         main_panel(@window) { |window| show sub_window_below_top_bar(window) }
+      end
+
+      def example_index(heights, index)
+        heights.values.index { |range| range.include?(index) }
       end
     end
 
