@@ -38,6 +38,7 @@ module Daigaku
 
         File.open(file_name, 'w') { |file| file << open(url).read }
         course_name = unzip(file_name, github)
+        scaffold_solutions
 
         say_info "Successfully downloaded the course \"#{course_name}\"!"
       rescue Download::NoUrlError => e
@@ -65,6 +66,10 @@ module Daigaku
         "#{text}\n#{Terminal.text :hint_course_download}"
       end
 
+      def github_repo(user_and_repo)
+        "https://github.com/#{user_and_repo}/archive/master.zip"
+      end
+
       def unzip(file_path, github = false)
         target_dir = File.dirname(file_path)
         course_name = nil
@@ -88,8 +93,10 @@ module Daigaku
         course_name
       end
 
-      def github_repo(user_and_repo)
-        "https://github.com/#{user_and_repo}/archive/master.zip"
+      def scaffold_solutions
+        generator = Generator.new
+        generator.prepare
+        generator.scaffold(Daigaku.config.courses_path, Daigaku.config.solutions_path)
       end
 
       def print_download_warning(url, text)
