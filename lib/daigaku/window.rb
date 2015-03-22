@@ -115,7 +115,7 @@ module Daigaku
         when h2
           text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
           emphasize(text.gsub(/^##\s?/, ''), text_decoration)
-        when bold || code
+        when (code || bold)
           emphasized = false
           highlighted = false
 
@@ -130,13 +130,22 @@ module Daigaku
               next
             end
 
-            if emphasized
-              emphasize(char)
-            elsif highlighted
+            if highlighted
               red(char)
+            elsif emphasized
+              emphasize(char)
             else
               write(char)
             end
+          end
+        when bold
+          text.chars.each do |char|
+            if char == '*'
+              emphasized = !emphasized
+              next
+            end
+
+            emphasized ? emphasize(char) : write(char)
           end
         when line
           write('-' * (Curses.cols - 2))
