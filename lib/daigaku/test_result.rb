@@ -8,7 +8,11 @@ module Daigaku
     TEST_PASSED_MESSAGE = "Your code passed all tests. Congratulations!"
 
     def initialize(result_json)
-      @result = JSON.parse(result_json, symbolize_names: true)
+      @result = begin
+        JSON.parse(result_json, symbolize_names: true)
+      rescue
+        syntax_error_json
+      end
 
       @example_count = @result[:summary][:example_count]
       @failure_count = @result[:summary][:failure_count]
@@ -47,6 +51,17 @@ module Daigaku
       summary = message.map(&:strip).join("\n" * 3)
     end
 
+    def syntax_error_json
+      {
+        summary: {},
+        examples: [
+          {
+            status: 'failed',
+            exception: { message: ":( You got a syntax error in your code!" }
+          }
+        ]
+      }
+    end
   end
 
   class TestExample
