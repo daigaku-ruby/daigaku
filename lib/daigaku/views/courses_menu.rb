@@ -74,7 +74,9 @@ module Daigaku
 
       def course_entries
         @course_entries = courses.map do |course|
-          "#{course.title} (#{course.author})"
+          line = "#{course.title}"
+          line << "(#{course.author})" if course.author
+          line
         end
       end
 
