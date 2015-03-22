@@ -1,6 +1,7 @@
 module Daigaku
   module Views
     require 'wisper'
+    require 'os'
 
     class TaskView
       include Views
@@ -125,6 +126,8 @@ module Daigaku
             when 'c' # clear
               reset_screen(window)
               return
+            when 'o' # open solution file
+              open_editor(@unit.solution.path)
             when Curses::KEY_DOWN, Curses::KEY_CTRL_N
               scrollable = scroll_down(window)
             when Curses::KEY_UP, Curses::KEY_CTRL_P
@@ -163,6 +166,16 @@ module Daigaku
           Curses.beep unless scrollable
           window.setpos(0, 1)
           window.refresh
+        end
+      end
+
+      def open_editor(file_path)
+        if OS.windows?
+          system "start '' '#{file_path}'"
+        elsif OS.mac?
+          system "open -f '#{file_path}'"
+        elsif OS.linux?
+          system "xdg-open '#{file_path}'"
         end
       end
 
