@@ -1,5 +1,7 @@
 # ![Daigaku](http://res.cloudinary.com/daigaku-ruby/image/upload/c_scale,h_100/v1426946323/rect5481_si3rjr.png)
 
+[![Gem Version](https://badge.fury.io/rb/daigaku.svg)](http://badge.fury.io/rb/daigaku)
+
 Daigaku (大学) is the Japanese word for **university**.
 
 With Daigaku you can master your way of learning the Ruby programming
