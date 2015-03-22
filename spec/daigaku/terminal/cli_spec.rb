@@ -12,9 +12,19 @@ describe Daigaku::Terminal::CLI do
   it { is_expected.to respond_to :setup }
 
   describe "#learn" do
-    it "starts the daigaku terminal app" do
+    it "starts the daigaku terminal app if there are courses" do
+      allow(Daigaku::Loading::Courses).to receive(:load) { [1] }
       allow(Daigaku).to receive(:start) { true }
       expect(Daigaku).to receive(:start)
+
+      subject.learn
+    end
+
+    it "does not start the daigaku terminal app if there are no courses" do
+      suppress_print_out
+      allow(Daigaku::Loading::Courses).to receive(:load) { [] }
+      allow(Daigaku).to receive(:start) { true }
+      expect(Daigaku).not_to receive(:start)
 
       subject.learn
     end
