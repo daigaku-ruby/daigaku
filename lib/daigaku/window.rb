@@ -106,7 +106,7 @@ module Daigaku
       h1 = /^\#{1}[^#]+/    # '# heading'
       h2 = /^\#{2}[^#]+/    # '## sub heading'
       bold = /(\*[^*]*\*)/  # '*text*'
-      line = /^-{5}/        # '-----' vertical line
+      line = /^-{3,}/        # '---' vertical line
       code = /(\`*\`)/    # '`code line`'
 
       case text
