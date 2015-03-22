@@ -173,7 +173,7 @@ module Daigaku
         if OS.windows?
           system "start '' '#{file_path}'"
         elsif OS.mac?
-          system "open -f '#{file_path}'"
+          system "open '#{file_path}'"
         elsif OS.linux?
           system "xdg-open '#{file_path}'"
         end
