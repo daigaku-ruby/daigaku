@@ -73,13 +73,14 @@ module Daigaku
       end
 
       def course_entries
-        @course_entries = courses.map do |course|
+        non_empty_courses = courses.select { |course| !course.chapters.empty? }
+
+        @course_entries = non_empty_courses.map do |course|
           line = "#{course.title}"
           line << "(#{course.author})" if course.author
           line
         end
       end
-
     end
 
   end
