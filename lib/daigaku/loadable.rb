@@ -6,7 +6,7 @@ module Daigaku
     def load(path)
       if Dir.exist?(path)
         dirs = Dir.entries(path).select do |entry|
-          !(entry == '.' || entry == '..')
+          !entry.match(/\./)
         end
 
         dirs.sort.map do |dir|
