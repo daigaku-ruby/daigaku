@@ -8,7 +8,7 @@ module Daigaku
     SOLUTION_SUFFIX = '_solution.rb'
 
     def scaffold(courses_path, target_path)
-      Dir[File.join(courses_path, "**/*.md")].each do |file|
+      Dir[File.join(courses_path, "*/*/*/*.md")].each do |file|
         content_dir = File.join(*file.split('/')[-4..-2])
         directory = File.join(target_path, File.dirname(content_dir))
 
