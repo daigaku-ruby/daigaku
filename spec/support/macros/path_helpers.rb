@@ -5,8 +5,8 @@ module PathHelpers
   SOLUTIONS = 'solutions'
   TEMP_PATH = File.expand_path("../../../../tmp/", __FILE__)
   COURSE_DIR_NAMES = ['Course_A', 'Course_B']
-  CHAPTER_DIR_NAMES = ['Chapter-1', 'Chapter-2']
-  UNIT_DIR_NAMES = ['unit-1', 'unit-2']
+  CHAPTER_DIR_NAMES = ['1_Chapter-A', '2_Chapter-B']
+  UNIT_DIR_NAMES = ['1_unit-a', '2_unit-b']
   TASK_NAME = 'task.md'
   REFERENCE_SOLUTION_NAME = 'solution.rb'
   TEST_NAME = 'solution_spec.rb'
