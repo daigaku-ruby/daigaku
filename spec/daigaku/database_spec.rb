@@ -30,9 +30,14 @@ describe Daigaku::Database do
     expect(Daigaku::Database.carrots).to eq "carrots"
   end
 
-  it "returns nil for not set keys" do
+  it "returns nil for not set simple keys" do
     expect(Daigaku::Database.hamburger).to be_nil
   end
+
+  it "returns nil for not set nested keys" do
+      key = "pastries/muffins/savory"
+      expect(Daigaku::Database.get(key)).to be_nil
+    end
 
   it "raises an method missing errror for non getter/setter methods" do
     expect { Daigaku::Database.arbitrary_method(1, 2) }
@@ -55,15 +60,43 @@ describe Daigaku::Database do
     it "returns the value of the given key" do
       toast = 'toast'
       Daigaku::Database.toast = toast
-      expect(Daigaku::Database.get :toast).to eq toast
+      expect(Daigaku::Database.get(:toast)).to eq toast
+    end
+
+    it "gets the value hash for a given partly key" do
+      base_key = 'pastries'
+      second_key = 'muffins'
+      third_key = 'sweet'
+      key = "#{base_key}/#{second_key}/#{third_key}"
+      muffin = 'raspberry cream muffin'
+      hash = { second_key => { third_key => muffin } }
+
+      Daigaku::Database.set(key, muffin)
+      expect(Daigaku::Database.get(base_key)).to eq hash
     end
   end
 
   describe "::set" do
     it "sets the value for the given key" do
       juice = 'orange juice'
-      Daigaku::Database.set :juice, juice
+      Daigaku::Database.set(:juice, juice)
       expect(Daigaku::Database.juice).to eq juice
+    end
+
+    it "sets the value for the given nested key" do
+      key = "pastries/muffins/sweet"
+      muffin = 'blueberry muffin'
+
+      Daigaku::Database.set(key, muffin)
+      expect(Daigaku::Database.get(key)).to eq muffin
+    end
+
+    it "sets the value for the given nested key" do
+      key = "pastries/muffins/sweet"
+      muffin = 'apple walnut muffin'
+
+      Daigaku::Database.set(key, muffin)
+      expect(Daigaku::Database.get(key)).to eq muffin
     end
   end
 

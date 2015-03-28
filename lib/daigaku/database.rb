@@ -6,6 +6,8 @@ module Daigaku
   class Database
     include Singleton
 
+    KEY_SPLIT = '/'
+
     attr_reader :file
 
     def initialize
@@ -16,12 +18,48 @@ module Daigaku
       @db = YAML::Store.new(@file)
     end
 
+    # Sets the value for the given key.
+    # If the key is of structure "a/b/c" then the value is saved as a nested
+    # Hash, like: { a: { b: { c: value} } }.
     def set(key, value)
-      @db.transaction { @db[key.to_s] = value }
+      keys = key.to_s.split(KEY_SPLIT)
+      base_key = keys.shift
+
+      if keys.empty?
+        final_value = value
+      else
+        final_value = keys.reverse.inject(value) { |v, k| { k => v } }
+      end
+
+      old_value = get(base_key)
+
+      if old_value.is_a? Hash
+        updated_values = old_value ? old_value.deep_merge(final_value) : final_value
+      else
+        updated_values = final_value
+      end
+
+      @db.transaction { @db[base_key.to_s] = updated_values }
     end
 
+    # Gets the value for the given key.
+    # If the value was saved for a key of structure "a/b/c" then the value is
+    # searched in a nested Hash, like: { a: { b: { c: value} } }.
+    # If there is a value stored within a nested hash, it returns the appropriate
+    # Hash if a partial key is used.
+    #   e.g. get('a') return { b: { c: value }}
+    #        get('a/b') returns { c: value }
     def get(key)
-      @db.transaction { @db[key.to_s] }
+      keys = key.to_s.split(KEY_SPLIT)
+      base_key = keys.shift
+
+      @db.transaction do
+       data = @db[base_key.to_s]
+
+       if data
+         keys.reduce(data) { |value, key| value ? value = value[key] : nil }
+       end
+     end
     end
 
     def self.get(key)

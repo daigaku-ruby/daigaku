@@ -5,15 +5,16 @@ module Daigaku
 
   class Generator
 
-    SOLUTION_SUFFIX = '_solution.rb'
-
     def scaffold(courses_path, target_path)
       Dir[File.join(courses_path, "*/*/*/*.md")].each do |file|
-        content_dir = File.join(*file.split('/')[-4..-2])
+        content_dir_parts = file.split('/')[-4..-2].map do |part|
+          clean_up_path_part(part)
+        end
+
+        content_dir = File.join(content_dir_parts)
         directory = File.join(target_path, File.dirname(content_dir))
 
-        unit_name = File.basename(content_dir)
-        solution_file = unit_name.gsub(/(\_+|\-+|\.+)/, '_') + SOLUTION_SUFFIX
+        solution_file = File.basename(content_dir) + Solution::FILE_SUFFIX
         file_path = File.join(directory, solution_file)
 
         create_dir(directory)
@@ -48,6 +49,12 @@ module Daigaku
       return if path.blank?
       create_dir(File.dirname(path))
       FileUtils.touch(path) unless File.exist?(path)
+    end
+
+    def clean_up_path_part(text)
+      leading_numbers = /^\d+[\_\-\s]/
+      part_joints = /[\_\-\s]+/
+      text.gsub(leading_numbers, '').gsub(part_joints, '_').downcase
     end
   end
 end

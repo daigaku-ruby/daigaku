@@ -33,6 +33,13 @@ describe Daigaku::Solution do
     expect(solution).to be_verified
   end
 
+  describe "#store_key" do
+    it "returns the appropriate key string for the solution" do
+      key = "verified/course_a/chapter_a/unit_a"
+      expect(subject.store_key).to eq key
+    end
+  end
+
   context "Verification" do
     describe "#verify!" do
       it "returns a TestResult" do
@@ -40,7 +47,7 @@ describe Daigaku::Solution do
       end
 
       it "sets @verified true if Test passed" do
-        Daigaku::Database.set(subject.path, false)
+        Daigaku::Database.set(subject.store_key, false)
         solution = Daigaku::Solution.new(unit_path)
 
         expect(solution.instance_variable_get(:@verified)).to be_falsey
@@ -50,7 +57,7 @@ describe Daigaku::Solution do
 
       it "sets the solution's state in the database to verified if passed" do
         subject.verify!
-        mastered = Daigaku::Database.get(subject.path)
+        mastered = Daigaku::Database.get(subject.store_key)
 
         expect(mastered).to be_truthy
       end
@@ -58,7 +65,7 @@ describe Daigaku::Solution do
       it "sets the solution's state in the database to unverified unless passed" do
         subject.instance_variable_set(:@code, 'puts "I ❤ Daigaku!"')
         subject.verify!
-        mastered = Daigaku::Database.get(subject.path)
+        mastered = Daigaku::Database.get(subject.store_key)
 
         expect(mastered).to be_falsey
       end

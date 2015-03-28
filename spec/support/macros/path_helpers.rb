@@ -5,8 +5,8 @@ module PathHelpers
   SOLUTIONS = 'solutions'
   TEMP_PATH = File.expand_path("../../../../tmp/", __FILE__)
   COURSE_DIR_NAMES = ['Course_A', 'Course_B']
-  CHAPTER_DIR_NAMES = ['Chapter-1', 'Chapter-2']
-  UNIT_DIR_NAMES = ['unit-1', 'unit-2']
+  CHAPTER_DIR_NAMES = ['1_Chapter-A', '2_Chapter-B']
+  UNIT_DIR_NAMES = ['1_unit-a', '2_unit-b']
   TASK_NAME = 'task.md'
   REFERENCE_SOLUTION_NAME = 'solution.rb'
   TEST_NAME = 'solution_spec.rb'
@@ -86,11 +86,17 @@ module PathHelpers
 
   def all_solution_file_paths
     all_unit_dirs.map do |unit_dir|
-      underscored_unit_dir =  File.basename(unit_dir).gsub(/(\_+|\-+|\.+)/, '_')
-      file_name = underscored_unit_dir + Daigaku::Generator::SOLUTION_SUFFIX
-      unit_path = File.join(solutions_basepath, unit_dir.split('/')[-3..-1])
+      underscored_unit_dir =  File.basename(unit_dir).gsub(/[\_\-\.]+/, '_')
+      file_name = underscored_unit_dir + Daigaku::Solution::FILE_SUFFIX
 
-      File.join(File.dirname(unit_path), file_name)
+      unit_path = File.join(solutions_basepath, unit_dir.split('/')[-3..-1])
+      parts = File.join(File.dirname(unit_path), file_name).split('/')
+
+      course_parts = parts[-3..-1].map do |part|
+        part.gsub(/^[\d]+\_/, '').gsub(/[\_\-]+/, '_').downcase
+      end
+
+      [*parts[0...-3], *course_parts].join('/')
     end
   end
 
