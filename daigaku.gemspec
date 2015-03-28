@@ -1,4 +1,3 @@
-# coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'daigaku/version'
@@ -6,10 +5,11 @@ require 'daigaku/version'
 Gem::Specification.new do |spec|
   spec.name          = "daigaku"
   spec.version       = Daigaku::VERSION
+  spec.required_ruby_version = '~> 2.0'
   spec.authors       = ["Paul Götze"]
   spec.email         = ["paul.christoph.goetze@gmail.com"]
   spec.summary       = %q{Learning Ruby on the command line.}
-  spec.description   = %q{Daigaku is the Japanese word for university. With Daigaku you can interactively learn the Ruby Programming language using the command line.}
+  spec.description   = %q{Daigaku is the Japanese word for university. With Daigaku you can interactively learn the Ruby programming language using the command line.}
   spec.homepage      = "https://github.com/daigaku-ruby/daigaku"
   spec.license       = "MIT"
 

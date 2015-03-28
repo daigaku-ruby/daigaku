@@ -1,6 +1,7 @@
 # ![Daigaku](http://res.cloudinary.com/daigaku-ruby/image/upload/c_scale,h_100/v1426946323/rect5481_si3rjr.png)
 
 [![Gem Version](https://badge.fury.io/rb/daigaku.svg)](http://badge.fury.io/rb/daigaku)
+[![Travis Build](https://travis-ci.org/daigaku-ruby/daigaku.svg)](https://travis-ci.org/daigaku-ruby/daigaku)
 
 Daigaku (大学) is the Japanese word for **university**.
 
@@ -36,11 +37,15 @@ and navigate through your solutions.
 
 Please visit the [Daigaku Wiki](https://github.com/daigaku-ruby/daigaku/wiki/How-to-use-Daigaku%27s-command-line-interface-%28CLI%29) to learn more about available commands.
 
+![Daigaku CLI screenshot](http://res.cloudinary.com/daigaku-ruby/image/upload/v1427558807/daigaku-cli-screenshot_xgpav6.png)
+
 ## Daigaku screen
 
 Daigaku's text based interface - the Daigaku screen - shows your installed courses and allows you to navigate through their chapters and units. In the task view you can read the unit's task and validate your solution code.
 
 Please visit the [Diagaku Wiki](https://github.com/daigaku-ruby/daigaku/wiki/How-to-learn-Ruby-in-the-Daigaku-screen) to learn how to use the Daigaku screen.
+
+![Daigaku screen screenshot](http://res.cloudinary.com/daigaku-ruby/image/upload/v1427040250/daigaku-task-view_zbvsia.png)
 
 ## Contributing
 
@@ -54,7 +59,7 @@ Learn how to create a Daigaku course in the [Daigaku Wiki](https://github.com/da
 ### Development
 
 1. Fork it ( https://github.com/daigaku-ruby/daigaku/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
+2. Create your feature branch (`git checkout -b feature/my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
