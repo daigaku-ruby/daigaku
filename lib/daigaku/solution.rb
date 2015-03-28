@@ -30,8 +30,8 @@ module Daigaku
 
     def solution_path(path)
       local_path = Daigaku.config.solutions_path
-      sub_dirs = path.split('/')[-3..-2]
-      file = File.basename(path).gsub(/[\_\-\.]+/, '_') + FILE_SUFFIX
+      sub_dirs = path.split('/')[-3..-2].map { |part| clean_up_path_part(part) }
+      file = clean_up_path_part(File.basename(path)) + FILE_SUFFIX
 
       File.join(local_path, sub_dirs, file)
     end
@@ -46,14 +46,14 @@ module Daigaku
     end
 
     def build_store_key(prefix = nil)
+      parts = @path.split('/')[-3..-1].map { |part| clean_up_path_part(part) }
+      [prefix, *parts].compact.join('/')
+    end
+
+    def clean_up_path_part(text)
       leading_numbers = /(^\d+[\_\-\s]|#{FILE_SUFFIX})/
       part_joints = /[\_\-\s]+/
-
-      parts = @path.split('/')[-3..-1].map do |part|
-        part.gsub(leading_numbers, '').gsub(part_joints, '_').downcase
-      end
-
-      [prefix, *parts].compact.join('/')
+      text.gsub(leading_numbers, '').gsub(part_joints, '_').downcase
     end
   end
 end
