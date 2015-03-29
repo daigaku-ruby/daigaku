@@ -1,6 +1,6 @@
 require 'curses'
 require 'active_support/concern'
-require_relative 'views/top_bar'
+require 'daigaku/views/top_bar'
 
 module Daigaku
   module Views
@@ -38,17 +38,9 @@ module Daigaku
         window
       end
 
-      def top_bar(window)
-        TopBar.new(window)
-      end
-
-      def main_panel(window)
-        top_bar(window).show
-        yield(window) if block_given?
-      end
-
-      def sub_window_below_top_bar(window)
-        top = top_bar(window).height
+      def sub_window_below_top_bar(window, top_bar)
+        top_bar.show
+        top = top_bar.height
         sub_window = window.subwin(window.maxy - top, window.maxx, top, 0)
         sub_window.keypad(true)
         sub_window

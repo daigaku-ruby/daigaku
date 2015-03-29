@@ -72,7 +72,7 @@ module Daigaku
 
       x = curx
       setpos(cury, start)
-      write(' ' * (stop - 1), color, text_decoration)
+      write((options[:text] || ' ') * (stop - 1), color, text_decoration)
       setpos(cury, x)
       refresh
     end

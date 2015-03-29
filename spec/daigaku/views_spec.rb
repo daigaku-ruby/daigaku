@@ -12,8 +12,6 @@ describe Daigaku::Views do
 
   [
     :default_window,
-    :top_bar,
-    :main_panel,
     :sub_window_below_top_bar
   ].each do |method|
     it "has a private method ::#{method}" do
