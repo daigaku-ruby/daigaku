@@ -1,56 +1,27 @@
+require 'daigaku/views/menu'
+
 module Daigaku
   module Views
-    require 'wisper'
 
-    class UnitsMenu
-      include Views
-      include Wisper::Publisher
-
-      def initialize
-        @position = 0
-      end
-
-      def enter_units_menu(course, chapter)
-        @window = default_window
-        @course = course
-        @chapter = chapter
-
-        main_panel(@window) do |window|
-          show sub_window_below_top_bar(window)
-        end
-      end
-
-      def reenter_units_menu(course, chapter, unit)
-        @course = course
-        @chapter = chapter
-
-        @position = chapter.units.find_index(unit)
-        enter_units_menu(@course, @chapter)
-      end
+    class UnitsMenu < Menu
 
       private
 
-      def show(window)
-        draw(window, @position)
-        interact_with(window)
+      def before_enter(*args)
+        @course = args[0]
+        @chapter = args[1]
       end
 
-      def draw(window, active_index = 0)
-        window.attrset(A_NORMAL)
-        window.setpos(0, 1)
-        window.emphasize @course.title
-        window.write ' > '
-        window.emphasize @chapter.title
-        window.write ' >  - available units:'
+      def before_reenter(*args)
+        @course = args[0]
+        @chapter = args[1]
+        @unit = args[2]
 
-        menu_items.each_with_index do |item, index|
-          window.setpos(index + 2, 1)
-          window.print_indicator(units[index])
-          window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
-          window.write " #{item.to_s} "
-        end
+        @position = @chapter.units.find_index(@unit)
+      end
 
-        window.refresh
+      def header_text
+        "*#{@course.title}* > *#{@chapter.title}* - available units:"
       end
 
       def interact_with(window)
@@ -61,29 +32,27 @@ module Daigaku
             when KEY_DOWN
               @position += 1
             when 10 # Enter
-              broadcast(:enter_task_view, @course, @chapter, units[@position])
+              broadcast(:enter, @course, @chapter, models[@position])
               return
             when 263 # Backspace
-              broadcast(:reenter_chapters_menu, @course, @chapter)
+              broadcast(:reenter, @course, @chapter)
               return
             when 27 # ESC
               exit
           end
 
-          @position = menu_items.length - 1 if @position < 0
-          @position = 0 if @position >= menu_items.length
+          @position = items.length - 1 if @position < 0
+          @position = 0 if @position >= items.length
           draw(window, @position)
         end
       end
 
-      def units
+      def models
         @chapter.units
       end
 
-      def menu_items
-        @menu_items = units.map do |unit|
-          unit.title
-        end
+      def items
+        models.map(&:title)
       end
 
     end

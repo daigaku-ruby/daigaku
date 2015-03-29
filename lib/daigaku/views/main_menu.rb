@@ -15,14 +15,14 @@ module Daigaku
         # second has to have method that is broadcasted.
 
         # top down navigation
-        courses_menu.subscribe(chapters_menu, on: :enter_chapters_menu)
-        chapters_menu.subscribe(units_menu, on: :enter_units_menu)
-        units_menu.subscribe(task_view, on: :enter_task_view)
+        courses_menu.subscribe(chapters_menu, on: :enter)
+        chapters_menu.subscribe(units_menu, on: :enter)
+        units_menu.subscribe(task_view, on: :enter)
 
         # bottom up navigation
-        chapters_menu.subscribe(courses_menu, on: :reenter_courses_menu)
-        units_menu.subscribe(chapters_menu, on: :reenter_chapters_menu)
-        task_view.subscribe(units_menu, on: :reenter_units_menu)
+        chapters_menu.subscribe(courses_menu, on: :reenter)
+        units_menu.subscribe(chapters_menu, on: :reenter)
+        task_view.subscribe(units_menu, on: :reenter)
 
         # position reset
         courses_menu.subscribe(chapters_menu, on: :reset_menu_position)

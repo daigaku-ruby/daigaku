@@ -7,12 +7,20 @@ module Daigaku
       include Views
       include Wisper::Publisher
 
+      TOP_BAR_TEXT = [
+          'Scroll with *UP KEY* and *DOWN KEY*',
+          'Verify solution with *v*',
+          'Open solution file with *o*',
+          'Clear validation with *c*',
+          'Exit with *ESC*'
+          ].join('  |  ')
+
       def initialize
         @lines = []
         @top = nil
       end
 
-      def enter_task_view(course, chapter, unit)
+      def enter(course, chapter, unit)
         @course = course
         @chapter = chapter
         @unit = unit
@@ -30,12 +38,9 @@ module Daigaku
       def set_head(window)
         window.setpos(0, 1)
         window.clear_line
-        window.emphasize @course.title
-        window.write ' > '
-        window.emphasize @chapter.title
-        window.write ' > '
-        window.emphasize @unit.title
-        window.write ':'
+
+        text = "*#{@course.title}* > *#{@chapter.title}* > *#{@unit.title}*:"
+        window.print_markdown(text)
 
         window.setpos(1, 1)
         window.clear_line
@@ -157,7 +162,7 @@ module Daigaku
               while scroll_down(window)
               end
             when Curses::KEY_BACKSPACE
-              broadcast(:reenter_units_menu, @course, @chapter, @unit)
+              broadcast(:reenter, @course, @chapter, @unit)
               return
             when 27 # ESC
               exit
@@ -206,7 +211,9 @@ module Daigaku
 
       def initialize_window(height)
         @window = default_window(height)
-        main_panel(@window) { |window| show sub_window_below_top_bar(window) }
+
+        top_bar = TopBar.new(@window, TOP_BAR_TEXT)
+        show sub_window_below_top_bar(@window, top_bar)
       end
 
       def example_index(heights, index)

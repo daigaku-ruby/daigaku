@@ -4,12 +4,14 @@ module Daigaku
     class TopBar
       include Curses
 
+      HEIGHT = 4
+
       attr_reader :height, :width, :panel
 
-      def initialize(window)
-        @height = 4
+      def initialize(window, text = '')
+        @height = HEIGHT
         @width = window.maxx
-        @panel = create_panel(window, @width, @height)
+        @panel = create_panel(window, @width, @height, text)
       end
 
       def show
@@ -18,23 +20,13 @@ module Daigaku
 
       private
 
-      def create_panel(window, width, heigth)
-        panel = window.subwin(heigth, window.maxx, 0, 0)
+      def create_panel(window, width, height, text)
+        panel = window.subwin(height, window.maxx, 0, 0)
 
         panel.setpos(1, 1)
-        panel.write     'Use '
-        panel.emphasize 'UP KEY'
-        panel.write     ' and '
-        panel.emphasize 'DOWN KEY'
-        panel.write     ' for menu navigation'
-        panel.write     '  |  Enter menu with '
-        panel.emphasize 'RETURN'
-        panel.write     '  |  Go back with '
-        panel.emphasize 'BACKSPACE'
-        panel.write     '  |  Exit with '
-        panel.emphasize 'ESC'
+        panel.print_markdown(text)
         panel.setpos(2, 1)
-        panel.write     '_' * (window.maxx - 3)
+        panel.clear_line(text: '_')
 
         panel
       end

@@ -1,53 +1,24 @@
+require 'daigaku/views/menu'
+
 module Daigaku
   module Views
-    require 'wisper'
 
-    class ChaptersMenu
-      include Views
-      include Wisper::Publisher
-
-      def initialize
-        @position = 0
-      end
-
-      def enter_chapters_menu(course)
-        @window = default_window
-        @course = course
-
-        main_panel(@window) do |window|
-          show sub_window_below_top_bar(window)
-        end
-      end
-
-      def reenter_chapters_menu(course, chapter)
-        @course = course
-        @chapter = chapter
-
-        @position = course.chapters.find_index(chapter)
-        enter_chapters_menu(@course)
-      end
+    class ChaptersMenu < Menu
 
       private
 
-      def show(window)
-        draw(window, @position)
-        interact_with(window)
+      def before_enter(*args)
+        @course = args[0]
       end
 
-      def draw(window, active_index = 0)
-        window.attrset(A_NORMAL)
-        window.setpos(0, 1)
-        window.emphasize @course.title
-        window.write ' - available chapters:'
+      def before_reenter(*args)
+        @course = args[0]
+        @chapter = args[1]
+        @position = @course.chapters.find_index(@chapter)
+      end
 
-        menu_items.each_with_index do |item, index|
-          window.setpos(index + 2, 1)
-          window.print_indicator(chapters[index])
-          window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
-          window.write " #{item.to_s} "
-        end
-
-        window.refresh
+      def header_text
+        "*#{@course.title}* - available chapters:"
       end
 
       def interact_with(window)
@@ -60,29 +31,27 @@ module Daigaku
               @position += 1
               broadcast(:reset_menu_position)
             when 10 # Enter
-              broadcast(:enter_units_menu, @course, chapters[@position])
+              broadcast(:enter, @course, models[@position])
               return
             when 263 # Backspace
-              broadcast(:reenter_courses_menu, @course)
+              broadcast(:reenter, @course)
               return
             when 27 # ESC
               exit
           end
 
-          @position = menu_items.length - 1 if @position < 0
-          @position = 0 if @position >= menu_items.length
+          @position = items.length - 1 if @position < 0
+          @position = 0 if @position >= items.length
           draw(window, @position)
         end
       end
 
-      def chapters
+      def models
         @course.chapters
       end
 
-      def menu_items
-        @menu_items = chapters.map do |chapter|
-          chapter.title
-        end
+      def items
+        models.map(&:title)
       end
 
     end
