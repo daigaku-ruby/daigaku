@@ -9,6 +9,7 @@ describe Daigaku::TestResult do
   it { is_expected.to respond_to :examples }
   it { is_expected.to respond_to :passed? }
   it { is_expected.to respond_to :summary }
+  it { is_expected.to respond_to :summary_lines }
 
   context "with passed input:" do
 
@@ -19,7 +20,7 @@ describe Daigaku::TestResult do
     end
 
     it "has a default summary" do
-      expect(subject.summary).to eq test_passed_summary
+      expect(subject.summary).to include test_passed_summary
     end
   end
 
@@ -62,7 +63,7 @@ describe Daigaku::TestResult do
 
           expect(example.description).to eq description
           expect(example.status).to eq status
-          expect(example.message).to eq message
+          expect(example.message).to include message
         end
       end
     end
@@ -75,6 +76,15 @@ describe Daigaku::TestResult do
           expect(subject.summary).to include example.status
         end
       end
+    end
+  end
+
+  describe "#summary_lines" do
+    it "returns the summary split into lines" do
+      lines = ['This', 'is', 'summary', 'for', 'a', 'test']
+      allow(subject).to receive(:summary) { lines.join("\n") }
+
+      expect(subject.summary_lines).to eq lines
     end
   end
 

@@ -125,7 +125,7 @@ module Daigaku
           scrollable = true
 
           case char
-            when 'v' # Verifiy
+            when 'v' # verify
               print_test_results(window)
               return
             when 'c' # clear
@@ -186,8 +186,19 @@ module Daigaku
 
       def print_test_results(window)
         result = @unit.solution.verify!
+        @test_result_lines = result.summary_lines
 
-        @test_result_lines = result.summary.strip.split("\n")
+        if result.passed?
+          code_lines = @unit.reference_solution.code_lines
+
+          unless code_lines.empty?
+            code_lines.map! { |line| "  #{line}" }
+            code_lines.unshift('', "Reference code:", '')
+          end
+
+          @test_result_lines += code_lines
+        end
+
         @lines = [''] + @test_result_lines + ['', ''] + @unit.task.markdown.lines
         @examples = result.examples
 
