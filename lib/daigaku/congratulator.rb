@@ -4,7 +4,8 @@ module Daigaku
 
     def self.message
       lines = Terminal.text(:congratulations).lines.map(&:strip).compact
-      random_value = rand(0...lines.count).to_i
+      count = lines.count.zero? ? 0 : (lines.count - 1)
+      random_value = rand(0..count)
       lines[random_value]
     end
 
