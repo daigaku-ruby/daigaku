@@ -12,7 +12,7 @@ module Daigaku
     end
 
     def code_lines
-      code.lines.map(&:strip)
+      code.lines.map(&:chomp)
     end
   end
 end
