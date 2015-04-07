@@ -87,7 +87,7 @@ module ContentHelpers
       }
     #
 
-  TEST_PASSED_MESSAGE = "Your code passed all tests. Congratulations!"
+  TEST_PASSED_MESSAGE = "Your code passed all tests."
   EXAMPLE_PASSED_MESSAGE = "Your code passed this requirement."
 
   def task_file_content

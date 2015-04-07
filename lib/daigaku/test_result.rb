@@ -5,8 +5,6 @@ module Daigaku
 
     attr_reader :examples, :example_count, :failure_count
 
-    TEST_PASSED_MESSAGE = "Your code passed all tests. Congratulations!"
-
     def initialize(result_json)
       @result = begin
         JSON.parse(result_json, symbolize_names: true)
@@ -35,7 +33,7 @@ module Daigaku
 
     def summary
       if passed?
-        TEST_PASSED_MESSAGE
+        "Your code passed all tests. #{Daigaku::Congratulator.message}"
       else
         build_failed_summary
       end

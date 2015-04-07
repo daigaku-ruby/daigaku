@@ -20,7 +20,7 @@ describe Daigaku::TestResult do
     end
 
     it "has a default summary" do
-      expect(subject.summary).to eq test_passed_summary
+      expect(subject.summary).to include test_passed_summary
     end
   end
 
@@ -63,7 +63,7 @@ describe Daigaku::TestResult do
 
           expect(example.description).to eq description
           expect(example.status).to eq status
-          expect(example.message).to eq message
+          expect(example.message).to include message
         end
       end
     end
