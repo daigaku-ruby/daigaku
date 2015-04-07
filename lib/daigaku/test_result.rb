@@ -41,6 +41,10 @@ module Daigaku
       end
     end
 
+    def summary_lines
+      summary.lines.map(&:strip)
+    end
+
     private
 
     def build_failed_summary
