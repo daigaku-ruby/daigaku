@@ -26,7 +26,7 @@ describe Daigaku::Solution do
     expect(subject.code).to eq solution_content
   end
 
-  it "loads the verified state from the database on creation" do
+  it "loads the verified state from the store on creation" do
     Daigaku::Solution.new(unit_path).verify!
     solution = Daigaku::Solution.new(unit_path)
 
@@ -47,7 +47,7 @@ describe Daigaku::Solution do
       end
 
       it "sets @verified true if Test passed" do
-        Daigaku::Database.set(subject.store_key, false)
+        QuickStore.store.set(subject.store_key, false)
         solution = Daigaku::Solution.new(unit_path)
 
         expect(solution.instance_variable_get(:@verified)).to be_falsey
@@ -55,17 +55,17 @@ describe Daigaku::Solution do
         expect(solution.instance_variable_get(:@verified)).to be_truthy
       end
 
-      it "sets the solution's state in the database to verified if passed" do
+      it "sets the solution's state in the store to verified if passed" do
         subject.verify!
-        mastered = Daigaku::Database.get(subject.store_key)
+        mastered = QuickStore.store.get(subject.store_key)
 
         expect(mastered).to be_truthy
       end
 
-      it "sets the solution's state in the database to unverified unless passed" do
+      it "sets the solution's state in the store to unverified unless passed" do
         subject.instance_variable_set(:@code, 'puts "I ❤ Daigaku!"')
         subject.verify!
-        mastered = Daigaku::Database.get(subject.store_key)
+        mastered = QuickStore.store.get(subject.store_key)
 
         expect(mastered).to be_falsey
       end

@@ -9,12 +9,12 @@ module Daigaku
       @unit_path = unit_path
       @path = solution_path(unit_path)
       @code = File.read(@path).strip if File.file?(@path)
-      @verified = get_database_state
+      @verified = get_store_state
     end
 
     def verify!
       result = Daigaku::Test.new(@unit_path).run(self.code)
-      set_database_state(result.passed?)
+      set_store_state(result.passed?)
       result
     end
 
@@ -36,13 +36,13 @@ module Daigaku
       File.join(local_path, sub_dirs, file)
     end
 
-    def set_database_state(verified)
+    def set_store_state(verified)
       @verified = verified
-      Daigaku.database.set(store_key, verified?)
+      QuickStore.store.set(store_key, verified?)
     end
 
-    def get_database_state
-      Daigaku.database.get(store_key)
+    def get_store_state
+      QuickStore.store.get(store_key)
     end
 
     def build_store_key(prefix = nil)

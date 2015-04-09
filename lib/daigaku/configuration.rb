@@ -1,6 +1,5 @@
 module Daigaku
   require 'singleton'
-  require 'yaml'
   require 'fileutils'
 
   class Configuration
@@ -18,6 +17,10 @@ module Daigaku
     def initialize
       @courses_path = local_path_to(COURSES_DIR)
       @storage_file = local_path_to(STORAGE_FILE)
+
+      QuickStore.configure do |config|
+        config.file_path = @storage_file
+      end
 
       yield if block_given?
     end
@@ -48,13 +51,13 @@ module Daigaku
       settings.each do |variable|
         key = variable.to_s.delete('@')
         value = self.instance_variable_get(variable.to_sym)
-        Database.set(key, value)
+        QuickStore.store.set(key, value)
       end
     end
 
     def import!
-      @courses_path = Database.courses_path || @courses_path
-      @solutions_path = Database.solutions_path || @solutions_path
+      @courses_path = QuickStore.store.courses_path || @courses_path
+      @solutions_path = QuickStore.store.solutions_path || @solutions_path
       self
     end
 

@@ -49,43 +49,43 @@ describe Daigaku::Configuration do
   end
 
   describe "#storage_path" do
-    it "returns the appropriate path to the storge file" do
+    it "returns the appropriate path to the storage file" do
       expect(subject.storage_file).to eq local_storage_file
     end
   end
 
   describe "#save" do
-    it "saves the configured courses path to the daigaku database" do
+    it "saves the configured courses path to the daigaku store" do
       subject.courses_path = local_courses_path
       subject.save
 
-      expect(Daigaku::Database.courses_path).to eq local_courses_path
+      expect(QuickStore.store.courses_path).to eq local_courses_path
     end
 
-    it "saves the configured solution_path to the daigaku database" do
+    it "saves the configured solution_path to the daigaku store" do
       path = File.join(test_basepath, 'test_solutions')
       FileUtils.makedirs(path)
       subject.solutions_path = path
       subject.save
 
-      expect(Daigaku::Database.solutions_path).to eq path
+      expect(QuickStore.store.solutions_path).to eq path
     end
 
     it "does not save the storage file path" do
       subject.save
-      expect(Daigaku::Database.storage_file).to be_nil
+      expect(QuickStore.store.storage_file).to be_nil
     end
   end
 
   describe "#import!" do
-    context "with non-existent daigaku database entries:" do
+    context "with non-existent daigaku store entries:" do
       before  do
         FileUtils.rm(local_storage_file) if File.exist?(local_storage_file)
       end
 
       it "uses the default configuration" do
-        Daigaku::Database.courses_path = nil
-        Daigaku::Database.solutions_path = nil
+        QuickStore.store.courses_path = nil
+        QuickStore.store.solutions_path = nil
         subject.instance_variable_set(:@courses_path, local_courses_path)
 
         loaded_config = subject.import!
@@ -96,12 +96,12 @@ describe Daigaku::Configuration do
       end
     end
 
-    context "with existing daigaku database file:" do
+    context "with existing daigaku storage file:" do
       it "returns a Daigaku::Configuration" do
         expect(subject.import!).to be_a Daigaku::Configuration
       end
 
-      it "loads the daigaku database entries into the configuration" do
+      it "loads the daigaku store entries into the configuration" do
         wanted_courses_path = "/courses/path"
         wanted_solutions_path = solutions_basepath
         temp_solutions_path = File.join(solutions_basepath, 'temp')

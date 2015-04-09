@@ -48,10 +48,4 @@ describe "Daigaku module" do
       expect(Daigaku.config.solutions_path).to eq courses_basepath
     end
   end
-
-  describe "::database" do
-    it "returns a Diagaku::Database instance" do
-      expect(Daigaku.database).to be_a Daigaku::Database
-    end
-  end
 end
