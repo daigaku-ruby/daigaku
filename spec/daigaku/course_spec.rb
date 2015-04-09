@@ -72,4 +72,20 @@ describe Daigaku::Course do
       expect(subject.mastered?).to be false
     end
   end
+
+  describe "#store_key" do
+    it "returns the underscored, downcased title of the course" do
+      expect(subject.store_key).to eq subject.title.gsub(' ', '_').downcase
+    end
+  end
+
+  describe "#author" do
+    it "returns the author of Github courses form the store" do
+      author = 'author'
+      QuickStore.store.set("courses/#{subject.store_key}/author", author)
+
+      course = Daigaku::Course.new(course_path)
+      expect(course.author).to eq author
+    end
+  end
 end

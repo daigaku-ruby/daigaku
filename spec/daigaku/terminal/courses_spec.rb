@@ -38,10 +38,7 @@ describe Daigaku::Terminal::Courses do
 
     it "creates a new courses folder in the daigaku courses directory" do
       target_path = File.join(Daigaku.config.courses_path, File.basename(course_dirs.first))
-
       dirs = Dir[File.join(Daigaku.config.courses_path, '**')]
-      puts "target_path: #{target_path}"
-      puts dirs.to_s
 
       expect(dirs.include?(target_path)).to be_truthy
     end
@@ -54,6 +51,13 @@ describe Daigaku::Terminal::Courses do
     it "raises an error if param is no url to a zip file" do
       expect(subject).to receive(:say_warning)
       subject.download('http://exmaple.com/something-else')
+    end
+
+    it "stores the course's author for courses from Github" do
+      subject.download('https://github.com/daigaku-ruby/Get_started_with_Ruby')
+      store_key = 'courses/get_started_with_ruby/author'
+
+      expect(QuickStore.store.get(store_key)).to eq 'daigaku-ruby'
     end
   end
 

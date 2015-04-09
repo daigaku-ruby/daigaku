@@ -28,6 +28,8 @@ module Daigaku
         url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
         github = use_initial_course || options[:github] || url.match(/github\.com/)
 
+        store_author(options[:github]) if github
+
         raise Download::NoUrlError unless url_given
         raise Download::NoZipFileUrlError unless File.basename(url) =~ /\.zip/
 
@@ -68,6 +70,15 @@ module Daigaku
 
       def github_repo(user_and_repo)
         "https://github.com/#{user_and_repo}/archive/master.zip"
+      end
+
+      def store_author(user_and_repo)
+        parts = (user_and_repo ||= Daigaku.config.initial_course).split('/')
+        author = parts.first
+        course = parts.second
+
+        key = Storeable.key(course, prefix: 'courses', suffix: 'author')
+        QuickStore.store.set(key, author)
       end
 
       def unzip(file_path, github = false)

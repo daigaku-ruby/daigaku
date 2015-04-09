@@ -53,6 +53,8 @@ module Daigaku
           window.print_indicator(models[index])
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
           window.write " #{item.to_s} "
+          window.attrset(A_NORMAL)
+          window.write " #{items_info[index].to_s}"
         end
 
         window.refresh
@@ -72,6 +74,14 @@ module Daigaku
 
       def header_text
         raise "Please implement the method #header_text!"
+      end
+
+      def items_info
+        @items_info || []
+      end
+
+      def items_info=(items_info)
+        @items_info = items_info
       end
     end
 
