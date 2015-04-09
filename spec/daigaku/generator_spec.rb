@@ -42,8 +42,8 @@ describe Daigaku::Generator do
 
       it "saves the current config info" do
         expect(File.exist?(local_storage_file)).to be_truthy
-        expect(Daigaku::Database.courses_path).to eq local_courses_path
-        expect(Daigaku::Database.solutions_path).to eq solutions_basepath
+        expect(QuickStore.store.courses_path).to eq local_courses_path
+        expect(QuickStore.store.solutions_path).to eq solutions_basepath
       end
     end
 
@@ -73,8 +73,8 @@ describe Daigaku::Generator do
 
       it "saves the current config info" do
         expect(File.exist?(local_storage_file)).to be_truthy
-        expect(Daigaku::Database.courses_path).to eq local_courses_path
-        expect(Daigaku::Database.solutions_path).to eq @solutions_path
+        expect(QuickStore.store.courses_path).to eq local_courses_path
+        expect(QuickStore.store.solutions_path).to eq @solutions_path
       end
     end
   end
