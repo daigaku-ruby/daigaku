@@ -22,13 +22,13 @@ module Daigaku
       desc 'download [URL] [OPTIONS]', 'Download a new daigaku course from [URL]'
       def download(url = nil)
         use_initial_course = url.nil? && options[:github].nil?
-        url = github_repo(Daigaku.config.initial_course) if use_initial_course
-        url = github_repo(options[:github]) if options[:github]
+        url = GithubClient.master_zip_url(Daigaku.config.initial_course) if use_initial_course
+        url = GithubClient.master_zip_url(options[:github]) if options[:github]
 
         url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
         github = use_initial_course || options[:github] || url.match(/github\.com/)
 
-        store_author(options[:github]) if github
+        store_repo_data(options[:github]) if github
 
         raise Download::NoUrlError unless url_given
         raise Download::NoZipFileUrlError unless File.basename(url) =~ /\.zip/
@@ -68,17 +68,15 @@ module Daigaku
         "#{text}\n#{Terminal.text :hint_course_download}"
       end
 
-      def github_repo(user_and_repo)
-        "https://github.com/#{user_and_repo}/archive/master.zip"
-      end
-
-      def store_author(user_and_repo)
+      def store_repo_data(user_and_repo)
         parts = (user_and_repo ||= Daigaku.config.initial_course).split('/')
         author = parts.first
         course = parts.second
+        pushed_at = GithubClient.pushed_at(user_and_repo)
 
         course = Course.new(course)
         QuickStore.store.set(course.key(:author), author)
+        QuickStore.store.set(course.key(:pushed_at), pushed_at)
       end
 
       def unzip(file_path, github = false)
