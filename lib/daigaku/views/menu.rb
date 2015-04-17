@@ -54,7 +54,7 @@ module Daigaku
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
           window.write " #{item.to_s} "
           window.attrset(A_NORMAL)
-          window.write " #{items_info[index].to_s}"
+          window.write " #{items_info[index].join(' ')}"
         end
 
         window.refresh

@@ -20,7 +20,7 @@ module Daigaku
     # stored one.
     def self.updated?(user_and_repo)
       course = Course.new(user_and_repo.split('/').last)
-      stored_time = QuickStore.get(course.key(:pushed_at))
+      stored_time = QuickStore.store.get(course.key(:pushed_at))
       current_time = self.pushed_at(user_and_repo)
       DateTime.parse(stored_time) < DateTime.parse(current_time)
     end

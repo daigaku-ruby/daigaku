@@ -42,7 +42,7 @@ module Daigaku
 
         non_empty_courses.map do |course|
           line = "#{course.title}"
-          self.items_info = self.items_info << (course.author ? "(by #{course.author})" : '')
+          self.items_info <<= [(course.author ? "(by #{course.author})" : '')]
           line
         end
       end

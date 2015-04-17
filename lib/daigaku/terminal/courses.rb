@@ -28,8 +28,6 @@ module Daigaku
         url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
         github = use_initial_course || options[:github] || url.match(/github\.com/)
 
-        store_repo_data(options[:github]) if github
-
         raise Download::NoUrlError unless url_given
         raise Download::NoZipFileUrlError unless File.basename(url) =~ /\.zip/
 
@@ -40,6 +38,12 @@ module Daigaku
 
         File.open(file_name, 'w') { |file| file << open(url).read }
         course_name = unzip(file_name, github)
+
+        if github
+          user_and_repo = url.match(/github.com\/(.*)\/archive\/master.zip/).captures.first
+          store_repo_data(options[:github] || user_and_repo)
+        end
+
         scaffold_solutions
 
         say_info "Successfully downloaded the course \"#{course_name}\"!"
@@ -77,6 +81,7 @@ module Daigaku
         course = Course.new(course)
         QuickStore.store.set(course.key(:author), author)
         QuickStore.store.set(course.key(:pushed_at), pushed_at)
+        QuickStore.store.set(course.key(:github), user_and_repo)
       end
 
       def unzip(file_path, github = false)
@@ -93,7 +98,10 @@ module Daigaku
               directory = entry.to_s
             end
 
-            course_name ||= directory.split('/').first.gsub(/_+/, ' ')
+            if directory != '/'
+              course_name ||= directory.split('/').first.gsub(/_+/, ' ')
+            end
+
             zip_file.extract(entry, "#{target_dir}/#{directory}") { true }
           end
         end
