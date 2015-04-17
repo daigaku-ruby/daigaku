@@ -23,15 +23,20 @@ module Daigaku
     end
 
     def store_key
-      @store_key ||= build_store_key('verified')
+      unless @store_key
+        part_path = path.split('/')[-3..-1].join('/').gsub(FILE_SUFFIX, '')
+        @store_key = Storeable.key(part_path, prefix: 'verified')
+      end
+
+      @store_key
     end
 
     private
 
     def solution_path(path)
       local_path = Daigaku.config.solutions_path
-      sub_dirs = path.split('/')[-3..-2].map { |part| clean_up_path_part(part) }
-      file = clean_up_path_part(File.basename(path)) + FILE_SUFFIX
+      sub_dirs = Storeable.key(path.split('/')[-3..-2].join('/').gsub(FILE_SUFFIX, ''))
+      file = Storeable.key(File.basename(path)) + FILE_SUFFIX
 
       File.join(local_path, sub_dirs, file)
     end
@@ -43,17 +48,6 @@ module Daigaku
 
     def get_store_state
       QuickStore.store.get(store_key)
-    end
-
-    def build_store_key(prefix = nil)
-      parts = @path.split('/')[-3..-1].map { |part| clean_up_path_part(part) }
-      [prefix, *parts].compact.join('/')
-    end
-
-    def clean_up_path_part(text)
-      leading_numbers = /(^\d+[\_\-\s]|#{FILE_SUFFIX})/
-      part_joints = /[\_\-\s]+/
-      text.gsub(leading_numbers, '').gsub(part_joints, '_').downcase
     end
   end
 end

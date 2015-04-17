@@ -73,16 +73,18 @@ describe Daigaku::Course do
     end
   end
 
-  describe "#store_key" do
-    it "returns the underscored, downcased title of the course" do
-      expect(subject.store_key).to eq subject.title.gsub(' ', '_').downcase
+  describe "#key" do
+    it "returns the courses store key for the given key name" do
+      allow(subject).to receive(:title) { '1-Course title' }
+      key = "courses/course_title/some_key"
+      expect(subject.key('1-some Key')).to eq key
     end
   end
 
   describe "#author" do
     it "returns the author of Github courses form the store" do
       author = 'author'
-      QuickStore.store.set("courses/#{subject.store_key}/author", author)
+      QuickStore.store.set(subject.key(:author), author)
 
       course = Daigaku::Course.new(course_path)
       expect(course.author).to eq author

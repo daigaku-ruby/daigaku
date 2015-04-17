@@ -77,8 +77,8 @@ module Daigaku
         author = parts.first
         course = parts.second
 
-        key = Storeable.key(course, prefix: 'courses', suffix: 'author')
-        QuickStore.store.set(key, author)
+        course = Course.new(course)
+        QuickStore.store.set(course.key(:author), author)
       end
 
       def unzip(file_path, github = false)

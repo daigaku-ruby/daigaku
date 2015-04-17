@@ -6,7 +6,7 @@ module Daigaku
     def initialize(path)
       @path = path
       @title = File.basename(path).gsub(/\_+/, ' ')
-      @author = QuickStore.store.get("courses/#{store_key}/author")
+      @author = QuickStore.store.get(key(:author))
     end
 
     def chapters
@@ -21,8 +21,8 @@ module Daigaku
       chapters.reduce(true) { |mastered, chapter| mastered &&= chapter.mastered? }
     end
 
-    def store_key
-      title.downcase.gsub(' ', '_')
+    def key(key_name)
+      Storeable.key(title, prefix: 'courses', suffix: key_name)
     end
   end
 end

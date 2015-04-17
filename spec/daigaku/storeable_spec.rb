@@ -7,9 +7,14 @@ describe Daigaku::Storeable do
   end
 
   describe '::key' do
-    it "creates a store key out of the given string" do
+    it "creates a store key from the given string" do
       key = Daigaku::Storeable.key('1-_Raw content-Title')
       expect(key).to eq 'raw_content_title'
+    end
+
+    it "creates a cleaned up store key from a given path string" do
+      key = Daigaku::Storeable.key('path/to/the/1-_Raw content string')
+      expect(key).to eq 'path/to/the/raw_content_string'
     end
 
     it "creates a prefixed key when a prefix option is given" do
