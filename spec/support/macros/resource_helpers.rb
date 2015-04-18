@@ -33,7 +33,9 @@ module ResourceHelpers
 
     Zip::File.open(zip_file_path, Zip::File::CREATE) do |zip_file|
       Dir[File.join(directory, '**', '**')].each do |file|
-        zip_file.add(file.sub(directory, '')[1..-1], file) { true }
+        if file.match(course_dir_names.first)
+          zip_file.add(file.sub(directory, '')[1..-1], file) { true }
+        end
       end
     end
 

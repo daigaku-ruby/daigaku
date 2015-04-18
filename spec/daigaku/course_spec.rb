@@ -72,4 +72,22 @@ describe Daigaku::Course do
       expect(subject.mastered?).to be false
     end
   end
+
+  describe "#key" do
+    it "returns the courses store key for the given key name" do
+      allow(subject).to receive(:title) { '1-Course title' }
+      key = "courses/course_title/some_key"
+      expect(subject.key('1-some Key')).to eq key
+    end
+  end
+
+  describe "#author" do
+    it "returns the author of Github courses form the store" do
+      author = 'author'
+      QuickStore.store.set(subject.key(:author), author)
+
+      course = Daigaku::Course.new(course_path)
+      expect(course.author).to eq author
+    end
+  end
 end

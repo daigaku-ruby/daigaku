@@ -15,15 +15,12 @@ module Daigaku
         say_info courses_list_text(courses)
       end
 
-      method_option :github,
-                    type: :string,
-                    aliases: '-g',
-                    desc: 'Download Github repository'
+      method_option :github, type: :string, aliases: '-g', desc: 'Download Github repository'
       desc 'download [URL] [OPTIONS]', 'Download a new daigaku course from [URL]'
-      def download(url = nil)
+      def download(url = nil, action = 'downloaded')
         use_initial_course = url.nil? && options[:github].nil?
-        url = github_repo(Daigaku.config.initial_course) if use_initial_course
-        url = github_repo(options[:github]) if options[:github]
+        url = GithubClient.master_zip_url(Daigaku.config.initial_course) if use_initial_course
+        url = GithubClient.master_zip_url(options[:github]) if options[:github]
 
         url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
         github = use_initial_course || options[:github] || url.match(/github\.com/)
@@ -38,9 +35,18 @@ module Daigaku
 
         File.open(file_name, 'w') { |file| file << open(url).read }
         course_name = unzip(file_name, github)
+
+        if github
+          user_and_repo = url.match(/github.com\/(.*)\/archive\/master.zip/).captures.first
+          store_repo_data(options[:github] || user_and_repo)
+        end
+
+        course = Course.new(course_name)
+        QuickStore.store.set(course.key(:url), url)
+        QuickStore.store.set(course.key(:updated_at), Time.now.to_s)
         scaffold_solutions
 
-        say_info "Successfully downloaded the course \"#{course_name}\"!"
+        say_info "Successfully #{action} the course \"#{course_name}\"!"
       rescue Download::NoUrlError => e
         print_download_warning(url, "\"#{url}\" is not a valid URL!")
       rescue Download::NoZipFileUrlError => e
@@ -49,6 +55,35 @@ module Daigaku
         print_download_warning(url, e.message)
       ensure
         FileUtils.rm(file_name) if File.exist?(file_name.to_s)
+      end
+
+      method_option :all, type: :boolean, aliases: '-a', desc: 'Update all courses'
+      desc 'update [COURSE_NAME] [OPTIONS]', 'Update Daigak courses.'
+      def update(course_name = nil)
+        if options[:all]
+          courses = Loading::Courses.load(Daigaku.config.courses_path)
+          courses.each { |course| update_course(course) }
+        elsif course_name
+          path = File.join(Daigaku.config.courses_path, course_name)
+
+          unless Dir.exist?(path)
+            text = [
+              "The course \"#{course_name}\" is not available in",
+              "\"#{Daigaku.config.courses_path}\".\n",
+            ]
+            say_warning text.join("\n")
+
+            unless Loading::Courses.load(Daigaku.config.courses_path).empty?
+              Terminal::Courses.new.list
+            end
+
+            return
+          end
+
+          update_course(Course.new(course_name))
+        else
+          system 'daigaku course help update'
+        end
       end
 
       private
@@ -66,8 +101,14 @@ module Daigaku
         "#{text}\n#{Terminal.text :hint_course_download}"
       end
 
-      def github_repo(user_and_repo)
-        "https://github.com/#{user_and_repo}/archive/master.zip"
+      def store_repo_data(user_and_repo)
+        parts = (user_and_repo ||= Daigaku.config.initial_course).split('/')
+        author = parts.first
+        course = parts.second
+
+        course = Course.new(course)
+        QuickStore.store.set(course.key(:author), author)
+        QuickStore.store.set(course.key(:github), user_and_repo)
       end
 
       def unzip(file_path, github = false)
@@ -84,7 +125,10 @@ module Daigaku
               directory = entry.to_s
             end
 
-            course_name ||= directory.split('/').first.gsub(/_+/, ' ')
+            if directory != '/'
+              course_name ||= directory.split('/').first.gsub(/_+/, ' ')
+            end
+
             zip_file.extract(entry, "#{target_dir}/#{directory}") { true }
           end
         end
@@ -107,6 +151,18 @@ module Daigaku
         ].join("\n")
 
         say_warning message
+      end
+
+      def update_course(course)
+        url = QuickStore.store.get(course.key(:url))
+        github_repo = QuickStore.store.get(course.key(:github))
+        updated = GithubClient.updated?(github_repo)
+
+        if !github_repo || updated
+          download(url, 'updated') if url
+        else
+          say_info "Course \"#{course.title}\" is still up to date."
+        end
       end
     end
 

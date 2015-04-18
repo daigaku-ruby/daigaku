@@ -13,7 +13,6 @@ describe Daigaku::Terminal::Courses do
   end
 
   describe "#download" do
-
     before do
       Daigaku.config.courses_path = local_courses_path
 
@@ -28,6 +27,10 @@ describe Daigaku::Terminal::Courses do
           'User-Agent' => 'Ruby'
           })
         .to_return(status: 200, body: @file_content, headers: {})
+
+      stub_request(:get, "https://api.github.com/repos/daigaku-ruby/Get_started_with_Ruby")
+        .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+        .to_return(status: 200, body: "{}", headers: {})
     end
 
     after { cleanup_download(@zip_file_name) }
@@ -38,11 +41,7 @@ describe Daigaku::Terminal::Courses do
 
     it "creates a new courses folder in the daigaku courses directory" do
       target_path = File.join(Daigaku.config.courses_path, File.basename(course_dirs.first))
-
       dirs = Dir[File.join(Daigaku.config.courses_path, '**')]
-      puts "target_path: #{target_path}"
-      puts dirs.to_s
-
       expect(dirs.include?(target_path)).to be_truthy
     end
 
@@ -54,6 +53,117 @@ describe Daigaku::Terminal::Courses do
     it "raises an error if param is no url to a zip file" do
       expect(subject).to receive(:say_warning)
       subject.download('http://exmaple.com/something-else')
+    end
+
+    describe "stores download data:" do
+      before do
+        @github_url = "https://github.com/user/course_a/archive/master.zip"
+
+        stub_request(:get, @github_url)
+          .with(headers: {
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'User-Agent' => 'Ruby'
+            })
+          .to_return(status: 200, body: @file_content, headers: {})
+
+        stub_request(:get, "https://api.github.com/repos/course_a/repo")
+          .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+          .to_return(status: 200, body: "{}", headers: {})
+      end
+
+      it "stores the course's author for courses from Github" do
+        subject.download(@github_url)
+        store_key = 'courses/course_a/author'
+        expect(QuickStore.store.get(store_key)).to eq 'user'
+      end
+
+      it "stores the course's repo for courses from Github" do
+        subject.download(@github_url)
+        store_key = 'courses/course_a/github'
+        expect(QuickStore.store.get(store_key)).to eq 'user/course_a'
+      end
+
+      it "stores the downloading timestamp" do
+        time = Time.now
+        allow(Time).to receive(:now) { time }
+        subject.download(@url)
+        expect(QuickStore.store.get('courses/course_a/updated_at')).to eq time.to_s
+      end
+
+      it "stores the course's download url" do
+        subject.download(@url)
+        expect(QuickStore.store.get('courses/course_a/url')).to eq @url
+      end
+    end
+  end
+
+  describe '#update' do
+    before do
+      Daigaku.config.courses_path = local_courses_path
+
+      @zip_file_name = "repo.zip"
+      @file_content = prepare_download(@zip_file_name)
+      @url = "https://example.com/#{@zip_file_name}"
+
+      stub_request(:get, @url)
+        .with(headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
+          })
+        .to_return(status: 200, body: @file_content, headers: {})
+
+      stub_request(:get, "https://api.github.com/repos/daigaku-ruby/Get_started_with_Ruby")
+        .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
+        .to_return(status: 200, body: "{}", headers: {})
+
+      allow(subject).to receive(:download) { true }
+      allow(Daigaku::GithubClient).to receive(:updated?) { |attr| true }
+    end
+
+    after { cleanup_download(@zip_file_name) }
+
+    it "updates a course that is not from Github on each call" do
+      url = 'https://example.com/repo.zip'
+      expect(subject).to receive(:download).with(url, 'updated').once
+      subject.update('Course_A')
+    end
+
+    it "updates a course from Github if there are new contents" do
+      url = "https://github.com/user/repo/archive/master.zip"
+
+      stub_request(:get, url)
+        .with(headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
+          })
+        .to_return(status: 200, body: @file_content, headers: {})
+
+      QuickStore.store.set('courses/course_a/url', url)
+
+      expect(subject).to receive(:download).with(url, 'updated').once
+      subject.update('Course_A')
+    end
+
+    it "does not update a course from Github if there are no new contents" do
+      allow(Daigaku::GithubClient).to receive(:updated?) { false }
+      url = "https://github.com/user/repo/archive/master.zip"
+
+      stub_request(:get, url)
+        .with(headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
+          })
+        .to_return(status: 200, body: @file_content, headers: {})
+
+      QuickStore.store.set('courses/course_a/url', url)
+      QuickStore.store.set('courses/course_a/github', 'user/repo')
+
+      expect(subject).not_to receive(:download)
+      subject.update('Course_A')
     end
   end
 
