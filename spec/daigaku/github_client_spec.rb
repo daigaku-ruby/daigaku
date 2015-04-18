@@ -37,13 +37,17 @@ describe Daigaku::GithubClient do
     end
 
     it "returns true if content was pushed to the Github repo" do
-      QuickStore.store.set('courses/b/pushed_at', "2015-10-21T11:59:59Z")
+      QuickStore.store.set('courses/b/updated_at', "2015-10-21T11:59:59Z")
       expect(Daigaku::GithubClient.updated?('a/b')).to be_truthy
     end
 
     it "returns false if no content was pushed to the Github repo" do
-      QuickStore.store.set('courses/b/pushed_at', @received_timestamp)
+      QuickStore.store.set('courses/b/updated_at', @received_timestamp)
       expect(Daigaku::GithubClient.updated?('a/b')).to be_falsey
+    end
+
+    it "returns false if param is nil" do
+      expect(Daigaku::GithubClient.updated?(nil)).to be_falsey
     end
   end
 end

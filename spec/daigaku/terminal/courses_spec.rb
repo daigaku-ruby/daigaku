@@ -13,7 +13,6 @@ describe Daigaku::Terminal::Courses do
   end
 
   describe "#download" do
-
     before do
       Daigaku.config.courses_path = local_courses_path
 
@@ -97,6 +96,69 @@ describe Daigaku::Terminal::Courses do
       store_key = 'courses/repo/github'
 
       expect(QuickStore.store.get(store_key)).to eq 'user/repo'
+    end
+
+    it "stores the downloading timestamp" do
+      time = Time.now
+      allow(Time).to receive(:now) { time }
+
+      subject.download(@url)
+      expect(QuickStore.store.get('courses/course_a/updated_at')).to eq time.to_s
+    end
+
+    it "stores the course's download url" do
+      subject.download(@url)
+      expect(QuickStore.store.get('courses/course_a/url')).to eq @url
+    end
+  end
+
+  describe '#update' do
+    before do
+      allow(subject).to receive(:download) { true }
+      allow(Daigaku::GithubClient).to receive(:updated?) { true }
+    end
+
+    it "updates a course that is not from Github on each call" do
+      url = 'https://example.com/repo.zip'
+      expect(subject).to receive(:download).with(url, 'updated').once
+
+      subject.update('Course_A')
+    end
+
+    it "updates a course from Github if there are new contents" do
+      url = "https://github.com/user/repo/archive/master.zip"
+
+      stub_request(:get, url)
+        .with(headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
+          })
+        .to_return(status: 200, body: @file_content, headers: {})
+
+      QuickStore.store.set('courses/course_a/url', url)
+
+      expect(subject).to receive(:download).with(url, 'updated').once
+      subject.update('Course_A')
+    end
+
+    it "does not update a course from Github if there are no new contents" do
+      allow(Daigaku::GithubClient).to receive(:updated?) { false }
+      url = "https://github.com/user/repo/archive/master.zip"
+
+      stub_request(:get, url)
+        .with(headers: {
+          'Accept' => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent' => 'Ruby'
+          })
+        .to_return(status: 200, body: @file_content, headers: {})
+
+      QuickStore.store.set('courses/course_a/url', url)
+      QuickStore.store.set('courses/course_a/github', 'user/repo')
+
+      expect(subject).not_to receive(:download)
+      subject.update('Course_A')
     end
   end
 

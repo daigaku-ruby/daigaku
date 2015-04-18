@@ -19,8 +19,10 @@ module Daigaku
     # Returns whether the pushed_at time from Github API is newer than the
     # stored one.
     def self.updated?(user_and_repo)
+      return false unless user_and_repo
+
       course = Course.new(user_and_repo.split('/').last)
-      stored_time = QuickStore.store.get(course.key(:pushed_at))
+      stored_time = QuickStore.store.get(course.key(:updated_at))
       current_time = self.pushed_at(user_and_repo)
       DateTime.parse(stored_time) < DateTime.parse(current_time)
     end
