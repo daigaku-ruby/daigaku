@@ -10,10 +10,10 @@ module Daigaku
       "https://github.com/#{user_and_repo}/archive/master.zip"
     end
 
-    # Returns the timestamp of pushed_at for the repo from the Github API.
-    def self.pushed_at(user_and_repo)
+    # Returns the timestamp of updated_at for the repo from the Github API.
+    def self.updated_at(user_and_repo)
       url = "https://api.github.com/repos/#{user_and_repo}"
-      JSON.parse(open(url).read)['pushed_at']
+      JSON.parse(open(url).read)['updated_at']
     end
 
     # Returns whether the pushed_at time from Github API is newer than the
@@ -23,7 +23,7 @@ module Daigaku
 
       course = Course.new(user_and_repo.split('/').last)
       stored_time = QuickStore.store.get(course.key(:updated_at))
-      current_time = self.pushed_at(user_and_repo)
+      current_time = self.updated_at(user_and_repo)
       DateTime.parse(stored_time) < DateTime.parse(current_time)
     end
   end

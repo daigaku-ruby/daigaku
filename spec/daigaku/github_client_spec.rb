@@ -9,17 +9,17 @@ describe Daigaku::GithubClient do
     end
   end
 
-  describe "#pushed_at" do
-    it "fetches the pushed_at timestamp from the Github API" do
+  describe "#updated_at" do
+    it "fetches the updated_at timestamp from the Github API" do
       expected_timestamp = "2015-10-21T12:00:00Z"
-      response = { pushed_at: expected_timestamp }.to_json
+      response = { updated_at: expected_timestamp }.to_json
       url = "https://api.github.com/repos/a/b"
 
       stub_request(:get, url)
         .with(headers: { 'Accept' => '*/*', 'User-Agent' => 'Ruby' })
         .to_return(status: 200, body: response, headers: {})
 
-      timestamp = Daigaku::GithubClient.pushed_at('a/b')
+      timestamp = Daigaku::GithubClient.updated_at('a/b')
 
       expect(timestamp).to eq expected_timestamp
     end
@@ -28,7 +28,7 @@ describe Daigaku::GithubClient do
   describe "#updated?" do
     before do
       @received_timestamp = "2015-10-21T12:00:00Z"
-      response = { pushed_at: @received_timestamp }.to_json
+      response = { updated_at: @received_timestamp }.to_json
       url = "https://api.github.com/repos/a/b"
 
       stub_request(:get, url)
