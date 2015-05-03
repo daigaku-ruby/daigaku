@@ -45,7 +45,7 @@ module PathHelpers
   end
 
   def courses_basepath
-    File.join(test_basepath, COURSES)
+    File.join(test_basepath, LOCAL_DIR, COURSES)
   end
 
   def solutions_basepath

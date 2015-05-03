@@ -167,4 +167,76 @@ describe Daigaku::Terminal::Courses do
     end
   end
 
+  describe '#delete' do
+    before do
+      Daigaku.config.courses_path = local_courses_path
+      @course_path = course_dirs.first
+      prepare_courses unless Dir.exist?(@course_path)
+      allow(subject).to receive(:get).and_return('yes')
+    end
+
+    describe "confirmation" do
+      it "is nessecary to delete all courses" do
+        allow(subject).to receive(:options) { { all: true } }
+        expect(subject).to receive(:get_confirm)
+        subject.delete
+      end
+
+      it "is nessecary to delete a certain course" do
+        expect(subject).to receive(:get_confirm)
+        subject.delete(course_dir_names.first)
+      end
+    end
+
+    context "when confirmed:" do
+      it "deletes the given course" do
+        expect(Dir.exist?(@course_path)).to be_truthy
+        subject.delete(course_dir_names.first)
+        expect(Dir.exist?(@course_path)).to be_falsey
+      end
+
+      it "deletes all courses with option --all" do
+        allow(subject).to receive(:options) { { all: true } }
+        expect(Dir.exist?(@course_path)).to be_truthy
+        subject.delete
+
+        course_dirs.each do |dir|
+          expect(Dir.exist?(dir)).to be_falsey
+        end
+      end
+    end
+
+    context "when not confirmed:" do
+      before { allow(subject).to receive(:get).and_return('no') }
+
+      it "does not delete the given course" do
+        expect(Dir.exist?(@course_path)).to be_truthy
+        subject.delete(course_dir_names.first)
+        expect(Dir.exist?(@course_path)).to be_truthy
+      end
+
+      it "does not delete all courses" do
+        allow(subject).to receive(:options) { { all: true } }
+        expect(Dir.exist?(@course_path)).to be_truthy
+        subject.delete
+
+        course_dirs.each do |dir|
+          expect(Dir.exist?(dir)).to be_truthy
+        end
+      end
+    end
+
+    describe "status information" do
+      it "is printed when a certain course was deleted" do
+        expect(subject).to receive(:say_info)
+        subject.delete(course_dir_names.first)
+      end
+
+      it "is printed when all courses were deleted" do
+        allow(subject).to receive(:options) { { all: true } }
+        expect(subject).to receive(:say_info)
+        subject.delete
+      end
+    end
+  end
 end
