@@ -82,8 +82,13 @@ module Daigaku
       def delete(course_name = nil)
         if options[:all]
           get_confirm('Are you shure you want to delete all courses?') do
-            course_dirs = Dir[File.join(Daigaku.config.courses_path, '**')]
-            course_dirs.each { |dir| FileUtils.remove_dir(dir) }
+            course_dirs = Dir[File.join(Daigaku.config.courses_path, '*')]
+
+            course_dirs.each do |dir|
+              FileUtils.remove_dir(dir)
+              QuickStore.store.delete(Storeable.key(File.basename(dir), prefix: 'courses'))
+            end
+
             say_info "All daigaku courses were successfully deleted."
           end
         elsif course_name
@@ -96,6 +101,7 @@ module Daigaku
 
           get_confirm("Are you shure you want to delete the course \"#{course_name}\"?") do
             FileUtils.remove_dir(path)
+            QuickStore.store.delete(Storeable.key(course_name, prefix: 'courses'))
             say_info "The course \"#{course_name}\" was successfully deleted."
           end
         else

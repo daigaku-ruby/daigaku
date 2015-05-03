@@ -238,5 +238,33 @@ describe Daigaku::Terminal::Courses do
         subject.delete
       end
     end
+
+    describe "QuickStore data" do
+      it "is deleted for a certain course" do
+        key = Daigaku::Storeable.key(course_dir_names.first, prefix: 'courses')
+        QuickStore.store.set(key, 'some value')
+        subject.delete(course_dir_names.first)
+        expect(QuickStore.store.get(key)).to be_nil
+      end
+
+      it "is deleted for all courses when option --all is set" do
+        allow(subject).to receive(:options) { { all: true } }
+
+        keys = course_dir_names.map do |course_name|
+          Daigaku::Storeable.key(course_name, prefix: 'courses')
+        end
+
+        course_dir_names.each_with_index do |course_name, index|
+          QuickStore.store.set(keys[index], course_name)
+        end
+
+        subject.delete
+
+        course_dir_names.each_with_index do |course_name, index|
+          expect(QuickStore.store.get(keys[index])).to be_nil
+        end
+
+      end
+    end
   end
 end
