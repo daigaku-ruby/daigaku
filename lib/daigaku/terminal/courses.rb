@@ -67,22 +67,45 @@ module Daigaku
           path = File.join(Daigaku.config.courses_path, course_name)
 
           unless Dir.exist?(path)
-            text = [
-              "The course \"#{course_name}\" is not available in",
-              "\"#{Daigaku.config.courses_path}\".\n",
-            ]
-            say_warning text.join("\n")
-
-            unless Loading::Courses.load(Daigaku.config.courses_path).empty?
-              Terminal::Courses.new.list
-            end
-
+            print_course_not_available(course_name)
             return
           end
 
           update_course(Course.new(course_name))
         else
           system 'daigaku course help update'
+        end
+      end
+
+      method_option :all, type: :boolean, aliases: '-a', desc: 'Delete all courses'
+      desc 'delete [COURSE_NAME] [OPTIONS]', 'Delete Daigaku courses.'
+      def delete(course_name = nil)
+        if options[:all]
+          get_confirm('Are you shure you want to delete all courses?') do
+            course_dirs = Dir[File.join(Daigaku.config.courses_path, '*')]
+
+            course_dirs.each do |dir|
+              FileUtils.remove_dir(dir)
+              QuickStore.store.delete(Storeable.key(File.basename(dir), prefix: 'courses'))
+            end
+
+            say_info "All daigaku courses were successfully deleted."
+          end
+        elsif course_name
+          path = File.join(Daigaku.config.courses_path, course_name)
+
+          unless Dir.exist?(path)
+            print_course_not_available(course_name)
+            return
+          end
+
+          get_confirm("Are you shure you want to delete the course \"#{course_name}\"?") do
+            FileUtils.remove_dir(path)
+            QuickStore.store.delete(Storeable.key(course_name, prefix: 'courses'))
+            say_info "The course \"#{course_name}\" was successfully deleted."
+          end
+        else
+          system 'daigaku courses help delete'
         end
       end
 
@@ -162,6 +185,19 @@ module Daigaku
           download(url, 'updated') if url
         else
           say_info "Course \"#{course.title}\" is still up to date."
+        end
+      end
+
+      def print_course_not_available(course_name)
+        text = [
+          "The course \"#{course_name}\" is not available in",
+          "\"#{Daigaku.config.courses_path}\".\n",
+        ]
+
+        say_warning text.join("\n")
+
+        unless Loading::Courses.load(Daigaku.config.courses_path).empty?
+          Terminal::Courses.new.list
         end
       end
     end

@@ -65,6 +65,12 @@ module Daigaku
             break
           end
         end
+
+        def get_confirm(description)
+          say_warning description
+          confirm = get '(yes|no)'
+          yield if confirm == 'yes' && block_given?
+        end
       end
     end
 

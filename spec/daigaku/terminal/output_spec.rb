@@ -22,7 +22,8 @@ describe Daigaku::Terminal::Output do
     :get,
     :say_info,
     :say_warning,
-    :get_command
+    :get_command,
+    :get_confirm
   ].each do |method|
     it "has the private method #{method}" do
       expect(subject.private_methods.include?(method)).to be_truthy
@@ -84,7 +85,6 @@ describe Daigaku::Terminal::Output do
   end
 
   describe "::get_command" do
-
     before do
       @correct_command = 'correct command'
       @description = 'description'
@@ -109,7 +109,7 @@ describe Daigaku::Terminal::Output do
     end
 
     context "with a wrong command typed  in:" do
-      it "writed a hint" do
+      it "writes a hint" do
         wrong_command = 'wrong command'
         error = "This was something else. Try \"#{@correct_command}\"."
         allow($stdin).to receive(:gets).and_return(wrong_command, @correct_command)
@@ -120,4 +120,32 @@ describe Daigaku::Terminal::Output do
     end
   end
 
+  describe "::get_confirm" do
+    before do
+      @description = 'description'
+      allow($stdin).to receive(:gets).and_return('yes')
+    end
+
+    it "prints a warning with the given description" do
+      expect(subject).to receive(:say_warning).once.with(@description)
+      subject.send(:get_confirm, @description)
+    end
+
+    it "gets a command from the $stdin" do
+      expect($stdin).to receive(:gets)
+      subject.send(:get_confirm, @description)
+    end
+
+    it "takes a block to run when confirmed" do
+      allow(subject).to receive(:mocked_method).and_return('mocked method')
+      expect(subject).to receive(:mocked_method)
+      subject.send(:get_confirm, @description) { subject.mocked_method }
+    end
+
+    it "does not run the given block if not confirmed" do
+      allow(subject).to receive(:get).and_return('no')
+      expect(subject).not_to receive(:mocked_method)
+      subject.send(:get_confirm, @description) { subject.mocked_method }
+    end
+  end
 end
