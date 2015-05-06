@@ -1,4 +1,5 @@
 require 'curses'
+require 'cgi'
 
 module Daigaku
   class Window < Curses::Window
@@ -108,6 +109,7 @@ module Daigaku
       bold = /(\*[^*]*\*)/  # '*text*'
       line = /^-{3,}/        # '---' vertical line
       code = /(\`*\`)/    # '`code line`'
+      ruby_doc_core = /(\(ruby-doc core:.*\))/
 
       case text
         when h1
@@ -149,6 +151,9 @@ module Daigaku
           end
         when line
           write('-' * (Curses.cols - 2))
+        when ruby_doc_core
+          capture = text.match(/\(ruby-doc core:\s?(.*)\)/).captures.first
+          write text.gsub(ruby_doc_core, ruby_doc_core_link(capture))
         else
           write(text)
       end
@@ -164,6 +169,22 @@ module Daigaku
       Curses.init_pair(COLOR_RED, RED, BACKGROUND)
       Curses.init_pair(COLOR_GREEN, GREEN, BACKGROUND)
       Curses.init_pair(COLOR_YELLOW, YELLOW, BACKGROUND)
+    end
+
+    private
+
+    def ruby_doc_core_link(text)
+      base_url = "http://ruby-doc.org/core-#{RUBY_VERSION}"
+      parts = text.split(/(::|#)/)
+      class_name = parts[0].strip.capitalize
+
+      if parts[1]
+        method_type = text.match(/#/) ? 'i' : 'c'
+        method_name = CGI.escape(parts[2].strip).gsub('%', '-')
+      end
+
+      method = method_name ? "#method-#{method_type}-#{method_name}" : ''
+      "#{base_url}/#{class_name}.html#{method}"
     end
   end
 end
