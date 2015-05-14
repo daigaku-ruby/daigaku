@@ -13,12 +13,18 @@ describe Daigaku::Course do
 
   let(:course_path) { course_dirs.first }
 
+  before { suppress_print_out }
+
   before(:all) do
     prepare_solutions
     Daigaku.config.solutions_path = solutions_basepath
   end
 
   subject { Daigaku::Course.new(course_path) }
+
+  it "responds to ::unzip" do
+    expect(Daigaku::Course).to respond_to :unzip
+  end
 
   it "has the prescribed title" do
     expect(subject.title).to eq course_titles.first
@@ -88,6 +94,108 @@ describe Daigaku::Course do
 
       course = Daigaku::Course.new(course_path)
       expect(course.author).to eq author
+    end
+  end
+
+  describe "::unzip" do
+    before do
+      Daigaku.config.courses_path = local_courses_path
+      @zip_file_name = "unzip/repo.zip"
+      @zip_file_path = File.join(courses_basepath, @zip_file_name)
+      @file_content = prepare_download(@zip_file_name)
+    end
+
+    after do
+      cleanup_download(@zip_file_name)
+      dir = File.dirname(@zip_file_path)
+      FileUtils.rm_r(dir) if Dir.exist?(dir)
+    end
+
+    def expect_course_dirs_exists_to_be(boolean)
+      unit_dirs(course_dir_names.first).each do |chapter_dirs|
+        chapter_dirs.each do |dir|
+          path = [dir.split('/')[0..-4], 'unzip', dir.split('/')[-3..-1]].join('/')
+          expect(Dir.exist?(path)).to be boolean
+        end
+      end
+    end
+
+    it "unzips a course zip file" do
+      expect_course_dirs_exists_to_be false
+      Daigaku::Course.unzip(@zip_file_path)
+      expect_course_dirs_exists_to_be true
+    end
+
+    it "returns the unzipped course" do
+      dir = course_dirs.first
+      path = File.join(File.dirname(dir), 'unzip', File.basename(dir))
+      course = Daigaku::Course.new(path)
+
+      expect(Daigaku::Course.unzip(@zip_file_path).to_json).to eql course.to_json
+    end
+
+    it "removes the zip file" do
+      expect(File.exist?(@zip_file_path)).to be true
+      Daigaku::Course.unzip(@zip_file_path)
+      expect(File.exist?(@zip_file_path)).to be false
+    end
+
+    context "with the same course already available:" do
+      before do
+        dir = course_dirs.first
+        @path = File.join(File.dirname(dir), 'unzip', File.basename(dir))
+        @old_chapter_dir = File.join(@path, 'Old_chapter')
+
+        FileUtils.mkdir_p(@old_chapter_dir)
+      end
+
+      it "overwrites all chapters" do
+        expect(Dir.exist?(@old_chapter_dir)).to be true
+        Daigaku::Course.unzip(@zip_file_path)
+        expect(Dir.exist?(@old_chapter_dir)).to be false
+      end
+
+      context "if an errior occurs" do
+        before do
+          allow_any_instance_of(Zip::File)
+            .to receive(:extract) { raise Exception.new }
+        end
+
+        it "restores an old state if an error occurs" do
+          Daigaku::Course.unzip(@zip_file_path)
+          expect(Dir.exist?(@old_chapter_dir)).to be true
+          expect(Dir.exist?("#{@path}_old")).to be false
+        end
+
+        it "keeps the zip file if an error occurs" do
+          expect(File.exist?(@zip_file_path)).to be true
+          Daigaku::Course.unzip(@zip_file_path)
+          expect(File.exist?(@zip_file_path)).to be true
+        end
+      end
+    end
+
+    context "with the github_repo option:" do
+      before { @github_course_dir = prepare_github_course }
+      after { FileUtils.rm_r(@github_course_dir) }
+
+      it "removes the '-master' from the root directory" do
+        zip_file_name = "unzip/repo-master.zip"
+        zip_file_path = File.join(courses_basepath, zip_file_name)
+        prepare_github_download(zip_file_name)
+
+        expect(File.exist?(zip_file_path)).to be true
+        Daigaku::Course.unzip(zip_file_path, github_repo: true)
+
+        unit_dirs("#{course_dir_names.first}-master").each do |chapter_dirs|
+          chapter_dirs.each do |dir|
+            path = [dir.split('/')[0..-4], 'unzip', dir.split('/')[-3..-1]].join('/')
+            expect(Dir.exist?(path)).to be false
+          end
+        end
+
+        expect_course_dirs_exists_to_be true
+      end
     end
   end
 end
