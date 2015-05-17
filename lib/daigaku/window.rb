@@ -122,8 +122,8 @@ module Daigaku
           emphasized = false
           highlighted = false
 
-          text.chars.each do |char|
-            if char == '*'
+          text.chars.each_with_index do |char, index|
+            if char == '*' && text[index - 1] != '\\'
               emphasized = !emphasized
               next
             end
@@ -133,22 +133,25 @@ module Daigaku
               next
             end
 
+            character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+
             if highlighted
-              red(char)
+              red(character)
             elsif emphasized
-              emphasize(char)
+              emphasize(character)
             else
-              write(char)
+              write(character)
             end
           end
         when bold
-          text.chars.each do |char|
-            if char == '*'
+          text.chars.each_with_index do |char, index|
+            if char == '*' && text[index - 1] != '\\'
               emphasized = !emphasized
               next
             end
 
-            emphasized ? emphasize(char) : write(char)
+            character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+            emphasized ? emphasize(character) : write(character)
           end
         when line
           write('-' * (Curses.cols - 2))
@@ -159,7 +162,7 @@ module Daigaku
           capture = text.match(/\(ruby-doc stdlib:\s?(.*)\)/).captures.first
           write text.gsub(ruby_doc_stdlib, ruby_doc_stdlib_link(capture))
         else
-          write(text)
+          write(text.gsub(/(\\#)/, '#'))
       end
     end
 
