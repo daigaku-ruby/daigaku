@@ -39,6 +39,11 @@ describe Daigaku::Terminal::Courses do
       expect{ subject.download(@url) }.not_to raise_error
     end
 
+    it "uses Courses.unzip to unzip the course" do
+      expect(Daigaku::Course).to receive(:unzip).once
+      subject.download(@url)
+    end
+
     it "creates a new courses folder in the daigaku courses directory" do
       target_path = File.join(Daigaku.config.courses_path, File.basename(course_dirs.first))
       dirs = Dir[File.join(Daigaku.config.courses_path, '**')]
@@ -164,6 +169,24 @@ describe Daigaku::Terminal::Courses do
 
       expect(subject).not_to receive(:download)
       subject.update('Course_A')
+    end
+
+    it "updates all courses if --all option is given" do
+      file_content = prepare_download(@zip_file_name, multiple_courses: true)
+
+      stub_request(:get, @url)
+        .with(
+          headers: {
+            'Accept' => '*/*',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'User-Agent' => 'Ruby'
+          }
+        ).to_return(status: 200, body: file_content, headers: {})
+
+      allow(subject).to receive(:options) { { all: true } }
+      allow(subject).to receive(:download).exactly(course_dirs.count).times
+
+      subject.update
     end
   end
 

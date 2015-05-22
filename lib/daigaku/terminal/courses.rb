@@ -34,19 +34,18 @@ module Daigaku
         file_name = File.join(courses_path, url.split('/').last)
 
         File.open(file_name, 'w') { |file| file << open(url).read }
-        course_name = unzip(file_name, github)
+        course = Course.unzip(file_name, github_repo: github)
 
         if github
           user_and_repo = url.match(/github.com\/(.*)\/archive\/master.zip/).captures.first
           store_repo_data(options[:github] || user_and_repo)
         end
 
-        course = Course.new(course_name)
         QuickStore.store.set(course.key(:url), url)
         QuickStore.store.set(course.key(:updated_at), Time.now.to_s)
         scaffold_solutions
 
-        say_info "Successfully #{action} the course \"#{course_name}\"!"
+        say_info "Successfully #{action} the course \"#{course.title}\"!"
       rescue Download::NoUrlError => e
         print_download_warning(url, "\"#{url}\" is not a valid URL!")
       rescue Download::NoZipFileUrlError => e
@@ -132,32 +131,6 @@ module Daigaku
         course = Course.new(course)
         QuickStore.store.set(course.key(:author), author)
         QuickStore.store.set(course.key(:github), user_and_repo)
-      end
-
-      def unzip(file_path, github = false)
-        target_dir = File.dirname(file_path)
-        course_name = nil
-
-        Zip::File.open(file_path) do |zip_file|
-          zip_file.each do |entry|
-
-            if github
-              first, *others = entry.to_s.split('/')
-              directory = File.join(first.split('-')[0..-2].join('-'), others)
-            else
-              directory = entry.to_s
-            end
-
-            if directory != '/'
-              course_name ||= directory.split('/').first.gsub(/_+/, ' ')
-            end
-
-            zip_file.extract(entry, "#{target_dir}/#{directory}") { true }
-          end
-        end
-
-        FileUtils.rm(file_path)
-        course_name
       end
 
       def scaffold_solutions

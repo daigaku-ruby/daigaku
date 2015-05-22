@@ -19,6 +19,13 @@ module ResourceHelpers
     end
   end
 
+  def prepare_github_course
+    prepare_courses
+    github_course_dir = "#{course_dirs.first}-master/"
+    FileUtils.copy_entry("#{course_dirs.first}/", github_course_dir)
+    github_course_dir
+  end
+
   def prepare_solutions
     all_solution_file_paths.each do |path|
       base_dir = File.dirname(path)
@@ -27,19 +34,48 @@ module ResourceHelpers
     end
   end
 
-  def prepare_download(zip_file_name)
-    directory = File.dirname(course_dirs.first)
-    zip_file_path = File.join(File.dirname(directory), zip_file_name)
+  def prepare_download(zip_file_name, options = {})
+    zip_file_path = File.join(courses_basepath, zip_file_name)
+
+    unless Dir.exist?(File.dirname(zip_file_path))
+      FileUtils.makedirs(File.dirname(zip_file_path))
+    end
 
     Zip::File.open(zip_file_path, Zip::File::CREATE) do |zip_file|
-      Dir[File.join(directory, '**', '**')].each do |file|
-        if file.match(course_dir_names.first)
-          zip_file.add(file.sub(directory, '')[1..-1], file) { true }
+      Dir[File.join(courses_basepath, '**', '**')].each do |file|
+        if course_match?(file, options[:multiple_courses])
+          zip_file.add(file.sub(courses_basepath, '')[1..-1], file) { true }
         end
       end
     end
 
     File.read(zip_file_path)
+  end
+
+  def prepare_github_download(zip_file_name)
+    zip_file_path = File.join(courses_basepath, zip_file_name)
+
+    unless Dir.exist?(File.dirname(zip_file_path))
+      FileUtils.makedirs(File.dirname(zip_file_path))
+    end
+
+    Zip::File.open(zip_file_path, Zip::File::CREATE) do |zip_file|
+      Dir[File.join(courses_basepath, '**', '**')].each do |file|
+        if file.match(/.*\-master/)
+          zip_file.add(file.sub(courses_basepath, '')[1..-1], file) { true }
+        end
+      end
+    end
+
+    File.read(zip_file_path)
+  end
+
+  def course_match?(name, multiple_courses)
+    if multiple_courses
+      name.match(course_dirs.first) || name.match(course_dirs.second)
+    else
+      name.match(course_dirs.first)
+    end
   end
 
   def cleanup_download(zip_file_name)
