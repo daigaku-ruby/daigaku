@@ -1,5 +1,5 @@
 require 'curses'
-require 'cgi'
+require 'daigaku/markdown'
 
 module Daigaku
   class Window < Curses::Window
@@ -156,11 +156,9 @@ module Daigaku
         when line
           write('-' * (Curses.cols - 2))
         when ruby_doc_core
-          capture = text.match(/\(ruby-doc core:\s?(.*)\)/).captures.first
-          write text.gsub(ruby_doc_core, ruby_doc_core_link(capture))
+          write text.sub(ruby_doc_core, Markdown::RubyDoc.parse(text))
         when ruby_doc_stdlib
-          capture = text.match(/\(ruby-doc stdlib:\s?(.*)\)/).captures.first
-          write text.gsub(ruby_doc_stdlib, ruby_doc_stdlib_link(capture))
+          write text.sub(ruby_doc_stdlib, Markdown::RubyDoc.parse(text))
         else
           write(text.gsub(/(\\#)/, '#'))
       end
@@ -178,38 +176,5 @@ module Daigaku
       Curses.init_pair(COLOR_YELLOW, YELLOW, BACKGROUND)
     end
 
-    private
-
-    def ruby_doc_core_link(text)
-      base_url = "http://ruby-doc.org/core-#{RUBY_VERSION}"
-      class_part = ruby_doc_class_parts(text).join('/')
-      method = ruby_doc_method(text)
-
-      "#{base_url}/#{class_part}.html#{method}"
-    end
-
-    def ruby_doc_stdlib_link(text)
-      base_url = "http://ruby-doc.org/stdlib-#{RUBY_VERSION}"
-      class_parts = ruby_doc_class_parts(text)
-      libdoc_part = "libdoc/#{class_parts.first.downcase}/rdoc"
-      method = ruby_doc_method(text)
-
-      "#{base_url}/#{libdoc_part}/#{class_parts.join('/')}.html#{method}"
-    end
-
-    def ruby_doc_class_parts(text)
-      parts = text.split(/::|#/)
-      parts[0..(parts.count > 1 ? -2 : -1)]
-    end
-
-    def ruby_doc_method(text)
-      parts = text.split(/::|#/)
-
-      if parts.count > 1
-        method_type = text.match(/#/) ? 'i' : 'c'
-        method_name = CGI.escape(parts.last.strip).gsub('%', '-').gsub(/\A-/, '')
-        "#method-#{method_type}-#{method_name}"
-      end
-    end
   end
 end
