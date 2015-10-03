@@ -99,55 +99,53 @@ module Daigaku
       ruby_doc_core = /(\(ruby-doc core:.*\))/ # '(ruby-doc core: Kernel#print)'
       ruby_doc_stdlib = /(\(ruby-doc stdlib:.*\))/ # '(ruby-doc stdlib: CSV#Row::<<)'
 
+      text = Markdown::RubyDoc.parse(text)
+
       case text
-        when h1
-          heading(text.gsub(/^#\s?/, ''))
-        when h2
-          text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
-          emphasize(text.gsub(/^##\s?/, ''), text_decoration)
-        when (code || bold)
-          emphasized = false
-          highlighted = false
+      when h1
+        heading(text.gsub(/^#\s?/, ''))
+      when h2
+        text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
+        emphasize(text.gsub(/^##\s?/, ''), text_decoration)
+      when (code || bold)
+        emphasized = false
+        highlighted = false
 
-          text.chars.each_with_index do |char, index|
-            if char == '*' && text[index - 1] != '\\'
-              emphasized = !emphasized
-              next
-            end
-
-            if char == '`'
-              highlighted = !highlighted
-              next
-            end
-
-            character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
-
-            if highlighted
-              red(character)
-            elsif emphasized
-              emphasize(character)
-            else
-              write(character)
-            end
+        text.chars.each_with_index do |char, index|
+          if char == '*' && text[index - 1] != '\\'
+            emphasized = !emphasized
+            next
           end
-        when bold
-          text.chars.each_with_index do |char, index|
-            if char == '*' && text[index - 1] != '\\'
-              emphasized = !emphasized
-              next
-            end
 
-            character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
-            emphasized ? emphasize(character) : write(character)
+          if char == '`'
+            highlighted = !highlighted
+            next
           end
-        when line
-          write('-' * (Curses.cols - 2))
-        when ruby_doc_core
-          write text.sub(ruby_doc_core, Markdown::RubyDoc.parse(text))
-        when ruby_doc_stdlib
-          write text.sub(ruby_doc_stdlib, Markdown::RubyDoc.parse(text))
-        else
-          write(text.gsub(/(\\#)/, '#'))
+
+          character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+
+          if highlighted
+            red(character)
+          elsif emphasized
+            emphasize(character)
+          else
+            write(character)
+          end
+        end
+      when bold
+        text.chars.each_with_index do |char, index|
+          if char == '*' && text[index - 1] != '\\'
+            emphasized = !emphasized
+            next
+          end
+
+          character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+          emphasized ? emphasize(character) : write(character)
+        end
+      when line
+        write('-' * (Curses.cols - 2))
+      else
+        write(text.gsub(/(\\#)/, '#'))
       end
     end
 
