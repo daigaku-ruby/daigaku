@@ -13,21 +13,37 @@ module Daigaku
 
       class << self
         def parse(text)
-          case text
-          when CORE_REGEX
-            core_link(text.match(CORE_REGEX).captures.first)
-          when STDLIB_REGEX
-            stdlib_link(text.match(STDLIB_REGEX).captures.first)
-          end
+          new.parse(text)
         end
+      end
 
-        def core_link(text)
-          new.core_link(text)
-        end
+      def parse(text)
+        parsed_text = sub_stdlib_links(text)
+        sub_core_links(parsed_text)
+      end
 
-        def stdlib_link(text)
-          new.stdlib_link(text)
+      private
+
+      def sub_core_links(text)
+        match = text.match(CORE_REGEX)
+        return text if match.nil?
+
+        match.captures.reduce(text) do |result, capture|
+          result.sub!(doc_regex(:core, capture), core_link(capture))
         end
+      end
+
+      def sub_stdlib_links(text)
+        match = text.match(STDLIB_REGEX)
+        return text if match.nil?
+
+        match.captures.reduce(text) do |result, capture|
+          result.sub!(doc_regex(:stdlib, capture), stdlib_link(capture))
+        end
+      end
+
+      def doc_regex(type, capture)
+        /\(ruby-doc #{type}: #{capture}\)/
       end
 
       def core_link(text)
@@ -44,8 +60,6 @@ module Daigaku
 
         "#{STDLIB_BASE_URL}/#{libdoc_part}/#{constants}.html#{method}"
       end
-
-      private
 
       # Returns the stdlib part of the url.
       # If an explicit stdlib name is defined in markdown, e.g.

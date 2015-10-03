@@ -2,14 +2,11 @@ require 'spec_helper'
 
 describe Daigaku::Markdown::RubyDoc do
 
-  [:core_link, :stdlib_link, :parse].each do |class_method|
+  [:parse].each do |class_method|
     it "responds to #{class_method}" do
       expect(Daigaku::Markdown::RubyDoc).to respond_to class_method
     end
   end
-
-  it { is_expected.to respond_to :core_link }
-  it { is_expected.to respond_to :stdlib_link }
 
   def parse(text)
     Daigaku::Markdown::RubyDoc.parse(text)
@@ -22,6 +19,11 @@ describe Daigaku::Markdown::RubyDoc do
       it 'returns the right link for a single class' do
         markdown = '(ruby-doc core: String)'
         expect(parse(markdown)).to eq "#{base_url}/String.html"
+      end
+
+      it 'returns the right text with link for a single class' do
+        markdown = '*emphasized* (ruby-doc core: String)'
+        expect(parse(markdown)).to eq "*emphasized* #{base_url}/String.html"
       end
 
       it 'returns the right link for a single namespaced class' do
@@ -62,6 +64,11 @@ describe Daigaku::Markdown::RubyDoc do
       it 'returns the right link for a single class' do
         markdown = '(ruby-doc stdlib: Time)'
         expect(parse(markdown)).to eq "#{base_url}/time/rdoc/Time.html"
+      end
+
+      it 'returns the right text with link for a single class' do
+        markdown = '*emphasized* (ruby-doc stdlib: Time)'
+        expect(parse(markdown)).to eq "*emphasized* #{base_url}/time/rdoc/Time.html"
       end
 
       it 'returns the right link for a single class with an explicit lib' do
