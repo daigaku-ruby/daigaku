@@ -9,8 +9,8 @@ module Daigaku
 
       TOP_BAR_TEXT = [
           'Scroll with *UP KEY* and *DOWN KEY*',
-          'Verify solution with *v*',
           'Open solution file with *o*',
+          'Verify solution with *v*',
           'Clear validation with *c*',
           'Exit with *ESC*'
           ].join('  |  ')
