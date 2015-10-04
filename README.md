@@ -16,6 +16,7 @@ language-explaining programming tasks.
 ## Installation
 
 First of all make sure Ruby is installed on your computer.
+Daigaku works with [MRI Ruby](https://www.ruby-lang.org/en/documentation/installation/) v2.x and [Rubinius](http://rubini.us/doc/en/getting-started/) v2.x.
 
 Then open a terminal and install Daigaku by running:
 
@@ -50,6 +51,8 @@ Please visit the [Diagaku Wiki](https://github.com/daigaku-ruby/daigaku/wiki/How
 ## Contributing
 
 We encourage you to contribute to Daigaku development and course creation.
+
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant code of conduct](http://contributor-covenant.org/version/1/2/0).
 
 ### Creating Daigaku courses
 
