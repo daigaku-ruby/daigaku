@@ -1,23 +1,10 @@
 require 'curses'
-require 'cgi'
+require 'daigaku/coloring'
+require 'daigaku/markdown'
 
 module Daigaku
   class Window < Curses::Window
-
-    COLOR_TEXT = Curses::COLOR_YELLOW         unless defined? COLOR_TEXT
-    COLOR_TEXT_EMPHASIZE = Curses::COLOR_CYAN unless defined? COLOR_TEXT_EMPHASIZE
-    COLOR_HEADING = Curses::COLOR_WHITE       unless defined? COLOR_HEADING
-    COLOR_RED = Curses::COLOR_BLUE            unless defined? COLOR_RED
-    COLOR_GREEN = Curses::COLOR_MAGENTA       unless defined? COLOR_GREEN
-    COLOR_YELLOW = Curses::COLOR_RED          unless defined? COLOR_YELLOW
-
-    BACKGROUND = Curses::COLOR_WHITE          unless defined? BACKGROUND
-    FONT = Curses::COLOR_BLACK                unless defined? FONT
-    FONT_HEADING = Curses::COLOR_MAGENTA      unless defined? FONT_HEADING
-    FONT_EMPHASIZE = Curses::COLOR_BLUE       unless defined? FONT_EMPHASIZE
-    RED = Curses::COLOR_RED                   unless defined? RED
-    GREEN = Curses::COLOR_GREEN               unless defined? GREEN
-    YELLOW = Curses::COLOR_YELLOW             unless defined? YELLOW
+    include Coloring
 
     def initialize(height = Curses.lines, width = Curses.cols, top = 0, left = 0)
       super(height, width, top, left)
@@ -29,23 +16,23 @@ module Daigaku
     end
 
     def emphasize(text, text_decoration = Curses::A_NORMAL)
-      write(text, Window::COLOR_TEXT_EMPHASIZE, text_decoration)
+      write(text, COLOR_TEXT_EMPHASIZE, text_decoration)
     end
 
     def heading(text, text_decoration = Curses::A_UNDERLINE)
-      write(text, Window::COLOR_HEADING, text_decoration)
+      write(text, COLOR_HEADING, text_decoration)
     end
 
     def red(text, text_decoration = Curses::A_NORMAL, options = {})
-      colored(text, Window::COLOR_RED, text_decoration, options)
+      colored(text, COLOR_RED, text_decoration, options)
     end
 
     def yellow(text, text_decoration = Curses::A_NORMAL, options = {})
-      colored(text, Window::COLOR_YELLOW, text_decoration, options)
+      colored(text, COLOR_YELLOW, text_decoration, options)
     end
 
     def green(text, text_decoration = Curses::A_NORMAL, options = {})
-      colored(text, Window::COLOR_GREEN, text_decoration, options)
+      colored(text, COLOR_GREEN, text_decoration, options)
     end
 
     def colored(text, color, text_decoration = Curses::A_NORMAL, options = {})
@@ -112,104 +99,55 @@ module Daigaku
       ruby_doc_core = /(\(ruby-doc core:.*\))/ # '(ruby-doc core: Kernel#print)'
       ruby_doc_stdlib = /(\(ruby-doc stdlib:.*\))/ # '(ruby-doc stdlib: CSV#Row::<<)'
 
+      text = Markdown::RubyDoc.parse(text)
+
       case text
-        when h1
-          heading(text.gsub(/^#\s?/, ''))
-        when h2
-          text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
-          emphasize(text.gsub(/^##\s?/, ''), text_decoration)
-        when (code || bold)
-          emphasized = false
-          highlighted = false
+      when h1
+        heading(text.gsub(/^#\s?/, ''))
+      when h2
+        text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
+        emphasize(text.gsub(/^##\s?/, ''), text_decoration)
+      when (code || bold)
+        emphasized = false
+        highlighted = false
 
-          text.chars.each_with_index do |char, index|
-            if char == '*' && text[index - 1] != '\\'
-              emphasized = !emphasized
-              next
-            end
-
-            if char == '`'
-              highlighted = !highlighted
-              next
-            end
-
-            character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
-
-            if highlighted
-              red(character)
-            elsif emphasized
-              emphasize(character)
-            else
-              write(character)
-            end
+        text.chars.each_with_index do |char, index|
+          if char == '*' && text[index - 1] != '\\'
+            emphasized = !emphasized
+            next
           end
-        when bold
-          text.chars.each_with_index do |char, index|
-            if char == '*' && text[index - 1] != '\\'
-              emphasized = !emphasized
-              next
-            end
 
-            character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
-            emphasized ? emphasize(character) : write(character)
+          if char == '`'
+            highlighted = !highlighted
+            next
           end
-        when line
-          write('-' * (Curses.cols - 2))
-        when ruby_doc_core
-          capture = text.match(/\(ruby-doc core:\s?(.*)\)/).captures.first
-          write text.gsub(ruby_doc_core, ruby_doc_core_link(capture))
-        when ruby_doc_stdlib
-          capture = text.match(/\(ruby-doc stdlib:\s?(.*)\)/).captures.first
-          write text.gsub(ruby_doc_stdlib, ruby_doc_stdlib_link(capture))
-        else
-          write(text.gsub(/(\\#)/, '#'))
+
+          character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+
+          if highlighted
+            red(character)
+          elsif emphasized
+            emphasize(character)
+          else
+            write(character)
+          end
+        end
+      when bold
+        text.chars.each_with_index do |char, index|
+          if char == '*' && text[index - 1] != '\\'
+            emphasized = !emphasized
+            next
+          end
+
+          character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+          emphasized ? emphasize(character) : write(character)
+        end
+      when line
+        write('-' * (Curses.cols - 2))
+      else
+        write(text.gsub(/(\\#)/, '#'))
       end
     end
 
-    protected
-
-    def init_colors
-      Curses.start_color
-      Curses.init_pair(COLOR_TEXT, FONT, BACKGROUND)
-      Curses.init_pair(COLOR_TEXT_EMPHASIZE, FONT_EMPHASIZE, BACKGROUND)
-      Curses.init_pair(COLOR_HEADING, FONT_HEADING, BACKGROUND)
-      Curses.init_pair(COLOR_RED, RED, BACKGROUND)
-      Curses.init_pair(COLOR_GREEN, GREEN, BACKGROUND)
-      Curses.init_pair(COLOR_YELLOW, YELLOW, BACKGROUND)
-    end
-
-    private
-
-    def ruby_doc_core_link(text)
-      base_url = "http://ruby-doc.org/core-#{RUBY_VERSION}"
-      class_part = ruby_doc_class_parts(text).join('/')
-      method = ruby_doc_method(text)
-
-      "#{base_url}/#{class_part}.html#{method}"
-    end
-
-    def ruby_doc_stdlib_link(text)
-      base_url = "http://ruby-doc.org/stdlib-#{RUBY_VERSION}"
-      class_parts = ruby_doc_class_parts(text)
-      libdoc_part = "libdoc/#{class_parts.first.downcase}/rdoc"
-      method = ruby_doc_method(text)
-
-      "#{base_url}/#{libdoc_part}/#{class_parts.join('/')}.html#{method}"
-    end
-
-    def ruby_doc_class_parts(text)
-      parts = text.split(/::|#/)
-      parts[0..(parts.count > 1 ? -2 : -1)]
-    end
-
-    def ruby_doc_method(text)
-      parts = text.split(/::|#/)
-
-      if parts.count > 1
-        method_type = text.match(/#/) ? 'i' : 'c'
-        method_name = CGI.escape(parts.last.strip).gsub('%', '-').gsub(/\A-/, '')
-        "#method-#{method_type}-#{method_name}"
-      end
-    end
   end
 end

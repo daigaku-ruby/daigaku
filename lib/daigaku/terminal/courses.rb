@@ -57,7 +57,7 @@ module Daigaku
       end
 
       method_option :all, type: :boolean, aliases: '-a', desc: 'Update all courses'
-      desc 'update [COURSE_NAME] [OPTIONS]', 'Update Daigak courses.'
+      desc 'update [COURSE_NAME] [OPTIONS]', 'Update Daigaku courses.'
       def update(course_name = nil)
         if options[:all]
           courses = Loading::Courses.load(Daigaku.config.courses_path)
@@ -98,7 +98,7 @@ module Daigaku
             return
           end
 
-          get_confirm("Are you shure you want to delete the course \"#{course_name}\"?") do
+          get_confirm("Are you sure you want to delete the course \"#{course_name}\"?") do
             FileUtils.remove_dir(path)
             QuickStore.store.delete(Storeable.key(course_name, prefix: 'courses'))
             say_info "The course \"#{course_name}\" was successfully deleted."
