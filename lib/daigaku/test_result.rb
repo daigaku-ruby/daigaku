@@ -59,7 +59,7 @@ module Daigaku
         examples: [
           {
             status: 'failed',
-            exception: { message: ":( You got a syntax error in your code!" }
+            exception: { message: ":( You got an error in your code!" }
           }
         ]
       }
