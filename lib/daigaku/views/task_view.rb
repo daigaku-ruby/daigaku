@@ -186,7 +186,7 @@ module Daigaku
 
       def print_test_results(window)
         result = @unit.solution.verify!
-        @test_result_lines = result.summary_lines
+        @test_result_lines = test_result_lines(result)
 
         if result.passed?
           code_lines = @unit.reference_solution.code_lines
@@ -213,6 +213,22 @@ module Daigaku
         initialize_window(height)
       end
 
+      def test_result_lines(result)
+        lines  = result.summary_lines
+        lines += code_error_lines(@unit.solution.code) unless result.passed?
+        lines
+      end
+
+      def code_error_lines(code)
+        begin
+          eval(code)
+        rescue Exception => e
+          return e.inspect.gsub(/(^.*#<|>.*$)/, '').lines.map(&:rstrip)
+        end
+
+        []
+      end
+
       def reset_screen(window)
         @test_result_lines = nil
         @lines = @unit.task.markdown.lines
@@ -228,7 +244,7 @@ module Daigaku
       end
 
       def example_index(heights, index)
-        heights.values.index { |range| range.include?(index) }
+        heights.values.index { |range| range.include?(index) }.to_i
       end
     end
 
