@@ -43,7 +43,7 @@ module Daigaku
       end
 
       def doc_regex(type, capture)
-        /\(ruby-doc #{type}: #{capture}\)/
+        Regexp.new(Regexp.escape("(ruby-doc #{type}: #{capture})"))
       end
 
       def core_link(text)
