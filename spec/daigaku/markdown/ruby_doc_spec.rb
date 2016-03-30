@@ -56,6 +56,15 @@ describe Daigaku::Markdown::RubyDoc do
         expect(parse(markdown)).to eq "#{base_url}/Enumerator/Lazy.html#method-i-flat_map"
       end
 
+      it 'returns the right link for an instance method not starting with word characters' do
+        markdown = '(ruby-doc core: Array#<<)'
+        expect(parse(markdown)).to eq "#{base_url}/Array.html#method-i-3C-3C"
+      end
+
+      it 'returns the right link for an instance method with regex characters' do
+        markdown = '(ruby-doc core: Array#any?)'
+        expect(parse(markdown)).to eq "#{base_url}/Array.html#method-i-any-3F"
+      end
     end
 
     context 'for a text containing a stdlib doc markup' do

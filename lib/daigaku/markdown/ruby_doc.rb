@@ -43,19 +43,19 @@ module Daigaku
       end
 
       def doc_regex(type, capture)
-        /\(ruby-doc #{type}: #{capture}\)/
+        Regexp.new(Regexp.escape("(ruby-doc #{type}: #{capture})"))
       end
 
       def core_link(text)
         constants = ruby_constants(text).join('/')
-        method = ruby_method(text)
+        method    = ruby_method(text)
 
         "#{CORE_BASE_URL}/#{constants}.html#{method}"
       end
 
       def stdlib_link(text)
-        constants = ruby_constants(text).join('/')
-        method = ruby_method(text)
+        constants   = ruby_constants(text).join('/')
+        method      = ruby_method(text)
         libdoc_part = "libdoc/#{ruby_stdlib(text)}/rdoc"
 
         "#{STDLIB_BASE_URL}/#{libdoc_part}/#{constants}.html#{method}"
@@ -68,7 +68,7 @@ module Daigaku
       # Else the lib is created from the constants, e.g.
       #   (ruby-doc stdlib: Time) => 'time'
       def ruby_stdlib(text)
-        parts = text.split(' ')
+        parts = text.split
 
         if parts.length > 1
           parts.first.strip.downcase
@@ -78,7 +78,7 @@ module Daigaku
       end
 
       def ruby_constants(text)
-        parts = text.split(' ').last.split(/::|#/)
+        parts = text.split.last.split(/::|#/)
         select_capitalized(parts)
       end
 
@@ -92,7 +92,9 @@ module Daigaku
       end
 
       def select_capitalized(parts)
-        parts.select { |part| part[0] == part[0].upcase }
+        parts.select do |part|
+          part[0].match(/\w/) && part[0] == part[0].upcase
+        end
       end
 
       def downcased?(text)
