@@ -1,12 +1,12 @@
-module ResourceHelpers
-  require 'fileutils'
-  require 'zip'
+require 'fileutils'
+require 'zip'
 
+module ResourceHelpers
   def prepare_courses
     FileUtils.mkdir_p(courses_basepath) unless Dir.exist?(courses_basepath)
 
     course_dir_names.each do |course|
-      chapter_dir_names.each do |chapter|
+      chapter_dir_names.each do |_|
         unit_dirs(course).each do |units|
           units.each do |unit|
             create_directory(unit)
@@ -29,7 +29,7 @@ module ResourceHelpers
   def prepare_solutions
     all_solution_file_paths.each do |path|
       base_dir = File.dirname(path)
-      name = File.basename(path)
+      name     = File.basename(path)
       create_file(base_dir, name, solution_content)
     end
   end
@@ -61,7 +61,7 @@ module ResourceHelpers
 
     Zip::File.open(zip_file_path, Zip::File::CREATE) do |zip_file|
       Dir[File.join(courses_basepath, '**', '**')].each do |file|
-        if file.match(/.*\-master/)
+        if file =~ /.*\-master/
           zip_file.add(file.sub(courses_basepath, '')[1..-1], file) { true }
         end
       end
@@ -80,7 +80,7 @@ module ResourceHelpers
 
   def cleanup_download(zip_file_name)
     directory = course_dirs.first
-    zip_file = File.join(File.dirname(directory), zip_file_name)
+    zip_file  = File.join(File.dirname(directory), zip_file_name)
     FileUtils.rm(zip_file) if File.exist?(zip_file)
   end
 
@@ -96,9 +96,8 @@ module ResourceHelpers
     create_directory(base_dir) unless Dir.exist?(base_dir)
     file_path = File.join(base_dir, name)
 
-    if Dir.exist?(base_dir)
-      File.open(file_path, 'w') { |f| f.puts content }
-    end
+    return unless Dir.exist?(base_dir)
+    File.open(file_path, 'w') { |f| f.puts content }
   end
 
   def available_courses
@@ -114,8 +113,8 @@ module ResourceHelpers
   end
 
   def available_units(course_name, chapter_name)
-    units = unit_dirs(course_name).map do |units|
-      units.map do |path|
+    units = unit_dirs(course_name).map do |unit_dir|
+      unit_dir.map do |path|
         next unless path.split('/')[-2] == chapter_name
         Daigaku::Unit.new(path)
       end
@@ -128,7 +127,7 @@ module ResourceHelpers
     task = unit_dirs(course_name).map do |units|
       units.map do |path|
         split = path.split('/')
-        next if (split[-2] != chapter_name || split[-1] != unit_name)
+        next if split[-2] != chapter_name || split[-1] != unit_name
 
         Daigaku::Task.new(path)
       end
@@ -141,7 +140,7 @@ module ResourceHelpers
     solution = unit_dirs(course_name).map do |units|
       units.map do |path|
         split = path.split('/')
-        next if (split[-2] != chapter_name || split[-1] != unit_name)
+        next if split[-2] != chapter_name || split[-1] != unit_name
 
         Daigaku::ReferenceSolution.new(path)
       end

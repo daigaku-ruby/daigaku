@@ -1,18 +1,15 @@
 require 'spec_helper'
 
 describe Daigaku::Markdown::RubyDoc do
-
-  [:parse].each do |class_method|
-    it "responds to #{class_method}" do
-      expect(Daigaku::Markdown::RubyDoc).to respond_to class_method
-    end
+  it 'responds to .parse' do
+    expect(Daigaku::Markdown::RubyDoc).to respond_to :parse
   end
 
   def parse(text)
     Daigaku::Markdown::RubyDoc.parse(text)
   end
 
-  describe '::parse' do
+  describe '.parse' do
     context 'for a text containing a core doc markup' do
       let(:base_url) { "http://ruby-doc.org/core-#{RUBY_VERSION}" }
 

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Daigaku::Coloring do
-
   subject do
     class Example
       include Daigaku::Coloring
