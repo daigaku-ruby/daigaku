@@ -6,20 +6,20 @@ module Daigaku
     extend ActiveSupport::Concern
 
     included do
-      COLOR_TEXT = Curses::COLOR_YELLOW         unless defined? COLOR_TEXT
-      COLOR_TEXT_EMPHASIZE = Curses::COLOR_CYAN unless defined? COLOR_TEXT_EMPHASIZE
-      COLOR_HEADING = Curses::COLOR_WHITE       unless defined? COLOR_HEADING
-      COLOR_RED = Curses::COLOR_BLUE            unless defined? COLOR_RED
-      COLOR_GREEN = Curses::COLOR_MAGENTA       unless defined? COLOR_GREEN
-      COLOR_YELLOW = Curses::COLOR_RED          unless defined? COLOR_YELLOW
+      COLOR_TEXT           = Curses::COLOR_YELLOW  unless defined? COLOR_TEXT
+      COLOR_TEXT_EMPHASIZE = Curses::COLOR_CYAN    unless defined? COLOR_TEXT_EMPHASIZE
+      COLOR_HEADING        = Curses::COLOR_WHITE   unless defined? COLOR_HEADING
+      COLOR_RED            = Curses::COLOR_BLUE    unless defined? COLOR_RED
+      COLOR_GREEN          = Curses::COLOR_MAGENTA unless defined? COLOR_GREEN
+      COLOR_YELLOW         = Curses::COLOR_RED     unless defined? COLOR_YELLOW
 
-      BACKGROUND = Curses::COLOR_WHITE          unless defined? BACKGROUND
-      FONT = Curses::COLOR_BLACK                unless defined? FONT
-      FONT_HEADING = Curses::COLOR_MAGENTA      unless defined? FONT_HEADING
-      FONT_EMPHASIZE = Curses::COLOR_BLUE       unless defined? FONT_EMPHASIZE
-      RED = Curses::COLOR_RED                   unless defined? RED
-      GREEN = Curses::COLOR_GREEN               unless defined? GREEN
-      YELLOW = Curses::COLOR_YELLOW             unless defined? YELLOW
+      BACKGROUND           = Curses::COLOR_WHITE   unless defined? BACKGROUND
+      FONT                 = Curses::COLOR_BLACK   unless defined? FONT
+      FONT_HEADING         = Curses::COLOR_MAGENTA unless defined? FONT_HEADING
+      FONT_EMPHASIZE       = Curses::COLOR_BLUE    unless defined? FONT_EMPHASIZE
+      RED                  = Curses::COLOR_RED     unless defined? RED
+      GREEN                = Curses::COLOR_GREEN   unless defined? GREEN
+      YELLOW               = Curses::COLOR_YELLOW  unless defined? YELLOW
 
       protected
 

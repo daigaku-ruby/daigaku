@@ -1,10 +1,8 @@
 require 'thor'
+require_relative 'output'
 
 module Daigaku
   module Terminal
-
-    require_relative 'output'
-
     class Setup < Thor
       include Terminal::Output
 
@@ -19,7 +17,7 @@ module Daigaku
           path = get 'path:'
 
           begin
-            @daigaku_path = File.expand_path("#{path}", Dir.pwd)
+            @daigaku_path = File.expand_path(path.to_s, Dir.pwd)
           rescue
             say_warning "#{path} is no valid path name. Try another!"
             next
@@ -29,7 +27,7 @@ module Daigaku
           say "\"#{@daigaku_path}\""
 
           confirmation = get '(yes|no)'
-          break if confirmation.downcase == 'yes'
+          break if confirmation.casecmp('yes').zero?
 
           empty_line
           say 'No Problem. Just type another one!'
@@ -61,8 +59,8 @@ module Daigaku
         solutions_path = options[:paths] || options[:solutions_path]
 
         if courses_path.nil? && solutions_path.nil?
-          say_warning "Please specify options when using this command!"
-          say %x{ daigaku setup help set }
+          say_warning 'Please specify options when using this command!'
+          say `daigaku setup help set`
           return
         end
 
@@ -76,11 +74,12 @@ module Daigaku
       private
 
       def prepare_directories(path)
-        courses_dir = Daigaku::Configuration::COURSES_DIR
+        courses_dir  = Daigaku::Configuration::COURSES_DIR
         courses_path = File.join(path, courses_dir)
+
         Daigaku.config.courses_path = courses_path
 
-        solutions_dir = Daigaku::Configuration::SOLUTIONS_DIR
+        solutions_dir  = Daigaku::Configuration::SOLUTIONS_DIR
         solutions_path = File.join(path, solutions_dir)
 
         if Dir.exist? solutions_path
@@ -92,7 +91,7 @@ module Daigaku
 
         text = [
           "Your Daigaku directory is now set up.\n",
-          "Daigaku created/updated following two paths for you:",
+          'Daigaku created/updated following two paths for you:',
           courses_path,
           solutions_path
         ]
@@ -101,15 +100,11 @@ module Daigaku
       end
 
       def update_config(attribute, value)
-        begin
-          path = File.expand_path(value, Dir.pwd)
-          Daigaku.config.send("#{attribute}=", path)
-        rescue Exception => e
-          say_warning e.message
-        end
+        path = File.expand_path(value, Dir.pwd)
+        Daigaku.config.send("#{attribute}=", path)
+      rescue StandardError => e
+        say_warning e.message
       end
-
     end
-
   end
 end

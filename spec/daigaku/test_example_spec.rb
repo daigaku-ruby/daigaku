@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Daigaku::TestExample do
+  subject { Daigaku::TestExample.new(description: '', status: '') }
+
   it { is_expected.to respond_to :description }
   it { is_expected.to respond_to :status }
   it { is_expected.to respond_to :message }

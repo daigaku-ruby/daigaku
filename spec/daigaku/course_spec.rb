@@ -172,7 +172,7 @@ describe Daigaku::Course do
       context 'if an error occurs' do
         before do
           allow_any_instance_of(Zip::File)
-            .to receive(:extract) { raise Exception.new, 'error' }
+            .to receive(:extract) { raise StandardError.new, 'error' }
         end
 
         it 'restores an old state' do

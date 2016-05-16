@@ -1,25 +1,24 @@
-module Daigaku
-  require 'fileutils'
+require 'fileutils'
 
+module Daigaku
   class Test
+    CODE_REGEX = /\[\['solution::code'\]\]/
 
     attr_reader :path
 
-    CODE_REGEX = /\[\['solution::code'\]\]/
-
     def initialize(path)
       @unit_path = path
-      @path = Dir[File.join(path, '*spec.rb')].first
+      @path      = Dir[File.join(path, '*spec.rb')].first
     end
 
     def run(solution_code)
-      spec_code = File.read(@path)
+      spec_code         = File.read(@path)
       patched_spec_code = insert_code(spec_code, solution_code.to_s)
 
       temp_spec = File.join(File.dirname(@path), "temp_#{File.basename(@path)}")
       create_temp_spec(temp_spec, patched_spec_code)
 
-      result = %x{ rspec --color --format j #{temp_spec} }
+      result = `rspec --color --format j #{temp_spec}`
       remove_file(temp_spec)
 
       TestResult.new(result)
@@ -40,7 +39,5 @@ module Daigaku
     def remove_file(path)
       FileUtils.rm(path) if File.exist?(path)
     end
-
   end
-
 end

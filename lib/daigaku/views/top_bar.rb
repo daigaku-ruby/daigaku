@@ -1,6 +1,5 @@
 module Daigaku
   module Views
-
     class TopBar
       include Curses
 
@@ -10,8 +9,8 @@ module Daigaku
 
       def initialize(window, text = '')
         @height = HEIGHT
-        @width = window.maxx
-        @panel = create_panel(window, @width, @height, text)
+        @width  = window.maxx
+        @panel  = create_panel(window, @width, @height, text)
       end
 
       def show
@@ -21,7 +20,7 @@ module Daigaku
       private
 
       def create_panel(window, width, height, text)
-        panel = window.subwin(height, window.maxx, 0, 0)
+        panel = window.subwin(height, width, 0, 0)
 
         panel.setpos(1, 1)
         panel.print_markdown(text)
@@ -35,6 +34,5 @@ module Daigaku
         panel.write(text, Window::COLOR_2)
       end
     end
-
   end
 end

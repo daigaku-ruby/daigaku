@@ -3,13 +3,12 @@ require 'cgi'
 module Daigaku
   class Markdown
     class RubyDoc
-
-      RUBY_DOC_URL    = "http://ruby-doc.org".freeze
+      RUBY_DOC_URL    = 'http://ruby-doc.org'.freeze
       CORE_BASE_URL   = "#{RUBY_DOC_URL}/core-#{RUBY_VERSION}".freeze
       STDLIB_BASE_URL = "#{RUBY_DOC_URL}/stdlib-#{RUBY_VERSION}".freeze
 
-      CORE_REGEX      = /\(ruby-doc core:\s?(.*)\)/.freeze
-      STDLIB_REGEX    = /\(ruby-doc stdlib:\s?(.*)\)/.freeze
+      CORE_REGEX      = /\(ruby-doc core:\s?(.*)\)/
+      STDLIB_REGEX    = /\(ruby-doc stdlib:\s?(.*)\)/
 
       class << self
         def parse(text)
@@ -86,8 +85,8 @@ module Daigaku
         method = text.split(/::|#/).last
         return '' unless downcased?(method)
 
-        method_type = text.match(/#/) ? 'i' : 'c'
-        method_name = CGI.escape(method.strip).gsub('%', '-').gsub(/\A-/, '')
+        method_type = text =~ /#/ ? 'i' : 'c'
+        method_name = CGI.escape(method.strip).tr('%', '-').gsub(/\A-/, '')
         "#method-#{method_type}-#{method_name}"
       end
 
@@ -100,7 +99,6 @@ module Daigaku
       def downcased?(text)
         text == text.downcase
       end
-
     end
   end
 end

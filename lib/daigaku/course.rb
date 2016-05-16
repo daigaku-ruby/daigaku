@@ -2,12 +2,11 @@ require 'fileutils'
 
 module Daigaku
   class Course
-
     attr_reader :title, :path, :author, :link
 
     def initialize(path)
-      @path = path
-      @title = File.basename(path).gsub(/\_+/, ' ')
+      @path   = path
+      @title  = File.basename(path).gsub(/\_+/, ' ')
       @author = QuickStore.store.get(key(:author))
     end
 
@@ -16,11 +15,11 @@ module Daigaku
     end
 
     def started?
-      chapters.reduce(false) { |started, chapter| started ||= chapter.started? }
+      chapters.any?(&:started?)
     end
 
     def mastered?
-      chapters.reduce(true) { |mastered, chapter| mastered &&= chapter.mastered? }
+      chapters.all?(&:mastered?)
     end
 
     def key(key_name)
@@ -44,7 +43,6 @@ module Daigaku
 
         Zip::File.open(file_path) do |zip_file|
           zip_file.each do |entry|
-
             if options[:github_repo]
               first, *others = entry.to_s.split('/')
               directory = File.join(first.split('-')[0..-2].join('-'), others)
@@ -66,10 +64,13 @@ module Daigaku
         end
 
         FileUtils.rm(file_path)
-      rescue Exception => e
+      rescue StandardError => e
         puts e
         old_dir = "#{course_dir}_old/"
-        FileUtils.copy_entry(old_dir, "#{course_dir}/", true) if Dir.exist?(old_dir)
+
+        if Dir.exist?(old_dir)
+          FileUtils.copy_entry(old_dir, "#{course_dir}/", true)
+        end
       ensure
         old_dir = "#{course_dir}_old/"
         FileUtils.rm_r(old_dir) if Dir.exist?(old_dir)

@@ -6,7 +6,6 @@ Dir[File.join("#{File.dirname(__FILE__)}/**/*.rb")].sort.each do |file|
 end
 
 module Daigaku
-
   class << self
     def config
       Configuration.instance

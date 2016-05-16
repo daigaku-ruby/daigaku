@@ -11,8 +11,8 @@ module Daigaku
       init_colors
     end
 
-    def write(text, color = COLOR_TEXT, text_decoration = Curses::A_NORMAL )
-      self.attron(Curses.color_pair(color) | text_decoration) { self << text.to_s }
+    def write(text, color = COLOR_TEXT, text_decoration = Curses::A_NORMAL)
+      attron(Curses.color_pair(color) | text_decoration) { self << text.to_s }
     end
 
     def emphasize(text, text_decoration = Curses::A_NORMAL)
@@ -69,35 +69,30 @@ module Daigaku
       if object.respond_to?(:mastered?) && object.respond_to?(:started?)
         if object.mastered?
           green(text, text_decoration)
-          write ' '
         elsif object.started?
           yellow(text, text_decoration)
-          write ' '
         else
           red(text, text_decoration)
-          write ' '
         end
       elsif object.respond_to?(:mastered?)
         if object.mastered?
           green(text, text_decoration)
-          write ' '
         else
           red(text, text_decoration)
-          write ' '
         end
       end
+
+      write ' '
     end
 
     def print_markdown(text)
       clear_line
 
-      h1 = /^\#{1}[^#]+/    # '# heading'
-      h2 = /^\#{2}[^#]+/    # '## sub heading'
-      bold = /(\*[^*]*\*)/  # '*text*'
-      line = /^-{3,}/       # '---' vertical line
-      code = /(\`*\`)/      # '`code line`'
-      ruby_doc_core = /(\(ruby-doc core:.*\))/ # '(ruby-doc core: Kernel#print)'
-      ruby_doc_stdlib = /(\(ruby-doc stdlib:.*\))/ # '(ruby-doc stdlib: CSV#Row::<<)'
+      h1   = /^\#{1}[^#]+/ # '# heading'
+      h2   = /^\#{2}[^#]+/ # '## sub heading'
+      bold = /(\*[^*]*\*)/ # '*text*'
+      line = /^-{3,}/      # '---' vertical line
+      code = /(\`*\`)/     # '`code line`'
 
       text = Markdown::RubyDoc.parse(text)
 
@@ -108,7 +103,7 @@ module Daigaku
         text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
         emphasize(text.gsub(/^##\s?/, ''), text_decoration)
       when (code || bold)
-        emphasized = false
+        emphasized  = false
         highlighted = false
 
         text.chars.each_with_index do |char, index|
@@ -122,7 +117,7 @@ module Daigaku
             next
           end
 
-          character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+          character = text[index..(index + 1)].to_s == '\\*' ? '' : char
 
           if highlighted
             red(character)
@@ -139,7 +134,7 @@ module Daigaku
             next
           end
 
-          character = "#{text[index..(index + 1)]}" == '\\*' ? '' : char
+          character = text[index..(index + 1)].to_s == '\\*' ? '' : char
           emphasized ? emphasize(character) : write(character)
         end
       when line
@@ -148,6 +143,5 @@ module Daigaku
         write(text.gsub(/(\\#)/, '#'))
       end
     end
-
   end
 end
