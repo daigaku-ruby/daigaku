@@ -35,7 +35,7 @@ module Daigaku
 
       private
 
-      def set_head(window)
+      def print_head(window)
         window.setpos(0, 1)
         window.clear_line
 
@@ -55,7 +55,7 @@ module Daigaku
       def draw(window)
         @top = 0
         window.attrset(A_NORMAL)
-        set_head(window)
+        print_head(window)
 
         @lines.each_with_index do |line, index|
           window.setpos(index + 2, 1)
@@ -70,7 +70,7 @@ module Daigaku
         return unless @top > 0
 
         window.scrl(-1)
-        set_head(window)
+        print_head(window)
 
         @top -= 1
         line = @lines[@top]
@@ -83,7 +83,7 @@ module Daigaku
       def scroll_down(window)
         if @top + Curses.lines <= @lines.count + @top_bar_height + @head_height
           window.scrl(1)
-          set_head(window)
+          print_head(window)
 
           @top += 1
           line = @lines[@top + window.maxy - 1]
