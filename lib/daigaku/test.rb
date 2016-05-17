@@ -32,7 +32,7 @@ module Daigaku
 
     def create_temp_spec(path, content)
       base_path = File.dirname(path)
-      FileUtils.mkdir_p(base_path) unless Dir.exist?(base_path)
+      FileUtils.makedirs(base_path) unless Dir.exist?(base_path)
       File.open(path, 'w') { |f| f.puts content }
     end
 
