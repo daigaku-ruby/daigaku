@@ -19,7 +19,7 @@ module Daigaku
       subcommand 'setup', Terminal::Setup
 
       def self.start
-        Daigaku.config.import!
+        Daigaku.config.import
         super
       end
 

@@ -54,9 +54,10 @@ module Daigaku
       end
     end
 
-    def import!
-      @courses_path   = QuickStore.store.courses_path || @courses_path
-      @solutions_path = QuickStore.store.solutions_path || @solutions_path
+    def import
+      store           = QuickStore.store
+      @courses_path   = store.courses_path || @courses_path
+      @solutions_path = store.solutions_path || @solutions_path
       self
     end
 

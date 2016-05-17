@@ -9,7 +9,7 @@ describe Daigaku::Configuration do
   it { is_expected.to respond_to :courses_path= }
   it { is_expected.to respond_to :storage_file }
   it { is_expected.to respond_to :save }
-  it { is_expected.to respond_to :import! }
+  it { is_expected.to respond_to :import }
   it { is_expected.to respond_to :summary }
 
   before do
@@ -83,7 +83,7 @@ describe Daigaku::Configuration do
     end
   end
 
-  describe '#import!' do
+  describe '#import' do
     context 'with non-existent daigaku store entries:' do
       before do
         FileUtils.rm(local_storage_file) if File.exist?(local_storage_file)
@@ -94,7 +94,7 @@ describe Daigaku::Configuration do
         QuickStore.store.solutions_path = nil
         subject.instance_variable_set(:@courses_path, local_courses_path)
 
-        loaded_config = subject.import!
+        loaded_config = subject.import
 
         expect(loaded_config.courses_path).to eq local_courses_path
         expect { loaded_config.solutions_path }
@@ -104,7 +104,7 @@ describe Daigaku::Configuration do
 
     context 'with existing daigaku storage file:' do
       it 'returns a Daigaku::Configuration' do
-        expect(subject.import!).to be_a Daigaku::Configuration
+        expect(subject.import).to be_a Daigaku::Configuration
       end
 
       it 'loads the daigaku store entries into the configuration' do
@@ -125,7 +125,7 @@ describe Daigaku::Configuration do
         subject.solutions_path = temp_solutions_path
 
         # fetch stored settings
-        subject.import!
+        subject.import
         expect(File.exist?(local_storage_file)).to be_truthy
         expect(subject.courses_path).to eq wanted_courses_path
         expect(subject.solutions_path).to eq wanted_solutions_path
