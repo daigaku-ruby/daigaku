@@ -70,7 +70,7 @@ describe Daigaku::Configuration do
 
     it 'saves the configured solution_path to the daigaku store' do
       path = File.join(test_basepath, 'test_solutions')
-      FileUtils.makedirs(path)
+      create_directory(path)
       subject.solutions_path = path
       subject.save
 
@@ -85,9 +85,7 @@ describe Daigaku::Configuration do
 
   describe '#import' do
     context 'with non-existent daigaku store entries:' do
-      before do
-        FileUtils.rm(local_storage_file) if File.exist?(local_storage_file)
-      end
+      before { remove_file(local_storage_file) }
 
       it 'uses the default configuration' do
         QuickStore.store.courses_path   = nil
@@ -112,8 +110,8 @@ describe Daigaku::Configuration do
         wanted_solutions_path = solutions_basepath
         temp_solutions_path   = File.join(solutions_basepath, 'temp')
 
-        FileUtils.makedirs(wanted_solutions_path)
-        FileUtils.makedirs(temp_solutions_path)
+        create_directory(wanted_solutions_path)
+        create_directory(temp_solutions_path)
 
         # save wanted settings
         subject.courses_path = wanted_courses_path

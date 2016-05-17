@@ -117,7 +117,7 @@ describe Daigaku::Course do
     after do
       cleanup_download(@zip_file_name)
       dir = File.dirname(@zip_file_path)
-      FileUtils.rm_r(dir) if Dir.exist?(dir)
+      remove_directory(dir)
     end
 
     def expect_course_dirs_exists_to_be(boolean)
@@ -160,7 +160,7 @@ describe Daigaku::Course do
         @path = File.join(File.dirname(dir), 'unzip', File.basename(dir))
         @old_chapter_dir = File.join(@path, 'Old_chapter')
 
-        FileUtils.mkdir_p(@old_chapter_dir)
+        create_directory(@old_chapter_dir)
       end
 
       it 'overwrites all chapters' do
@@ -191,7 +191,7 @@ describe Daigaku::Course do
 
     context 'with the github_repo option:' do
       before { @github_course_dir = prepare_github_course }
-      after  { FileUtils.rm_r(@github_course_dir) }
+      after  { remove_directory(@github_course_dir) }
 
       it 'removes the "-master" from the root directory' do
         zip_file_name = 'unzip/repo-master.zip'

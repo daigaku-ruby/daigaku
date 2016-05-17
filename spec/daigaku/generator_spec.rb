@@ -48,7 +48,8 @@ describe Daigaku::Generator do
 
     context 'with a missing solutions_path' do
       before do
-        FileUtils.rm_r(solutions_basepath) if Dir.exist?(solutions_basepath)
+        remove_directory(solutions_basepath)
+
         base_path       = File.dirname(Daigaku.config.courses_path)
         @solutions_path = File.join(base_path, 'solutions')
 
