@@ -47,7 +47,7 @@ module Daigaku
       def draw(window, active_index = 0)
         window.attrset(A_NORMAL)
         window.setpos(0, 1)
-        window.print_markdown header_text
+        window.print_markdown(header_text)
 
         items.each_with_index do |item, index|
           window.setpos(index + 2, 1)

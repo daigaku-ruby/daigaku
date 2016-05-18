@@ -48,6 +48,5 @@ module Daigaku
         sub_window
       end
     end
-
   end
 end

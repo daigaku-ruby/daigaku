@@ -29,10 +29,6 @@ module Daigaku
 
         panel
       end
-
-      def emphasized(panel, text)
-        panel.write(text, Window::COLOR_2)
-      end
     end
   end
 end
