@@ -8,34 +8,34 @@ module Daigaku
       include Wisper::Publisher
 
       TOP_BAR_TEXT = [
-          'Scroll with *UP KEY* and *DOWN KEY*',
-          'Open solution file with *o*',
-          'Verify solution with *v*',
-          'Clear validation with *c*',
-          'Exit with *ESC*'
-          ].join('  |  ')
+        'Scroll with *UP KEY* and *DOWN KEY*',
+        'Open solution file with *o*',
+        'Verify solution with *v*',
+        'Clear validation with *c*',
+        'Exit with *ESC*'
+      ].join('  |  ').freeze
 
       def initialize
         @lines = []
-        @top = nil
+        @top   = nil
       end
 
       def enter(course, chapter, unit)
-        @course = course
+        @course  = course
         @chapter = chapter
-        @unit = unit
+        @unit    = unit
 
         @test_result_lines = nil
-        @lines = @unit.task.markdown.lines
-        @top_bar_height = 4
-        @head_height = 2
+        @lines             = @unit.task.markdown.lines
+        @top_bar_height    = 4
+        @head_height       = 2
 
         initialize_window(@lines.count + @top_bar_height + @head_height)
       end
 
       private
 
-      def set_head(window)
+      def print_head(window)
         window.setpos(0, 1)
         window.clear_line
 
@@ -55,7 +55,7 @@ module Daigaku
       def draw(window)
         @top = 0
         window.attrset(A_NORMAL)
-        set_head(window)
+        print_head(window)
 
         @lines.each_with_index do |line, index|
           window.setpos(index + 2, 1)
@@ -67,24 +67,23 @@ module Daigaku
       end
 
       def scroll_up(window)
-        if @top > 0
-          window.scrl(-1)
-          set_head(window)
+        return unless @top > 0
 
-          @top -= 1
-          line = @lines[@top]
+        window.scrl(-1)
+        print_head(window)
 
-          if line
-            window.setpos(2, 1)
-            print_line(window, line, @top)
-          end
-        end
+        @top -= 1
+        line = @lines[@top]
+
+        return unless line
+        window.setpos(2, 1)
+        print_line(window, line, @top)
       end
 
       def scroll_down(window)
         if @top + Curses.lines <= @lines.count + @top_bar_height + @head_height
           window.scrl(1)
-          set_head(window)
+          print_head(window)
 
           @top += 1
           line = @lines[@top + window.maxy - 1]
@@ -125,47 +124,47 @@ module Daigaku
           scrollable = true
 
           case char
-            when 'v' # verify
-              print_test_results(window)
-              return
-            when 'c' # clear
-              reset_screen(window)
-              return
-            when 'o' # open solution file
-              open_editor(@unit.solution.path)
-            when Curses::KEY_DOWN, Curses::KEY_CTRL_N
-              scrollable = scroll_down(window)
-            when Curses::KEY_UP, Curses::KEY_CTRL_P
-              scrollable = scroll_up(window)
-            when Curses::KEY_NPAGE, ?\s  # white space
-              0.upto(window.maxy - 2) do |n|
-                scrolled = scroll_down(window)
+          when 'v' # verify
+            print_test_results
+            return
+          when 'c' # clear
+            reset_screen
+            return
+          when 'o' # open solution file
+            open_editor(@unit.solution.path)
+          when Curses::KEY_DOWN, Curses::KEY_CTRL_N
+            scrollable = scroll_down(window)
+          when Curses::KEY_UP, Curses::KEY_CTRL_P
+            scrollable = scroll_up(window)
+          when Curses::KEY_NPAGE, '?\s' # white space
+            0.upto(window.maxy - 2) do |n|
+              scrolled = scroll_down(window)
 
-                unless scrolled
-                  scrollable = false if n == 0
-                  break
-                end
+              unless scrolled
+                scrollable = false if n == 0
+                break
               end
-            when Curses::KEY_PPAGE
-              0.upto(window.maxy - 2) do |n|
-                scrolled = scroll_up(window)
+            end
+          when Curses::KEY_PPAGE
+            0.upto(window.maxy - 2) do |n|
+              scrolled = scroll_up(window)
 
-                unless scrolled
-                  scrollable = false if n == 0
-                  break
-                end
+              unless scrolled
+                scrollable = false if n == 0
+                break
               end
-            when Curses::KEY_LEFT, Curses::KEY_CTRL_T
-              while scroll_up(window)
-              end
-            when Curses::KEY_RIGHT, Curses::KEY_CTRL_B
-              while scroll_down(window)
-              end
-            when Curses::KEY_BACKSPACE
-              broadcast(:reenter, @course, @chapter, @unit)
-              return
-            when 27 # ESC
-              exit
+            end
+          when Curses::KEY_LEFT, Curses::KEY_CTRL_T
+            while scroll_up(window)
+            end
+          when Curses::KEY_RIGHT, Curses::KEY_CTRL_B
+            while scroll_down(window)
+            end
+          when Curses::KEY_BACKSPACE
+            broadcast(:reenter, @course, @chapter, @unit)
+            return
+          when 27 # ESC
+            exit
           end
 
           Curses.beep unless scrollable
@@ -184,8 +183,8 @@ module Daigaku
         end
       end
 
-      def print_test_results(window)
-        result = @unit.solution.verify!
+      def print_test_results
+        result             = @unit.solution.verify!
         @test_result_lines = test_result_lines(result)
 
         if result.passed?
@@ -193,7 +192,7 @@ module Daigaku
 
           unless code_lines.empty?
             code_lines.map! { |line| "  #{line}" }
-            code_lines.unshift('', "Reference code:", '')
+            code_lines.unshift('', 'Reference code:', '')
           end
 
           @test_result_lines += code_lines
@@ -203,13 +202,15 @@ module Daigaku
         @examples = result.examples
 
         @example_heights = @examples.reduce({}) do |hash, example|
-          start = hash.values.reduce(0) { |sum, r| sum += r.count }
+          start = hash.values.reduce(0) { |sum, results| sum + results.count }
           range = (start..(start + example.message.split("\n").count) + 2)
           hash[hash.keys.count] = range
           hash
         end
 
-        height = [@lines.count + @top_bar_height + @head_height, Curses.lines].max
+        lines_count = @lines.count + @top_bar_height + @head_height
+        height      = [lines_count, Curses.lines].max
+
         initialize_window(height)
       end
 
@@ -222,17 +223,19 @@ module Daigaku
       def code_error_lines(code)
         begin
           eval(code)
-        rescue Exception => e
+        rescue StandardError => e
           return e.inspect.gsub(/(^.*#<|>.*$)/, '').lines.map(&:rstrip)
         end
 
         []
       end
 
-      def reset_screen(window)
+      def reset_screen
         @test_result_lines = nil
-        @lines = @unit.task.markdown.lines
-        height = [@lines.count + @top_bar_height + @head_height, Curses.lines].max
+        @lines             = @unit.task.markdown.lines
+        lines_count        = @lines.count + @top_bar_height + @head_height
+        height             = [lines_count, Curses.lines].max
+
         initialize_window(height)
       end
 
@@ -247,6 +250,5 @@ module Daigaku
         heights.values.index { |range| range.include?(index) }.to_i
       end
     end
-
   end
 end

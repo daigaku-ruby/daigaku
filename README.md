@@ -16,7 +16,7 @@ language-explaining programming tasks.
 ## Installation
 
 First of all make sure Ruby is installed on your computer.
-Daigaku works with [MRI Ruby](https://www.ruby-lang.org/en/documentation/installation/) v2.x and [Rubinius](http://rubini.us/doc/en/getting-started/) v2.x.
+Daigaku works with [MRI Ruby](https://www.ruby-lang.org/en/documentation/installation/) v2.2.3 or higher.
 
 Then open a terminal and install Daigaku by running:
 

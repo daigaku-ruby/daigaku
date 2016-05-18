@@ -2,7 +2,6 @@ require 'wisper'
 
 module Daigaku
   module Views
-
     class Menu
       include Views
       include Wisper::Publisher
@@ -12,7 +11,9 @@ module Daigaku
         'Enter menu with *RETURN*',
         'Go back with *BACKSPACE*',
         'Exit with *ESC*'
-      ].join('  |  ')
+      ].join('  |  ').freeze
+
+      attr_writer :items_info
 
       def initialize
         @position = 0
@@ -52,7 +53,7 @@ module Daigaku
           window.setpos(index + 2, 1)
           window.print_indicator(models[index])
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
-          window.write " #{item.to_s} "
+          window.write " #{item} "
           window.attrset(A_NORMAL)
           window.write " #{items_info[index].try(:join, ' ')}"
         end
@@ -61,29 +62,24 @@ module Daigaku
       end
 
       def interact_with(window)
-        raise "Please implement the method #interact_with!"
+        raise 'Please implement the method #interact_with!'
       end
 
       def models
-        raise "Please implement the method #models!"
+        raise 'Please implement the method #models!'
       end
 
       def items
-        raise "Please implement the method #items!"
+        raise 'Please implement the method #items!'
       end
 
       def header_text
-        raise "Please implement the method #header_text!"
+        raise 'Please implement the method #header_text!'
       end
 
       def items_info
         @items_info || []
       end
-
-      def items_info=(items_info)
-        @items_info = items_info
-      end
     end
-
   end
 end

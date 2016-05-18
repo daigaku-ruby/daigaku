@@ -1,14 +1,12 @@
 module Daigaku
   module Views
-
     class Splash
       include Views
 
       def initialize
-        title = "DAIGAKU"
-        subtitle = "Learning the Ruby programming language dead easy."
-
-        panel = default_window
+        title    = 'DAIGAKU'
+        subtitle = 'Learning the Ruby programming language dead easy.'
+        panel    = default_window
 
         lines.times do |line|
           panel.setpos(line, 0)
@@ -43,13 +41,13 @@ module Daigaku
 
       def ruby_ascii_art
         [
-            "  ___________  ",
-            " /.\\  /.\\  /.\\ ",
-            "/___\\/___\\/___\\",
-            " \\  \\  . / . / ",
-            "   \\ \\ ./ ./   ",
-            "    \\\\ / /    ",
-            "      \\./     "
+          '  ___________  ',
+          ' /.\\  /.\\  /.\\ ',
+          '/___\\/___\\/___\\',
+          ' \\  \\  . / . / ',
+          '   \\ \\ ./ ./   ',
+          '    \\\\ / /    ',
+          '      \\./     '
         ]
       end
     end

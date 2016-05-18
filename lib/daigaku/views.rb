@@ -23,7 +23,7 @@ module Daigaku
         curs_set(0) # invisible cursor
 
         height ||= lines
-        width ||= cols + 1
+        width  ||= cols + 1
 
         window = Daigaku::Window.new(height, width, top, left)
 
@@ -40,8 +40,10 @@ module Daigaku
 
       def sub_window_below_top_bar(window, top_bar)
         top_bar.show
-        top = top_bar.height
+
+        top        = top_bar.height
         sub_window = window.subwin(window.maxy - top, window.maxx, top, 0)
+
         sub_window.keypad(true)
         sub_window
       end

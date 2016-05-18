@@ -1,10 +1,9 @@
 module Daigaku
   class Chapter
-
     attr_reader :title, :path
 
     def initialize(path)
-      @path = path
+      @path  = path
       @title = File.basename(path).gsub(/\_+/, ' ')
     end
 
@@ -13,11 +12,11 @@ module Daigaku
     end
 
     def started?
-      units.reduce(false) { |started, unit| started ||= unit.mastered? }
+      units.any?(&:mastered?)
     end
 
     def mastered?
-      units.reduce(true) { |mastered, unit| mastered &&= unit.mastered? }
+      units.all?(&:mastered?)
     end
   end
 end

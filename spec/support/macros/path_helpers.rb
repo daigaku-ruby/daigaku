@@ -1,16 +1,16 @@
 module PathHelpers
-  LOCAL_DIR = '.daigaku'
-  CONFIGURATION_FILE = 'daigaku.settings'
-  COURSES = 'courses'
-  SOLUTIONS = 'solutions'
-  TEMP_PATH = File.expand_path("../../../../tmp/", __FILE__)
-  COURSE_DIR_NAMES = ['Course_A', 'Course_B']
-  CHAPTER_DIR_NAMES = ['1_Chapter-A', '2_Chapter-B']
-  UNIT_DIR_NAMES = ['1_unit-a', '2_unit-b']
-  TASK_NAME = 'task.md'
-  REFERENCE_SOLUTION_NAME = 'solution.rb'
-  TEST_NAME = 'solution_spec.rb'
-  STORAGE_FILE = 'daigaku.db.yml'
+  LOCAL_DIR               = '.daigaku'.freeze
+  CONFIGURATION_FILE      = 'daigaku.settings'.freeze
+  COURSES                 = 'courses'.freeze
+  SOLUTIONS               = 'solutions'.freeze
+  TEMP_PATH               = File.expand_path('../../../../tmp/', __FILE__).freeze
+  COURSE_DIR_NAMES        = %w(Course_A Course_B).freeze
+  CHAPTER_DIR_NAMES       = %w(1_Chapter-A 2_Chapter-B).freeze
+  UNIT_DIR_NAMES          = %w(1_unit-a 2_unit-b).freeze
+  TASK_NAME               = 'task.md'.freeze
+  REFERENCE_SOLUTION_NAME = 'solution.rb'.freeze
+  TEST_NAME               = 'solution_spec.rb'.freeze
+  STORAGE_FILE            = 'daigaku.db.yml'.freeze
 
   def temp_basepath
     TEMP_PATH
@@ -86,17 +86,17 @@ module PathHelpers
 
   def all_solution_file_paths
     all_unit_dirs.map do |unit_dir|
-      underscored_unit_dir =  File.basename(unit_dir).gsub(/[\_\-\.]+/, '_')
+      underscored_unit_dir = File.basename(unit_dir).gsub(/[\_\-\.]+/, '_')
       file_name = underscored_unit_dir + Daigaku::Solution::FILE_SUFFIX
 
       unit_path = File.join(solutions_basepath, unit_dir.split('/')[-3..-1])
-      parts = File.join(File.dirname(unit_path), file_name).split('/')
+      parts     = File.join(File.dirname(unit_path), file_name).split('/')
 
       course_parts = parts[-3..-1].map do |part|
         part.gsub(/^[\d]+\_/, '').gsub(/[\_\-]+/, '_').downcase
       end
 
-      [*parts[0...-3], *course_parts].join('/')
+      (parts[0...-3] + course_parts).join('/')
     end
   end
 

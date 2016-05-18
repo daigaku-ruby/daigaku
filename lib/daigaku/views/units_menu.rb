@@ -2,21 +2,18 @@ require 'daigaku/views/menu'
 
 module Daigaku
   module Views
-
     class UnitsMenu < Menu
-
       private
 
       def before_enter(*args)
-        @course = args[0]
+        @course  = args[0]
         @chapter = args[1]
       end
 
       def before_reenter(*args)
-        @course = args[0]
-        @chapter = args[1]
-        @unit = args[2]
-
+        @course   = args[0]
+        @chapter  = args[1]
+        @unit     = args[2]
         @position = @chapter.units.find_index(@unit)
       end
 
@@ -27,18 +24,18 @@ module Daigaku
       def interact_with(window)
         while char = window.getch
           case char
-            when KEY_UP
-              @position -= 1
-            when KEY_DOWN
-              @position += 1
-            when 10 # Enter
-              broadcast(:enter, @course, @chapter, models[@position])
-              return
-            when 263 # Backspace
-              broadcast(:reenter, @course, @chapter)
-              return
-            when 27 # ESC
-              exit
+          when KEY_UP
+            @position -= 1
+          when KEY_DOWN
+            @position += 1
+          when 10 # Enter
+            broadcast(:enter, @course, @chapter, models[@position])
+            return
+          when 263 # Backspace
+            broadcast(:reenter, @course, @chapter)
+            return
+          when 27 # ESC
+            exit
           end
 
           @position = items.length - 1 if @position < 0
@@ -54,8 +51,6 @@ module Daigaku
       def items
         models.map(&:title)
       end
-
     end
-
   end
 end

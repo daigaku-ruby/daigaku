@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Daigaku::Views do
-
   subject do
     class Test
       include Daigaku::Views

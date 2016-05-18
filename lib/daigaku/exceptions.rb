@@ -1,5 +1,4 @@
 module Daigaku
-
   class Error < StandardError; end
   class CourseNotFoundError < Error; end
   class ChaptersNotFoundError < Error; end
@@ -15,5 +14,4 @@ module Daigaku
     class NoUrlError < Error; end
     class NoZipFileUrlError < Error; end
   end
-
 end

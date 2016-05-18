@@ -1,13 +1,13 @@
 module ContentHelpers
-
   TASK_FILE_CONTENT = [
-    "Heading\n======", "##Task",
-    "Solve this task!",
-    "##Hints",
-    "Just do it right..."
-  ].join("\n\n")
+    "Heading\n======",
+    '##Task',
+    'Solve this task!',
+    '##Hints',
+    'Just do it right...'
+  ].join("\n\n").freeze
 
-  SOLUTION_CONTENT = 'print "hello world".upcase'
+  SOLUTION_CONTENT = 'print "hello world".upcase'.freeze
 
   TEST_CONTENT = [
     "require 'rspec'\n",
@@ -20,12 +20,12 @@ module ContentHelpers
     "    allow(self).to receive(:print).and_return ''",
     "    expect_any_instance_of(String).to receive(:upcase).and_return('HELLO WORLD')\n",
     "    [['solution::code']]",
-    "  end",
-    "end"
-    ].join("\n")
+    '  end',
+    'end'
+  ].join("\n").freeze
 
   TEST_FAILED_JSON =
-    %Q#
+    '
       { "examples":
         [
           { "description": "description 1",
@@ -56,10 +56,10 @@ module ContentHelpers
       },
       "summary_line": "2 example, 1 failure"
     }
-  #
+  '.freeze
 
   TEST_PASSED_JSON =
-    %Q#
+    '
       { "examples":
         [
           { "description":"description 1",
@@ -85,10 +85,10 @@ module ContentHelpers
         },
         "summary_line":"2 example, 0 failures"
       }
-    #
+    '.freeze
 
-  TEST_PASSED_MESSAGE = "Your code passed all tests."
-  EXAMPLE_PASSED_MESSAGE = "Your code passed this requirement."
+  TEST_PASSED_MESSAGE    = 'Your code passed all tests.'.freeze
+  EXAMPLE_PASSED_MESSAGE = 'Your code passed this requirement.'.freeze
 
   def task_file_content
     TASK_FILE_CONTENT
@@ -125,5 +125,4 @@ module ContentHelpers
   def example_passed_message
     EXAMPLE_PASSED_MESSAGE
   end
-
 end

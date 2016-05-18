@@ -4,7 +4,6 @@ require 'colorize'
 
 module Daigaku
   module Terminal
-
     module Output
       extend ActiveSupport::Concern
 
@@ -73,6 +72,5 @@ module Daigaku
         end
       end
     end
-
   end
 end
