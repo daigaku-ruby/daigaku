@@ -1,7 +1,7 @@
 require 'cgi'
 
 module Daigaku
-  class Markdown
+  module Markdown
     class RubyDoc
       RUBY_DOC_URL    = 'http://ruby-doc.org'.freeze
       CORE_BASE_URL   = "#{RUBY_DOC_URL}/core-#{RUBY_VERSION}".freeze

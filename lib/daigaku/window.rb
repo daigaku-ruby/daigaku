@@ -50,13 +50,13 @@ module Daigaku
       write("#{prefix}#{text}", color, text_decoration)
     end
 
-    # clear_line(options =  {})
-    # options: [:color, :text_decoration, :start_pos, :end_pos]
+    # clear_line(options = {})
+    # options: [:color, :text_decoration, :start_pos, :end_pos, :text]
     def clear_line(options = {})
-      color = options[:color] || COLOR_TEXT
+      color           = options[:color] || COLOR_TEXT
       text_decoration = options[:text_decoration] || Curses::A_NORMAL
-      start = options[:start_pos] || 0
-      stop = options[:end_pos] || maxx
+      start           = options[:start_pos] || 0
+      stop            = options[:end_pos] || maxx
 
       x = curx
       setpos(cury, start)
@@ -88,60 +88,8 @@ module Daigaku
     def print_markdown(text)
       clear_line
 
-      h1   = /^\#{1}[^#]+/ # '# heading'
-      h2   = /^\#{2}[^#]+/ # '## sub heading'
-      bold = /(\*[^*]*\*)/ # '*text*'
-      line = /^-{3,}/      # '---' vertical line
-      code = /(\`*\`)/     # '`code line`'
-
-      text = Markdown::RubyDoc.parse(text)
-
-      case text
-      when h1
-        heading(text.gsub(/^#\s?/, ''))
-      when h2
-        text_decoration = Curses::A_UNDERLINE | Curses::A_NORMAL
-        emphasize(text.gsub(/^##\s?/, ''), text_decoration)
-      when (code || bold)
-        emphasized  = false
-        highlighted = false
-
-        text.chars.each_with_index do |char, index|
-          if char == '*' && text[index - 1] != '\\'
-            emphasized = !emphasized
-            next
-          end
-
-          if char == '`'
-            highlighted = !highlighted
-            next
-          end
-
-          character = text[index..(index + 1)].to_s == '\\*' ? '' : char
-
-          if highlighted
-            red(character)
-          elsif emphasized
-            emphasize(character)
-          else
-            write(character)
-          end
-        end
-      when bold
-        text.chars.each_with_index do |char, index|
-          if char == '*' && text[index - 1] != '\\'
-            emphasized = !emphasized
-            next
-          end
-
-          character = text[index..(index + 1)].to_s == '\\*' ? '' : char
-          emphasized ? emphasize(character) : write(character)
-        end
-      when line
-        write('-' * (Curses.cols - 2))
-      else
-        write(text.gsub(/(\\#)/, '#'))
-      end
+      printer = Markdown::Printer.new(window: self)
+      printer.print(text)
     end
   end
 end

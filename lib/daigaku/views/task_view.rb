@@ -1,8 +1,8 @@
+require 'wisper'
+require 'os'
+
 module Daigaku
   module Views
-    require 'wisper'
-    require 'os'
-
     class TaskView
       include Views
       include Wisper::Publisher
@@ -224,7 +224,7 @@ module Daigaku
         begin
           eval(code)
         rescue StandardError => e
-          return e.inspect.gsub(/(^.*#<|>.*$)/, '').lines.map(&:rstrip)
+          return e.inspect.gsub(/(\A.*#<|>.*$)/, '').lines.map(&:rstrip)
         end
 
         []
