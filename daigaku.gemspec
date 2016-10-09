@@ -26,8 +26,8 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'colorize',      '~> 0.7.5'
   spec.add_runtime_dependency 'rubyzip',       '~> 1.0'
   spec.add_runtime_dependency 'wisper',        '~> 1.6.1'
-  spec.add_runtime_dependency 'quick_store',   '~> 0.1'
-  spec.add_runtime_dependency 'code_breaker',  '~> 0.2'
+  spec.add_runtime_dependency 'quick_store',   '~> 0.2'
+  spec.add_runtime_dependency 'code_breaker',  '~> 0.3'
 
   spec.add_development_dependency 'bundler',     '~> 1.7'
   spec.add_development_dependency 'rake',        '~> 10.0'
