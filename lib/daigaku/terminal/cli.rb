@@ -1,13 +1,11 @@
 require 'thor'
+require_relative 'courses'
+require_relative 'solutions'
+require_relative 'setup'
+require_relative 'output'
 
 module Daigaku
   module Terminal
-
-    require_relative 'courses'
-    require_relative 'solutions'
-    require_relative 'setup'
-    require_relative 'output'
-
     class CLI < Thor
       include Terminal::Output
 
@@ -21,7 +19,7 @@ module Daigaku
       subcommand 'setup', Terminal::Setup
 
       def self.start
-        Daigaku.config.import!
+        Daigaku.config.import
         super
       end
 
@@ -40,7 +38,7 @@ module Daigaku
         generator = Generator.new
         generator.prepare
 
-        courses_path = Daigaku.config.courses_path
+        courses_path   = Daigaku.config.courses_path
         solutions_path = Daigaku.config.solutions_path
 
         generator.scaffold(courses_path, solutions_path)

@@ -3,7 +3,7 @@ module Daigaku
     attr_reader :markdown, :path
 
     def initialize(path)
-      @path = Dir[File.join(path, '*.md')].first
+      @path     = Dir[File.join(path, '*.md')].first
       @markdown = File.read(@path).strip
     end
   end

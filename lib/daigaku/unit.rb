@@ -1,10 +1,9 @@
 module Daigaku
   class Unit
-
     attr_reader :title, :task
 
     def initialize(path)
-      @path = path
+      @path  = path
       @title = File.basename(path).gsub(/\_+/, ' ')
     end
 
@@ -23,6 +22,5 @@ module Daigaku
     def mastered?
       solution.verified?
     end
-
   end
 end

@@ -1,13 +1,17 @@
+require 'os'
+require 'open-uri'
+require 'zip'
+require_relative 'output'
+
 module Daigaku
   module Terminal
-
-    require 'os'
-    require 'open-uri'
-    require 'zip'
-    require_relative 'output'
-
     class Courses < Thor
       include Terminal::Output
+
+      GITHUB         = /github\.com/
+      MASTER_ZIP_URL = %r{github.com\/(.*)\/archive\/master.zip}
+      URL            = /\A#{URI.regexp(%w(http https))}\z/
+      ZIP_FILE       = /\.zip/
 
       desc 'list', 'List your available daigaku courses'
       def list
@@ -22,11 +26,11 @@ module Daigaku
         url = GithubClient.master_zip_url(Daigaku.config.initial_course) if use_initial_course
         url = GithubClient.master_zip_url(options[:github]) if options[:github]
 
-        url_given = (url =~ /\A#{URI::regexp(['http', 'https'])}\z/)
-        github = use_initial_course || options[:github] || url.match(/github\.com/)
+        url_given = (url =~ URL)
+        github = use_initial_course || options[:github] || url.match(GITHUB)
 
         raise Download::NoUrlError unless url_given
-        raise Download::NoZipFileUrlError unless File.basename(url) =~ /\.zip/
+        raise Download::NoZipFileUrlError unless File.basename(url) =~ ZIP_FILE
 
         courses_path = Daigaku.config.courses_path
         FileUtils.makedirs(courses_path) unless Dir.exist?(courses_path)
@@ -37,7 +41,7 @@ module Daigaku
         course = Course.unzip(file_name, github_repo: github)
 
         if github
-          user_and_repo = url.match(/github.com\/(.*)\/archive\/master.zip/).captures.first
+          user_and_repo = url.match(MASTER_ZIP_URL).captures.first
           store_repo_data(options[:github] || user_and_repo)
         end
 
@@ -46,11 +50,11 @@ module Daigaku
         scaffold_solutions
 
         say_info "Successfully #{action} the course \"#{course.title}\"!"
-      rescue Download::NoUrlError => e
+      rescue Download::NoUrlError
         print_download_warning(url, "\"#{url}\" is not a valid URL!")
-      rescue Download::NoZipFileUrlError => e
+      rescue Download::NoZipFileUrlError
         print_download_warning(url, "\"#{url}\" is not a URL of a *.zip file!")
-      rescue Exception => e
+      rescue StandardError => e
         print_download_warning(url, e.message)
       ensure
         FileUtils.rm(file_name) if File.exist?(file_name.to_s)
@@ -124,7 +128,7 @@ module Daigaku
       end
 
       def store_repo_data(user_and_repo)
-        parts = (user_and_repo ||= Daigaku.config.initial_course).split('/')
+        parts  = (user_and_repo ||= Daigaku.config.initial_course).split('/')
         author = parts.first
         course = parts.second
 
@@ -164,7 +168,7 @@ module Daigaku
       def print_course_not_available(course_name)
         text = [
           "The course \"#{course_name}\" is not available in",
-          "\"#{Daigaku.config.courses_path}\".\n",
+          "\"#{Daigaku.config.courses_path}\".\n"
         ]
 
         say_warning text.join("\n")
@@ -174,6 +178,5 @@ module Daigaku
         end
       end
     end
-
   end
 end

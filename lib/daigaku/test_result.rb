@@ -1,8 +1,7 @@
+require 'json'
+
 module Daigaku
-
   class TestResult
-    require 'json'
-
     attr_reader :examples, :example_count, :failure_count
 
     def initialize(result_json)
@@ -17,9 +16,9 @@ module Daigaku
 
       @examples = @result[:examples].map do |example|
         description = example[:full_description]
-        status = example[:status]
-        exception = example[:exception]
-        message = exception ? exception[:message] : nil
+        status      = example[:status]
+        exception   = example[:exception]
+        message     = exception ? exception[:message] : nil
 
         TestExample.new(description: description, status: status, message: message)
       end
@@ -47,10 +46,10 @@ module Daigaku
 
     def build_failed_summary
       message = examples.map do |example|
-        "#{example.description}\n#{example.status}: #{example.message}"
+        "#{example.description}\n#{example.status}: #{example.message}".strip
       end
 
-      summary = message.map(&:strip).join("\n" * 3)
+      message.join("\n" * 3)
     end
 
     def syntax_error_json
@@ -59,7 +58,7 @@ module Daigaku
         examples: [
           {
             status: 'failed',
-            exception: { message: ":( You got an error in your code!" }
+            exception: { message: ':( You got an error in your code!' }
           }
         ]
       }
@@ -67,20 +66,18 @@ module Daigaku
   end
 
   class TestExample
-
     attr_reader :description, :status, :message
 
-    EXAMPLE_PASSED_MESSAGE = "Your code passed this requirement."
+    EXAMPLE_PASSED_MESSAGE = 'Your code passed this requirement.'.freeze
 
-    def initialize(args = {})
-      @description = args[:description]
-      @status = args[:status]
-      @message = args[:message] || EXAMPLE_PASSED_MESSAGE
+    def initialize(description:, status:, message: nil)
+      @description = description
+      @status      = status
+      @message     = message || EXAMPLE_PASSED_MESSAGE
     end
 
     def passed?
       @status == 'passed'
     end
   end
-
 end
