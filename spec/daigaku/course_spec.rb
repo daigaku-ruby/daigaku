@@ -143,9 +143,13 @@ describe Daigaku::Course do
     it 'returns the unzipped course' do
       dir    = course_dirs.first
       path   = File.join(File.dirname(dir), 'unzip', File.basename(dir))
-      course = Daigaku::Course.new(path)
 
-      expect(Daigaku::Course.unzip(@zip_file_path).to_json).to eq course.to_json
+      actual = Daigaku::Course.unzip(@zip_file_path)
+      expected = Daigaku::Course.new(path)
+
+      expect(actual.path).to eq expected.path
+      expect(actual.title).to eq expected.title
+      expect(actual.author).to eq expected.author
     end
 
     it 'removes the zip file' do

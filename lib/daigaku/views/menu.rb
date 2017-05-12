@@ -55,7 +55,7 @@ module Daigaku
           window.attrset(index == active_index ? A_STANDOUT : A_NORMAL)
           window.write " #{item} "
           window.attrset(A_NORMAL)
-          window.write " #{items_info[index].try(:join, ' ')}"
+          window.write " #{items_info[index] && items_info[index].join(' ')}"
         end
 
         window.refresh
