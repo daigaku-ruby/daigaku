@@ -66,7 +66,7 @@ module ResourceHelpers
     first_course_matches = name.match(course_dirs.first)
 
     if multiple_courses
-      first_course_matches || name.match(course_dirs.second)
+      first_course_matches || name.match(course_dirs[1])
     else
       first_course_matches
     end

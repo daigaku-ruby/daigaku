@@ -1,6 +1,4 @@
 require 'fileutils'
-require 'active_support'
-require 'active_support/core_ext'
 
 module Daigaku
   class Generator
@@ -43,12 +41,12 @@ module Daigaku
     private
 
     def create_dir(path)
-      return if path.blank?
+      return if path.nil? || path.empty?
       FileUtils.makedirs(path) unless Dir.exist?(path)
     end
 
     def create_file(path)
-      return if path.blank?
+      return if path.nil? || path.empty?
       create_dir(File.dirname(path))
       FileUtils.touch(path) unless File.exist?(path)
     end

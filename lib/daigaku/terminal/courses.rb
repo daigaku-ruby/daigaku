@@ -129,8 +129,8 @@ module Daigaku
 
       def store_repo_data(user_and_repo)
         parts  = (user_and_repo ||= Daigaku.config.initial_course).split('/')
-        author = parts.first
-        course = parts.second
+        author = parts[0]
+        course = parts[1]
 
         course = Course.new(course)
         QuickStore.store.set(course.key(:author), author)
