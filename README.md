@@ -1,4 +1,4 @@
-# ![Daigaku](http://res.cloudinary.com/daigaku-ruby/image/upload/c_scale,h_100/v1426946323/rect5481_si3rjr.png)
+# ![Daigaku](https://res.cloudinary.com/paulgoetze/image/upload/v1520762114/daigaku/rect5481_si3rjr.png)
 
 [![Gem Version](https://badge.fury.io/rb/daigaku.svg)](http://badge.fury.io/rb/daigaku)
 [![Travis Build](https://travis-ci.org/daigaku-ruby/daigaku.svg)](https://travis-ci.org/daigaku-ruby/daigaku)
@@ -38,7 +38,7 @@ and navigate through your solutions.
 
 Please visit the [Daigaku Wiki](https://github.com/daigaku-ruby/daigaku/wiki/How-to-use-Daigaku%27s-command-line-interface-%28CLI%29) to learn more about available commands.
 
-![Daigaku CLI screenshot](http://res.cloudinary.com/daigaku-ruby/image/upload/v1427558807/daigaku-cli-screenshot_xgpav6.png)
+![Daigaku CLI screenshot](https://res.cloudinary.com/paulgoetze/image/upload/v1520762037/daigaku/daigaku-cli-screenshot_xgpav6.png)
 
 ## Daigaku screen
 
@@ -46,7 +46,7 @@ Daigaku’s text based interface—the Daigaku screen—shows your installed cou
 
 Please visit the [Diagaku Wiki](https://github.com/daigaku-ruby/daigaku/wiki/How-to-learn-Ruby-in-the-Daigaku-screen) to learn how to use the Daigaku screen.
 
-![Daigaku screen screenshot](http://res.cloudinary.com/daigaku-ruby/image/upload/v1430859202/daigaku-taskview_erwzrh.png)
+![Daigaku screen screenshot](https://res.cloudinary.com/paulgoetze/image/upload/v1520762097/daigaku/daigaku-task-view_zbvsia.png)
 
 ## Contributing
 
