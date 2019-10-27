@@ -52,7 +52,7 @@ Please visit the [Diagaku Wiki](https://github.com/daigaku-ruby/daigaku/wiki/How
 
 We encourage you to contribute to Daigaku development and course creation.
 
-This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant code of conduct](http://contributor-covenant.org/version/1/2/0).
+This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant Code of Conduct](https://github.com/daigaku-ruby/daigaku/blob/master/CODE_OF_CONDUCT.md).
 
 ### Creating Daigaku courses
 
