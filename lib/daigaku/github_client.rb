@@ -12,7 +12,7 @@ module Daigaku
     # Returns the timestamp of updated_at for the repo from the Github API.
     def self.updated_at(user_and_repo)
       url = "https://api.github.com/repos/#{user_and_repo}"
-      JSON.parse(open(url).read)['updated_at']
+      JSON.parse(URI.open(url).read)['updated_at']
     end
 
     # Returns whether the pushed_at time from Github API is newer than the
