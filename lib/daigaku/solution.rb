@@ -7,12 +7,13 @@ module Daigaku
     def initialize(unit_path)
       @unit_path = unit_path
       @path      = solution_path(unit_path)
-      @code      = File.read(@path).strip if File.file?(@path)
+      @code      = load_code(@path)
       @verified  = store_state
     end
 
     def verify!
-      result = Daigaku::Test.new(@unit_path).run(code)
+      @code = load_code(@path)
+      result = Daigaku::Test.new(@unit_path).run(@code)
       self.store_state = result.passed?
       result
     end
@@ -31,6 +32,10 @@ module Daigaku
     end
 
     private
+
+    def load_code(path)
+      File.read(path).strip if File.file?(path)
+    end
 
     def solution_path(path)
       local_path    = Daigaku.config.solutions_path

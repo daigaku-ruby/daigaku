@@ -62,10 +62,11 @@ describe Daigaku::Solution do
       end
 
       it 'sets the solution’s state in the store to unverified unless passed' do
-        subject.instance_variable_set(:@code, 'puts "I ❤ Daigaku!"')
+        allow(File).to receive(:read).and_return('puts "I ❤ Daigaku!"')
+        QuickStore.store.set(subject.store_key, true)
+
         subject.verify!
         mastered = QuickStore.store.get(subject.store_key)
-
         expect(mastered).to be_falsey
       end
     end
