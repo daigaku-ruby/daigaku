@@ -6,7 +6,11 @@ begin
   require 'daigaku'
 rescue LoadError => e
   warn "could not load \"daigaku\"\n#{e}"
-  exit -1
+  exit(-1)
 end
 
-Daigaku::Terminal::CLI.start
+begin
+  Daigaku::Terminal::CLI.start
+rescue Interrupt
+  puts "\n\n\t👋 See you soon!"
+end

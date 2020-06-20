@@ -9,6 +9,8 @@ module Daigaku
     class CLI < Thor
       include Terminal::Output
 
+      package_name 'Daigaku'
+
       desc 'courses [COMMAND]', 'Handle daigaku courses'
       subcommand 'courses', Terminal::Courses
 
