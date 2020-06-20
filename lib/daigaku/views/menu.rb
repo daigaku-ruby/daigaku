@@ -7,10 +7,10 @@ module Daigaku
       include Wisper::Publisher
 
       TOP_BAR_TEXT = [
-        'Use *UP KEY* and *DOWN KEY* for menu navigation',
-        'Enter menu with *RETURN*',
-        'Go back with *BACKSPACE*',
-        'Exit with *ESC*'
+        'Use * 🠕 * and * 🠗 * for menu navigation',
+        'Enter menu with * ⏎ *',
+        'Go back with * ⟵ *',
+        'Exit with *Esc*'
       ].join('  |  ').freeze
 
       attr_writer :items_info

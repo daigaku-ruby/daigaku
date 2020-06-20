@@ -8,11 +8,11 @@ module Daigaku
       include Wisper::Publisher
 
       TOP_BAR_TEXT = [
-        'Scroll with *UP KEY* and *DOWN KEY*',
+        'Scroll with * 🠕 * and * 🠗 *',
         'Open solution file with *o*',
         'Verify solution with *v*',
         'Clear validation with *c*',
-        'Exit with *ESC*'
+        'Exit with *Esc*'
       ].join('  |  ').freeze
 
       def initialize
@@ -201,11 +201,10 @@ module Daigaku
         @lines = [''] + @test_result_lines + ['', ''] + @unit.task.markdown.lines
         @examples = result.examples
 
-        @example_heights = @examples.reduce({}) do |hash, example|
+        @example_heights = @examples.each_with_object({}) do |example, hash|
           start = hash.values.reduce(0) { |sum, results| sum + results.count }
           range = (start..(start + example.message.split("\n").count) + 2)
           hash[hash.keys.count] = range
-          hash
         end
 
         lines_count = @lines.count + @top_bar_height + @head_height
@@ -223,8 +222,8 @@ module Daigaku
       def code_error_lines(code)
         begin
           eval(code)
-        rescue StandardError => e
-          return e.inspect.gsub(/(\A.*#<|>.*$)/, '').lines.map(&:rstrip)
+        rescue StandardError, ScriptError => error
+          return error.inspect.gsub(/(\A.*#<|>.*$)/, '').lines.map(&:rstrip)
         end
 
         []
