@@ -18,7 +18,7 @@ module Daigaku
       temp_spec = File.join(File.dirname(@path), "temp_#{File.basename(@path)}")
       create_temp_spec(temp_spec, patched_spec_code)
 
-      result = `rspec --color --format j #{temp_spec}`
+      result = `rspec --no-color --order defined --format j #{temp_spec}`
       remove_file(temp_spec)
 
       TestResult.new(result)

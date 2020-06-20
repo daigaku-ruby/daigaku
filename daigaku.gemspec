@@ -16,17 +16,17 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.4.5'
+  spec.required_ruby_version = '>= 2.5'
 
   spec.add_runtime_dependency 'curses',        '~> 1.3'
   spec.add_runtime_dependency 'rspec',         '~> 3.0'
-  spec.add_runtime_dependency 'thor',          '~> 0.20'
+  spec.add_runtime_dependency 'thor',          '~> 1.0'
   spec.add_runtime_dependency 'os',            '~> 1.0'
   spec.add_runtime_dependency 'colorize',      '~> 0.8'
   spec.add_runtime_dependency 'rubyzip',       '~> 2.0'
   spec.add_runtime_dependency 'wisper',        '~> 2.0'
-  spec.add_runtime_dependency 'quick_store',   '~> 0.2'
-  spec.add_runtime_dependency 'code_breaker',  '~> 0.3'
+  spec.add_runtime_dependency 'quick_store',   '~> 1.0'
+  spec.add_runtime_dependency 'code_breaker',  '~> 1.0'
 
   spec.add_development_dependency 'bundler',     '~> 2.0'
   spec.add_development_dependency 'rake',        '~> 13.0'

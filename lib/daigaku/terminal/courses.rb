@@ -37,7 +37,7 @@ module Daigaku
 
         file_name = File.join(courses_path, url.split('/').last)
 
-        File.open(file_name, 'w') { |file| file << open(url).read }
+        File.open(file_name, 'w') { |file| file << URI.open(url).read }
         course = Course.unzip(file_name, github_repo: github)
 
         if github
