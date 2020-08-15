@@ -7,7 +7,7 @@ module Daigaku
       include Wisper::Publisher
 
       TOP_BAR_TEXT = [
-        'Use * 🠕 * and * 🠗 * for menu navigation',
+        'Use * ← * and * → * for menu navigation',
         'Enter menu with * ⏎ *',
         'Go back with * ⟵ *',
         'Exit with *Esc*'
